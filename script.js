@@ -21,6 +21,7 @@ const allQuestions = [
   { question: "What does 'tired' mean?", options: ["Feliz", "Cansado", "Bravo", "Triste"], answer: 1 }
 ];
 
+// Função para embaralhar as perguntas e selecionar 5 aleatórias
 function getRandomQuestions() {
   const shuffled = allQuestions.sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 5);
@@ -31,7 +32,6 @@ let score = 0;
 let currentQuestion = 0;
 let errors = [];
 
-// Elementos da página
 const questionElement = document.getElementById("question");
 const optionsElement = document.getElementById("options");
 const quizContainer = document.getElementById("quiz-container");
@@ -39,23 +39,6 @@ const endScreen = document.getElementById("end-screen");
 const finalMessageElement = document.getElementById("final-message");
 const errorListElement = document.getElementById("error-list");
 const restartButton = document.getElementById("restart-button");
-const timerElement = document.getElementById("timer");
-
-let timeLeft = 60;
-let timerInterval;
-
-function startTimer() {
-  timeLeft = 60;
-  timerElement.textContent = `Tempo: ${timeLeft}s`;
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    timerElement.textContent = `Tempo: ${timeLeft}s`;
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      endQuiz();
-    }
-  }, 1000);
-}
 
 function loadQuestion() {
   if (currentQuestion < questions.length) {
@@ -86,38 +69,30 @@ function checkAnswer(selected) {
 }
 
 function endQuiz() {
-  clearInterval(timerInterval); // Para o timer caso ainda esteja rodando
   quizContainer.style.display = "none";
   endScreen.style.display = "block";
-  // Cada resposta correta vale 10 pontos
-  finalMessageElement.textContent = `Pontuação: ${score * 10} pontos`;
-  
+  finalMessageElement.textContent = `Pontuação: ${score}/5`;
+
   errorListElement.innerHTML = errors
     .map(err => `<li class="error-item">${err}</li>`)
     .join("");
 }
 
-// Reiniciar o quiz
 restartButton.onclick = () => {
   score = 0;
   currentQuestion = 0;
   errors = [];
   questions = getRandomQuestions(); // Nova seleção aleatória de perguntas
-  
-  // Reinicia o timer e as telas
   quizContainer.style.display = "block";
   endScreen.style.display = "none";
-  startTimer();
   loadQuestion();
 };
 
-// Navegação entre abas
 document.getElementById("quizTab").onclick = () => {
   quizContainer.style.display = "block";
   document.getElementById("library-container").style.display = "none";
   endScreen.style.display = "none";
   questions = getRandomQuestions(); // Garante novas perguntas ao acessar
-  startTimer();
   loadQuestion();
 };
 
@@ -127,6 +102,4 @@ document.getElementById("libraryTab").onclick = () => {
   endScreen.style.display = "none";
 };
 
-// Inicia o quiz e o timer na carga inicial
-startTimer();
 loadQuestion();
