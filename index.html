@@ -3,52 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Speaky Easy - Quiz de Inglês</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>Speak Easy - Quiz de Inglês</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<!-- Exibir o tempo restante -->
-<div id="timer" class="timer">Tempo: 60s</div>
-
-<!-- Quiz -->
-<div id="quiz-container" class="quiz-container">
-  <div id="quiz">
-    <p id="question"></p>
-    <ul id="options"></ul>
-  </div>
-</div>
   <div class="container">
-    <h1 class="title">Speaky Easy</h1>
+    <h1 class="title">Speak Easy</h1>
 
+    <!-- Menu de navegação -->
     <div class="tabs">
       <button id="quizTab" class="tab-button">Quiz de Inglês</button>
       <button id="libraryTab" class="tab-button">Biblioteca de Textos</button>
     </div>
 
+    <!-- Quiz -->
     <div id="quiz-container" class="quiz-container">
       <div id="quiz">
         <p id="question"></p>
         <ul id="options"></ul>
       </div>
-      <button id="next" class="next-button">Próxima Pergunta</button>
-      <p class="score-text">Pontuação: <span id="score">0</span></p>
-      <p id="timer">Tempo restante: <span id="time">60</span>s</p>
     </div>
 
+    <!-- Biblioteca de textos -->
     <div id="library-container" class="library-container" style="display: none;">
       <h2>Biblioteca de Textos</h2>
       <div class="text-entry">
-        <p><strong>Texto em Português:</strong> Eu gosto de estudar inglês.</p>
-        <p><strong>Texto em Inglês:</strong> I like to study English.</p>
+        <p><strong>Inglês:</strong> I like to study English.</p>
+        <p><strong>Português:</strong> Eu gosto de estudar inglês.</p>
+      </div>
+      <div class="text-entry">
+        <p><strong>Inglês:</strong> My name is John.</p>
+        <p><strong>Português:</strong> Meu nome é João.</p>
       </div>
     </div>
 
+    <!-- Tela final do Quiz -->
     <div id="end-screen" class="end-screen" style="display: none;">
       <p id="final-message"></p>
+      <ul id="error-list"></ul>
       <button id="restart-button" class="restart-button">Reiniciar Quiz</button>
     </div>
   </div>
 
-  <script src="js/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
