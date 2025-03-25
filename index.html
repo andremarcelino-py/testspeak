@@ -10,12 +10,12 @@
   <!-- Tela de Cadastro -->
   <div id="register-container" class="register-container">
     <h2>Cadastro</h2>
-    <input type="text" id="name" placeholder="Seu Nome" required>
-    <input type="number" id="number" placeholder="Seu Número" required>
+    <input type="text" id="name" placeholder="Digite seu nome">
+    <input type="number" id="number" placeholder="Digite seu número">
     <button id="start-button">Iniciar</button>
   </div>
 
-  <!-- Conteúdo Principal (inicialmente oculto) -->
+  <!-- Conteúdo principal oculto inicialmente -->
   <div id="main-container" class="container" style="display: none;">
     <h1 class="title">Speak Easy</h1>
 
@@ -40,6 +40,10 @@
         <p><strong>Inglês:</strong> I like to study English.</p>
         <p><strong>Português:</strong> Eu gosto de estudar inglês.</p>
       </div>
+      <div class="text-entry">
+        <p><strong>Inglês:</strong> My name is John.</p>
+        <p><strong>Português:</strong> Meu nome é João.</p>
+      </div>
     </div>
 
     <!-- Tela final do Quiz -->
@@ -55,46 +59,7 @@
     </div>
   </div>
 
-  <script type="module">
-    // Importação do Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
-
-    // Configuração do Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBCVGQk1Ctp1IZJrHQdM6YUSItaD3pypjg",
-      authDomain: "testspeakeasy.firebaseapp.com",
-      projectId: "testspeakeasy",
-      storageBucket: "testspeakeasy.firebasestorage.app",
-      messagingSenderId: "732379388945",
-      appId: "1:732379388945:web:a46304dd51b10e2850e5b0",
-      measurementId: "G-WNB4XS2YJB"
-    };
-
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Botão de cadastro
-    document.getElementById("start-button").addEventListener("click", async () => {
-      const name = document.getElementById("name").value.trim();
-      const number = document.getElementById("number").value.trim();
-
-      if (name === "" || number === "") {
-        alert("Por favor, preencha todos os campos.");
-        return;
-      }
-
-      try {
-        await addDoc(collection(db, "users"), { name, number });
-        document.getElementById("register-container").style.display = "none";
-        document.getElementById("main-container").style.display = "block";
-      } catch (error) {
-        console.error("Erro ao salvar cadastro:", error);
-      }
-    });
-  </script>
-
+  <script type="module" src="firebase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
