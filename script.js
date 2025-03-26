@@ -1,37 +1,58 @@
+import { db } from "./firebase-config.js";
+import { collection, addDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+let userId = null;
+let score = 0;
+let currentQuestion = 0;
+let errors = [];
+
+// Cadastro do usuário
+document.getElementById("start-button").addEventListener("click", async () => {
+  const name = document.getElementById("name").value;
+  const number = document.getElementById("number").value;
+
+  if (name && number) {
+    try {
+      const docRef = await addDoc(collection(db, "users"), { name, number, score: 0 });
+      userId = docRef.id; // Salvar o ID do usuário para atualizar depois
+
+      document.getElementById("register-container").style.display = "none";
+      document.getElementById("main-container").style.display = "block";
+    } catch (error) {
+      console.error("Erro ao salvar no Firestore: ", error);
+    }
+  } else {
+    alert("Preencha todos os campos!");
+  }
+});
+
+// Função para atualizar pontuação no Firestore
+async function updateUserScore() {
+  if (userId) {
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, { score: score });
+      console.log("Pontuação salva no Firestore!");
+    } catch (error) {
+      console.error("Erro ao salvar a pontuação:", error);
+    }
+  }
+}
+
+// Banco de perguntas
 const allQuestions = [
   { question: "What is 'eu sou estudante' in English?", options: ["I am a student", "I am student", "I student am", "A student I am"], answer: 0 },
   { question: "Which one is correct?", options: ["Do you like pizza?", "Like pizza you?", "Pizza do you like?", "You pizza like?"], answer: 0 },
   { question: "What does 'I am learning English' mean?", options: ["Eu estou aprendendo inglês", "Eu aprendi inglês", "Eu ensino inglês", "Eu amo inglês"], answer: 0 },
   { question: "How do you say 'Onde você mora?' in English?", options: ["Where are you living?", "Where do you live?", "Where is you live?", "Where you live?"], answer: 1 },
-  { question: "What is the plural of 'child'?", options: ["Childs", "Children", "Childes", "Childern"], answer: 1 },
-  { question: "What does 'She is my sister' mean?", options: ["Ela é minha irmã", "Ela é minha prima", "Ela é minha mãe", "Ela é minha amiga"], answer: 0 },
-  { question: "Which sentence is correct?", options: ["He have a car", "He has a car", "He are a car", "He do have car"], answer: 1 },
-  { question: "How do you say 'Eu gosto de ler livros' in English?", options: ["I like to read books", "I likes to read books", "I am like to read books", "I reading books"], answer: 0 },
-  { question: "What is 'yesterday' in Portuguese?", options: ["Amanhã", "Ontem", "Hoje", "Depois"], answer: 1 },
-  { question: "Which one is correct?", options: ["She don’t like coffee", "She doesn’t like coffee", "She not like coffee", "She no like coffee"], answer: 1 },
-  { question: "Translate: 'They are my friends'", options: ["Eles são meus amigos", "Eles foram meus amigos", "Eles estavam meus amigos", "Eles é meus amigos"], answer: 0 },
-  { question: "What does 'goodbye' mean?", options: ["Olá", "Obrigado", "Adeus", "Por favor"], answer: 2 },
-  { question: "What is the opposite of 'cold'?", options: ["Hot", "Warm", "Cool", "Frozen"], answer: 0 },
-  { question: "Choose the correct sentence", options: ["She go to school", "She goes to school", "She going to school", "She is go to school"], answer: 1 },
-  { question: "How do you say 'Nós estamos felizes' in English?", options: ["We is happy", "We are happy", "We am happy", "We do happy"], answer: 1 },
-  { question: "What is the past of 'eat'?", options: ["Ate", "Eaten", "Eating", "Eats"], answer: 0 },
-  { question: "What is 'verde' in English?", options: ["Red", "Blue", "Green", "Yellow"], answer: 2 },
-  { question: "Which is correct?", options: ["She have a dog", "She has a dog", "She do has a dog", "She has dog"], answer: 1 },
-  { question: "How do you say 'Me ajuda, por favor' in English?", options: ["Help me, please", "Please me help", "Me help please", "Please, I need help"], answer: 0 },
-  { question: "What does 'tired' mean?", options: ["Feliz", "Cansado", "Bravo", "Triste"], answer: 1 }
 ];
 
-
-// Função para embaralhar as perguntas e selecionar 5 aleatórias
 function getRandomQuestions() {
   const shuffled = allQuestions.sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 10);
 }
 
 let questions = getRandomQuestions();
-let score = 0;
-let currentQuestion = 0;
-let errors = [];
 
 const questionElement = document.getElementById("question");
 const optionsElement = document.getElementById("options");
@@ -39,14 +60,13 @@ const quizContainer = document.getElementById("quiz-container");
 const endScreen = document.getElementById("end-screen");
 const finalMessageElement = document.getElementById("final-message");
 const errorListElement = document.getElementById("error-list");
-const restartButton = document.getElementById("restart-button");
 
 function loadQuestion() {
   if (currentQuestion < questions.length) {
     const q = questions[currentQuestion];
     questionElement.textContent = q.question;
     optionsElement.innerHTML = "";
-    
+
     q.options.forEach((option, index) => {
       const li = document.createElement("li");
       li.textContent = option;
@@ -84,17 +104,17 @@ function updateScore() {
   document.getElementById("score").textContent = score;
 }
 
-function endQuiz() {
+async function endQuiz() {
   quizContainer.style.display = "none";
   endScreen.style.display = "block";
   finalMessageElement.textContent = `Pontuação: ${score}/10`;
 
-  errorListElement.innerHTML = errors
-    .map(err => `<li class="error-item">${err}</li>`)
-    .join("");
+  errorListElement.innerHTML = errors.map(err => `<li class="error-item">${err}</li>`).join("");
+
+  await updateUserScore();
 }
 
-restartButton.onclick = () => {
+document.getElementById("restart-button").onclick = () => {
   score = 0;
   currentQuestion = 0;
   errors = [];
@@ -102,20 +122,6 @@ restartButton.onclick = () => {
   quizContainer.style.display = "block";
   endScreen.style.display = "none";
   loadQuestion();
-};
-
-document.getElementById("quizTab").onclick = () => {
-  quizContainer.style.display = "block";
-  document.getElementById("library-container").style.display = "none";
-  endScreen.style.display = "none";
-  questions = getRandomQuestions();
-  loadQuestion();
-};
-
-document.getElementById("libraryTab").onclick = () => {
-  document.getElementById("library-container").style.display = "block";
-  quizContainer.style.display = "none";
-  endScreen.style.display = "none";
 };
 
 loadQuestion();
