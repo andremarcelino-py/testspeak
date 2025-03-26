@@ -14,6 +14,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+export { db }
+
 document.getElementById("start-button").addEventListener("click", async () => {
   const name = document.getElementById("name").value;
   const number = document.getElementById("number").value;
