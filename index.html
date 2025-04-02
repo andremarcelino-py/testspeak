@@ -7,25 +7,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
-
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-
-
-  <!-- Tela de Cadastro -->
+  <!-- Tela de Cadastro Atualizada -->
   <div id="register-container" class="register-container animate-in">
     <h2>Cadastro</h2>
     <input type="text" id="name" placeholder="Digite seu nome">
     <input type="number" id="number" placeholder="Digite seu número">
-    <button id="start-button">Iniciar <i class="fas fa-arrow-right"></i></button>
+    <button id="register-button">Cadastrar <i class="fas fa-check"></i></button>
+    <button id="start-quiz-button" class="hidden">Iniciar Quiz <i class="fas fa-play"></i></button>
   </div>
 
-  <!-- Conteúdo principal oculto inicialmente -->
+  <!-- Conteúdo principal -->
   <div id="main-container" class="container">
+    <!-- Timer -->
+    <div id="timer-container" class="timer-container">
+      <i class="fas fa-clock"></i> Tempo restante: <span id="timer">60</span>s
+    </div>
+
     <h1 class="title">Speak Easy</h1>
 
-    <!-- Menu de navegação -->
+    <!-- Menu de navegação atualizado -->
     <div class="tabs">
       <button id="quizTab" class="tab-button animate-in">
         <i class="fas fa-question-circle"></i>
@@ -38,6 +41,11 @@
       <button id="rankingTab" class="tab-button animate-in">
         <i class="fas fa-trophy"></i>
         Ranking
+      </button>
+      <!-- Nova aba de feedback -->
+      <button id="feedbackTab" class="tab-button animate-in">
+        <i class="fas fa-comment-dots"></i>
+        Feedback
       </button>
     </div>
 
@@ -85,6 +93,13 @@
       <ul id="ranking-list"></ul>
     </div>
 
+    <!-- Nova tela de Feedback -->
+    <div id="feedback-container" class="feedback-container">
+      <h2><i class="fas fa-comment-dots"></i> Feedback</h2>
+      <textarea id="feedback-text" placeholder="Escreva seu feedback aqui..."></textarea>
+      <button id="submit-feedback">Enviar Feedback</button>
+    </div>
+
     <!-- Tela final do Quiz -->
     <div id="end-screen" class="end-screen">
       <p id="final-message"></p>
@@ -96,7 +111,7 @@
 
     <!-- Contador de acertos -->
     <div id="score-container" class="score-container">
-      <p>Pontuação: <span id="score">0</span>/10</p>
+      <p>Pontuação: <span id="score">0</span></p>
     </div>
   </div>
 
