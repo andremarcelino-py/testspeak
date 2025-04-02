@@ -9,6 +9,14 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- wwbapp -->
+
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service-worker.js");
+}
+
   <!-- Tela de Cadastro -->
   <div id="register-container" class="register-container animate-in">
     <h2>Cadastro</h2>
