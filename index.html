@@ -22,7 +22,7 @@
   <!-- Conteúdo principal -->
   <div id="main-container" class="container">
     <!-- Timer -->
-    <div id="timer-container" class="timer-container">
+    <div id="timer-container" class="timer-container hidden">
       <i class="fas fa-clock"></i> Tempo restante: <span id="timer">60</span>s
     </div>
 
@@ -63,7 +63,7 @@
     </div>
 
     <!-- Biblioteca de textos -->
-    <div id="library-container" class="library-container">
+    <div id="library-container" class="library-container hidden">
       <h2><i class="fas fa-book-open"></i> Biblioteca de Textos</h2>
       <div class="text-card animate-in">
         <div class="text-header">
@@ -88,20 +88,20 @@
     </div>
 
     <!-- Tela de Ranking -->
-    <div id="ranking-container" class="ranking-container">
+    <div id="ranking-container" class="ranking-container hidden">
       <h2><i class="fas fa-trophy"></i> Ranking</h2>
       <ul id="ranking-list"></ul>
     </div>
 
     <!-- Nova tela de Feedback -->
-    <div id="feedback-container" class="feedback-container">
+    <div id="feedback-container" class="feedback-container hidden">
       <h2><i class="fas fa-comment-dots"></i> Feedback</h2>
       <textarea id="feedback-text" placeholder="Escreva seu feedback aqui..."></textarea>
       <button id="submit-feedback">Enviar Feedback</button>
     </div>
 
     <!-- Tela final do Quiz -->
-    <div id="end-screen" class="end-screen">
+    <div id="end-screen" class="end-screen hidden">
       <p id="final-message"></p>
       <ul id="error-list"></ul>
       <button id="restart-button" class="restart-button">
