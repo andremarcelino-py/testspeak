@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";  
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { 
   getFirestore, 
   collection, 
@@ -6,23 +6,29 @@ import {
   getDocs, 
   doc, 
   updateDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";  
+  getDoc,
+  query,
+  orderBy,
+  where,
+  limit
+} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
-const firebaseConfig = {  
-  apiKey: "AIzaSyBCVGQk1Ctp1IZJrHQdM6YUSItaD3pypjg",  
-  authDomain: "testspeakeasy.firebaseapp.com",  
-  projectId: "testspeakeasy",  
-  storageBucket: "testspeakeasy.appspot.com",  
-  messagingSenderId: "732379388945",  
-  appId: "1:732379388945:web:a46304dd51b10e2850e5b0",  
-  measurementId: "G-WNB4XS2YJB"  
-};  
+// Configuração do Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBCVGQk1Ctp1IZJrHQdM6YUSItaD3pypjg",
+  authDomain: "testspeakeasy.firebaseapp.com",
+  projectId: "testspeakeasy",
+  storageBucket: "testspeakeasy.appspot.com",
+  messagingSenderId: "732379388945",
+  appId: "1:732379388945:web:a46304dd51b10e2850e5b0",
+  measurementId: "G-WNB4XS2YJB"
+};
 
-const app = initializeApp(firebaseConfig);  
-const db = getFirestore(app);  
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // Variáveis globais
+let currentUser = null;
 let timer;
 let timeLeft = 60;
 let isQuizActive = false;
@@ -33,33 +39,50 @@ let errors = [];
 
 // Elementos DOM
 const elements = {
-  question: document.getElementById("question"),
-  options: document.getElementById("options"),
-  quizContainer: document.getElementById("quiz-container"),
-  endScreen: document.getElementById("end-screen"),
-  finalMessage: document.getElementById("final-message"),
-  errorList: document.getElementById("error-list"),
-  restartButton: document.getElementById("restart-button"),
-  progressBar: document.querySelector(".progress"),
-  timerContainer: document.getElementById("timer-container"),
-  timer: document.getElementById("timer"),
-  score: document.getElementById("score"),
-  registerButton: document.getElementById("register-button"),
-  startQuizButton: document.getElementById("start-quiz-button"),
-  feedbackText: document.getElementById("feedback-text"),
-  submitFeedback: document.getElementById("submit-feedback"),
+  // Cadastro
   registerContainer: document.getElementById("register-container"),
+  registerButton: document.getElementById("register-button"),
+  nameInput: document.getElementById("name"),
+  numberInput: document.getElementById("number"),
+  
+  // Main Container
   mainContainer: document.getElementById("main-container"),
+  
+  // Quiz
+  quizContainer: document.getElementById("quiz-container"),
+  questionElement: document.getElementById("question"),
+  optionsElement: document.getElementById("options"),
+  scoreElement: document.getElementById("score"),
+  timerContainer: document.getElementById("timer-container"),
+  timerElement: document.getElementById("timer"),
+  progressBar: document.querySelector(".progress"),
+  
+  // Telas
   libraryContainer: document.getElementById("library-container"),
   rankingContainer: document.getElementById("ranking-container"),
   feedbackContainer: document.getElementById("feedback-container"),
+  endScreen: document.getElementById("end-screen"),
+  
+  // Abas
   quizTab: document.getElementById("quizTab"),
   libraryTab: document.getElementById("libraryTab"),
   rankingTab: document.getElementById("rankingTab"),
-  feedbackTab: document.getElementById("feedbackTab")
+  feedbackTab: document.getElementById("feedbackTab"),
+  
+  // Ranking
+  rankingList: document.getElementById("ranking-list"),
+  
+  // Feedback
+  feedbackText: document.getElementById("feedback-text"),
+  submitFeedback: document.getElementById("submit-feedback"),
+  
+  // Final
+  finalMessage: document.getElementById("final-message"),
+  errorList: document.getElementById("error-list"),
+  restartButton: document.getElementById("restart-button")
 };
 
-// Array completo de perguntas
+// Perguntas do quiz
 const allQuestions = [
   { question: "What is 'eu sou estudante' in English?", options: ["I am a student", "I am student", "I student am", "A student I am"], answer: 0 },
   { question: "Which one is correct?", options: ["Do you like pizza?", "Like pizza you?", "Pizza do you like?", "You pizza like?"], answer: 0 },
@@ -89,116 +112,25 @@ function getRandomQuestions() {
   return shuffled.slice(0, 10);
 }
 
-function loadQuestion() {
-  const progress = (currentQuestion / questions.length) * 100;
-  elements.progressBar.style.width = `${progress}%`;
-  
-  if (currentQuestion < questions.length) {
-    const q = questions[currentQuestion];
-    elements.question.textContent = q.question;
-    elements.options.innerHTML = "";
-    
-    q.options.forEach((option, index) => {
-      const li = document.createElement("li");
-      li.textContent = option;
-      li.addEventListener("click", () => checkAnswer(index));
-      elements.options.appendChild(li);
-    });
-  } else {
-    endQuiz();
-  }
-}
-
-function checkAnswer(selected) {
-  if (!isQuizActive) return;
-
-  const q = questions[currentQuestion];
-  const options = elements.options.children;
-
-  for (let i = 0; i < options.length; i++) {
-    options[i].classList.remove("correct", "wrong");
-    if (i === q.answer) {
-      options[i].classList.add("correct");
-    } else if (i === selected) {
-      options[i].classList.add("wrong");
-    }
-    options[i].style.pointerEvents = "none";
-  }
-
-  if (selected === q.answer) {
-    score++;
-    updateScore();
-  } else {
-    errors.push(`Pergunta: ${q.question} - Resposta correta: ${q.options[q.answer]}`);
-  }
-
-  setTimeout(() => {
-    currentQuestion++;
-    if (currentQuestion >= questions.length) {
-      questions = getRandomQuestions();
-      currentQuestion = 0;
-    }
-    loadQuestion();
-  }, 1500);
-}
-
-function updateScore() {
-  elements.score.textContent = score;
-}
-
-function endQuiz() {
-  isQuizActive = false;
-  clearInterval(timer);
-  elements.timerContainer.classList.add("hidden");
-  
-  elements.quizContainer.classList.add("hidden");
-  elements.endScreen.classList.remove("hidden");
-  elements.finalMessage.textContent = `Pontuação Final: ${score} pontos`;
-
-  elements.errorList.innerHTML = errors
-    .map(err => `<li class="error-item">${err}</li>`)
-    .join("");
-    
-  const userName = document.getElementById("name").value;
-  saveScore(userName, score);
-}
-
-async function saveScore(userName, score) {
-  const querySnapshot = await getDocs(collection(db, "users"));
-  let userDoc;
-
-  querySnapshot.forEach((doc) => {
-    if (doc.data().name === userName) {
-      userDoc = doc.ref;
-    }
-  });
-
-  if (userDoc) {
-    const userData = (await getDoc(userDoc)).data();
-    await updateDoc(userDoc, {
-      score: userData.score + score,
-      totalCorrect: userData.totalCorrect + score,
-      totalQuestions: userData.totalQuestions + currentQuestion,
-      lastPlayed: new Date()
-    });
-  }
-}
-
 function startQuiz() {
   isQuizActive = true;
   timeLeft = 60;
-  elements.timer.textContent = timeLeft;
-  elements.timerContainer.classList.remove("hidden");
-  questions = getRandomQuestions();
   score = 0;
   currentQuestion = 0;
   errors = [];
-  updateScore();
-
-  clearInterval(timer);
+  
+  elements.timerElement.textContent = timeLeft;
+  elements.timerContainer.classList.remove("hidden");
+  elements.scoreElement.textContent = score;
+  
+  questions = getRandomQuestions();
+  
+  // Limpa timer existente
+  if (timer) clearInterval(timer);
+  
   timer = setInterval(() => {
     timeLeft--;
-    elements.timer.textContent = timeLeft;
+    elements.timerElement.textContent = timeLeft;
     
     if (timeLeft <= 0) {
       clearInterval(timer);
@@ -209,125 +141,256 @@ function startQuiz() {
   loadQuestion();
 }
 
+function loadQuestion() {
+  const progress = (currentQuestion / questions.length) * 100;
+  elements.progressBar.style.width = `${progress}%`;
+  
+  if (currentQuestion < questions.length) {
+    const q = questions[currentQuestion];
+    elements.questionElement.textContent = q.question;
+    elements.optionsElement.innerHTML = "";
+    
+    q.options.forEach((option, index) => {
+      const li = document.createElement("li");
+      li.textContent = option;
+      li.addEventListener("click", () => checkAnswer(index));
+      elements.optionsElement.appendChild(li);
+    });
+  } else {
+    endQuiz();
+  }
+}
+
+function checkAnswer(selected) {
+  if (!isQuizActive) return;
+
+  const q = questions[currentQuestion];
+  const options = elements.optionsElement.children;
+
+  // Mostra feedback visual
+  for (let i = 0; i < options.length; i++) {
+    options[i].classList.remove("correct", "wrong");
+    if (i === q.answer) {
+      options[i].classList.add("correct");
+    } else if (i === selected) {
+      options[i].classList.add("wrong");
+    }
+    options[i].style.pointerEvents = "none";
+  }
+
+  // Verifica resposta
+  if (selected === q.answer) {
+    score++;
+    elements.scoreElement.textContent = score;
+  } else {
+    errors.push(`Pergunta: ${q.question} - Resposta correta: ${q.options[q.answer]}`);
+  }
+
+  // Próxima pergunta
+  setTimeout(() => {
+    currentQuestion++;
+    if (currentQuestion >= questions.length) {
+      questions = getRandomQuestions();
+      currentQuestion = 0;
+    }
+    loadQuestion();
+  }, 1500);
+}
+
+function endQuiz() {
+  isQuizActive = false;
+  clearInterval(timer);
+  elements.timerContainer.classList.add("hidden");
+  
+  elements.quizContainer.classList.remove("active");
+  elements.endScreen.classList.add("active");
+  
+  elements.finalMessage.textContent = `Pontuação Final: ${score} pontos`;
+  elements.errorList.innerHTML = errors.map(err => `<li>${err}</li>`).join("");
+  
+  // Salva a pontuação
+  if (currentUser) {
+    saveScore(currentUser, score);
+  }
+}
+
+async function saveScore(userName, score) {
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("name", "==", userName));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      // Novo usuário
+      await addDoc(usersRef, {
+        name: userName,
+        score: score,
+        lastPlayed: new Date()
+      });
+    } else {
+      // Usuário existente - atualiza
+      const userDoc = querySnapshot.docs[0];
+      await updateDoc(userDoc.ref, {
+        score: (userDoc.data().score || 0) + score,
+        lastPlayed: new Date()
+      });
+    }
+    
+    // Atualiza o ranking
+    await loadRanking();
+  } catch (error) {
+    console.error("Erro ao salvar pontuação:", error);
+  }
+}
+
+async function loadRanking() {
+  elements.rankingList.innerHTML = '<li class="loading">Carregando ranking...</li>';
+  
+  try {
+    const q = query(collection(db, "users"), orderBy("score", "desc"), limit(100));
+    const querySnapshot = await getDocs(q);
+    
+    const rankings = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      rankings.push({
+        name: data.name,
+        score: data.score || 0,
+        lastPlayed: data.lastPlayed?.toDate() || new Date(0)
+      });
+    });
+
+    displayRanking(rankings);
+  } catch (error) {
+    console.error("Erro ao carregar ranking:", error);
+    elements.rankingList.innerHTML = '<li class="error">Erro ao carregar ranking</li>';
+  }
+}
+
+function displayRanking(rankings) {
+  elements.rankingList.innerHTML = '';
+
+  if (rankings.length === 0) {
+    elements.rankingList.innerHTML = '<li class="empty">Nenhum jogador ainda</li>';
+    return;
+  }
+
+  rankings.forEach((player, index) => {
+    const li = document.createElement("li");
+    li.className = `rank-item ${index < 3 ? `top-${index + 1}` : ''}`;
+    
+    li.innerHTML = `
+      <span class="rank-position">${index + 1}º</span>
+      <span class="rank-name">${player.name}</span>
+      <span class="rank-score">${player.score} pts</span>
+      <span class="rank-date">${formatDate(player.lastPlayed)}</span>
+    `;
+    
+    elements.rankingList.appendChild(li);
+  });
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// Navegação entre abas
+function showTab(tab) {
+  // Esconde todas as telas
+  document.querySelectorAll('.content-container').forEach(container => {
+    container.classList.remove('active');
+  });
+  
+  // Remove active de todas as abas
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.classList.remove('active');
+  });
+  
+  // Mostra a tela selecionada
+  tab.container.classList.add('active');
+  tab.button.classList.add('active');
+}
+
 // Event Listeners
 elements.registerButton.addEventListener("click", async () => {
-  const name = elements.registerContainer.querySelector("#name").value;
-  const number = elements.registerContainer.querySelector("#number").value;
+  const name = elements.nameInput.value.trim();
+  const number = elements.numberInput.value.trim();
 
   if (name && number) {
     try {
-      await addDoc(collection(db, "users"), {
-        name,
-        number,
-        score: 0,
-        totalCorrect: 0,
-        totalQuestions: 0,
-        lastPlayed: new Date()
-      });
+      currentUser = name;
       elements.registerContainer.style.display = "none";
-      elements.mainContainer.classList.remove("hidden");
+      elements.mainContainer.style.display = "block";
       startQuiz();
     } catch (error) {
-      console.error("Erro ao salvar no Firestore: ", error);
+      console.error("Erro ao registrar:", error);
+      alert("Ocorreu um erro ao registrar. Por favor, tente novamente.");
     }
   } else {
-    alert("Preencha todos os campos!");
+    alert("Por favor, preencha todos os campos!");
   }
 });
 
 elements.restartButton.addEventListener("click", () => {
-  elements.endScreen.classList.add("hidden");
+  elements.endScreen.classList.remove("active");
+  elements.quizContainer.classList.add("active");
   startQuiz();
 });
 
 elements.submitFeedback.addEventListener("click", async () => {
-  const feedbackText = elements.feedbackText.value;
-  const userName = elements.registerContainer.querySelector("#name").value;
-
-  if (feedbackText) {
+  const feedback = elements.feedbackText.value.trim();
+  
+  if (feedback) {
     try {
       await addDoc(collection(db, "feedbacks"), {
-        name: userName,
-        text: feedbackText,
+        name: currentUser || "Anônimo",
+        text: feedback,
         timestamp: new Date()
       });
+      
       alert("Obrigado pelo seu feedback!");
       elements.feedbackText.value = "";
     } catch (error) {
-      console.error("Erro ao enviar feedback: ", error);
+      console.error("Erro ao enviar feedback:", error);
+      alert("Ocorreu um erro ao enviar seu feedback.");
     }
   } else {
-    alert("Por favor, escreva seu feedback antes de enviar!");
+    alert("Por favor, escreva seu feedback antes de enviar.");
   }
 });
 
-// Navegação entre abas
-elements.quizTab.addEventListener("click", () => {
-  elements.quizContainer.classList.remove("hidden");
-  elements.libraryContainer.classList.add("hidden");
-  elements.rankingContainer.classList.add("hidden");
-  elements.feedbackContainer.classList.add("hidden");
-  elements.endScreen.classList.add("hidden");
-});
+// Configura abas
+const tabs = [
+  { button: elements.quizTab, container: elements.quizContainer },
+  { button: elements.libraryTab, container: elements.libraryContainer },
+  { button: elements.rankingTab, container: elements.rankingContainer },
+  { button: elements.feedbackTab, container: elements.feedbackContainer }
+];
 
-elements.libraryTab.addEventListener("click", () => {
-  elements.libraryContainer.classList.remove("hidden");
-  elements.quizContainer.classList.add("hidden");
-  elements.rankingContainer.classList.add("hidden");
-  elements.feedbackContainer.classList.add("hidden");
-  elements.endScreen.classList.add("hidden");
-});
-
-elements.rankingTab.addEventListener("click", async () => {
-  elements.rankingContainer.classList.remove("hidden");
-  elements.quizContainer.classList.add("hidden");
-  elements.libraryContainer.classList.add("hidden");
-  elements.feedbackContainer.classList.add("hidden");
-  elements.endScreen.classList.add("hidden");
-
-  elements.rankingList.innerHTML = "";
-
-  const querySnapshot = await getDocs(collection(db, "users"));
-  const users = [];
-
-  querySnapshot.forEach(doc => {
-    let userData = doc.data();
-    users.push({
-      name: userData.name,
-      score: userData.score || 0
-    });
+tabs.forEach(tab => {
+  tab.button.addEventListener("click", async () => {
+    showTab(tab);
+    
+    // Carrega o ranking quando a aba é acessada
+    if (tab.container === elements.rankingContainer) {
+      await loadRanking();
+    }
   });
-
-  users.sort((a, b) => b.score - a.score);
-
-  users.forEach((user, index) => {
-    const li = document.createElement("li");
-    li.className = "animate-in";
-    li.style.animationDelay = `${index * 0.1}s`;
-    li.innerHTML = `
-      <span>${index + 1}. ${user.name}</span>
-      <span>Pontos: ${user.score}</span>
-    `;
-    elements.rankingList.appendChild(li);
-  });
-});
-
-elements.feedbackTab.addEventListener("click", () => {
-  elements.feedbackContainer.classList.remove("hidden");
-  elements.quizContainer.classList.add("hidden");
-  elements.libraryContainer.classList.add("hidden");
-  elements.rankingContainer.classList.add("hidden");
-  elements.endScreen.classList.add("hidden");
 });
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", () => {
   // Configura estado inicial
-  elements.mainContainer.classList.add("hidden");
-  elements.quizContainer.classList.remove("hidden");
-  elements.libraryContainer.classList.add("hidden");
-  elements.rankingContainer.classList.add("hidden");
-  elements.feedbackContainer.classList.add("hidden");
-  elements.endScreen.classList.add("hidden");
+  elements.mainContainer.style.display = "none";
+  showTab(tabs[0]); // Mostra a aba do quiz inicialmente
+  
+  // Esconde elementos que devem começar ocultos
   elements.timerContainer.classList.add("hidden");
+  elements.endScreen.classList.remove("active");
 });
