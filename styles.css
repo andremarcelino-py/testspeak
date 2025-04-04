@@ -259,13 +259,48 @@ body {
   padding: 0;
 }
 
+/* Substitua o estilo atual do ranking por este: */
+#ranking-list {
+  counter-reset: ranking;
+  padding: 0;
+  margin: 2rem 0;
+}
+
 #ranking-list li {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 1rem;
-  margin: 0.5rem 0;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
+  counter-increment: ranking;
+  background: rgba(255,255,255,0.05);
+  padding: 1.2rem;
+  margin: 0.8rem 0;
+  border-radius: 15px;
+  display: grid;
+  grid-template-columns: 50px 1fr 100px 100px;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+/* Estilo para o 1º lugar */
+#ranking-list li:first-child {
+  background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+  color: #2F2F2F;
+  font-weight: bold;
+  box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+}
+
+#ranking-list li:first-child::after {
+  content: "👑";
+  margin-left: 1rem;
+  font-size: 1.8em;
+}
+
+/* Estilo para o 2º lugar */
+#ranking-list li:nth-child(2) {
+  background: linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%);
+}
+
+/* Estilo para o 3º lugar */
+#ranking-list li:nth-child(3) {
+  background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);
+}
 }
 
 /* Tela Final */
