@@ -417,6 +417,12 @@ btnRanking.addEventListener('click', async () => {
     let userData = doc.data();
     users.push({ name: userData.name, score: userData.score || 0, time: userData.time || 9999 });
   });
+
+
+
+users = users.filter(user => user.time !== 9999);
+
+
   users.sort((a, b) => {
     if(a.score === b.score) {
       return a.time - b.time;
