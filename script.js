@@ -19,72 +19,186 @@ const registerContainer = document.getElementById("register-container");
 const menuContainer = document.getElementById("menu-container");
 const quizContainer = document.getElementById("quiz-container");
 const perguntasContainer = document.getElementById("perguntas-container");
+const perguntasQuizContainer = document.getElementById("perguntas-quiz-container");
 const libraryContainer = document.getElementById("library-container");
 const rankingContainer = document.getElementById("ranking-container");
 const endScreen = document.getElementById("end-screen");
+const perguntasEndScreen = document.getElementById("perguntas-end-screen");
 
+// Botões
 const startButton = document.getElementById("start-button");
 const btnQuiz = document.getElementById("btnQuiz");
 const btnPerguntas = document.getElementById("btnPerguntas");
 const btnLibrary = document.getElementById("btnLibrary");
 const btnRanking = document.getElementById("btnRanking");
+const btnFacil = document.getElementById("btnFacil");
+const btnMedio = document.getElementById("btnMedio");
+const btnDificil = document.getElementById("btnDificil");
+const restartButton = document.getElementById("restart-button");
+const perguntasRestartButton = document.getElementById("perguntas-restart-button");
+const perguntasMenuButton = document.getElementById("perguntas-menu-button");
 
+// Elementos do quiz
 const questionElement = document.getElementById("question");
 const optionsElement = document.getElementById("options");
 const scoreElement = document.getElementById("score");
 const timerElement = document.getElementById("timer");
 const finalMessageElement = document.getElementById("final-message");
 const errorListElement = document.getElementById("error-list");
-const restartButton = document.getElementById("restart-button");
 const rankingList = document.getElementById("ranking-list");
 
-// Variáveis para o Quiz
-let allQuestions = [
-  { question: "What is 'eu sou estudante' in English?", options: ["I am a student", "I am student", "I student am", "A student I am"], answer: 0 },
-  { question: "Which one is correct?", options: ["Do you like pizza?", "Like pizza you?", "Pizza do you like?", "You pizza like?"], answer: 0 },
-  { question: "What does 'I am learning English' mean?", options: ["Eu estou aprendendo inglês", "Eu aprendi inglês", "Eu ensino inglês", "Eu amo inglês"], answer: 0 },
-  { question: "How do you say 'Onde você mora?' in English?", options: ["Where are you living?", "Where do you live?", "Where is you live?", "Where you live?"], answer: 1 },
-  { question: "What is the plural of 'child'?", options: ["Childs", "Children", "Childes", "Childern"], answer: 1 },
-  { question: "What does 'She is my sister' mean?", options: ["Ela é minha irmã", "Ela é minha prima", "Ela é minha mãe", "Ela é minha amiga"], answer: 0 },
-  { question: "Which sentence is correct?", options: ["He have a car", "He has a car", "He are a car", "He do have car"], answer: 1 },
-  { question: "How do you say 'Eu gosto de ler livros' in English?", options: ["I like to read books", "I likes to read books", "I am like to read books", "I reading books"], answer: 0 },
-  { question: "What is 'yesterday' in Portuguese?", options: ["Amanhã", "Ontem", "Hoje", "Depois"], answer: 1 },
-  { question: "Which one is correct?", options: ["She don't like coffee", "She doesn't like coffee", "She not like coffee", "She no like coffee"], answer: 1 },
-  { question: "Translate: 'They are my friends'", options: ["Eles são meus amigos", "Eles foram meus amigos", "Eles estavam meus amigos", "Eles é meus amigos"], answer: 0 },
-  { question: "What does 'goodbye' mean?", options: ["Olá", "Obrigado", "Adeus", "Por favor"], answer: 2 },
-  { question: "What is the opposite of 'cold'?", options: ["Hot", "Warm", "Cool", "Frozen"], answer: 0 },
-  { question: "Choose the correct sentence", options: ["She go to school", "She goes to school", "She going to school", "She is go to school"], answer: 1 },
-  { question: "How do you say 'Nós estamos felizes' in English?", options: ["We is happy", "We are happy", "We am happy", "We do happy"], answer: 1 }
-];
-let questions = [];
-let score = 0;
-let currentQuestion = 0;
-let errors = [];
-let quizTimer = 0;
-let timerInterval;
+// Elementos do quiz de perguntas
+const perguntasQuestionElement = document.getElementById("perguntas-question");
+const perguntasOptionsElement = document.getElementById("perguntas-options");
+const perguntasScoreElement = document.getElementById("perguntas-score");
+const perguntasTimerElement = document.getElementById("perguntas-timer");
+const perguntasFinalMessageElement = document.getElementById("perguntas-final-message");
+const perguntasErrorListElement = document.getElementById("perguntas-error-list");
 
-// Função para embaralhar e pegar 15 perguntas
+// Botões de voltar
+const backButtons = {
+  quiz: document.getElementById("backButtonQuiz"),
+  perguntas: document.getElementById("backButtonPerguntas"),
+  perguntasQuiz: document.getElementById("backButtonPerguntasQuiz"),
+  library: document.getElementById("backButtonLibrary"),
+  ranking: document.getElementById("backButtonRanking"),
+  endScreen: document.getElementById("backButtonEndScreen"),
+  perguntasEndScreen: document.getElementById("backButtonPerguntasEndScreen")
+};
+
+// Configuração dos eventos dos botões de voltar
+Object.values(backButtons).forEach(button => {
+  if (button) {
+    button.addEventListener('click', backToMenu);
+  }
+});
+
+// Função atualizada para voltar ao menu (para garantir que os timers sejam parados)
+function backToMenu() {
+  stopTimer();
+  stopPerguntasTimer();
+  hideAllSections();
+  menuContainer.style.display = "block";
+}
+
+function hideAllSections() {
+  const sections = [
+    registerContainer,
+    quizContainer,
+    perguntasContainer,
+    perguntasQuizContainer,
+    libraryContainer,
+    rankingContainer,
+    endScreen,
+    perguntasEndScreen
+  ];
+  
+  sections.forEach(section => {
+    if (section) section.style.display = "none";
+  });
+}
+
+// Perguntas do quiz (mais perguntas adicionadas)
+let allQuestions = [
+  { 
+    question: "What is 'eu sou estudante' in English?", 
+    options: ["I am a student", "I am student", "I student am", "A student I am"], 
+    answer: 0,
+    difficulty: "easy",
+    libraryRef: "frases-basicas"
+  },
+  { 
+    question: "Which one is correct?", 
+    options: ["Do you like pizza?", "Like pizza you?", "Pizza do you like?", "You pizza like?"], 
+    answer: 0,
+    difficulty: "easy",
+    libraryRef: "frases-basicas"
+  },
+  { 
+    question: "What does 'I am learning English' mean?", 
+    options: ["Eu estou aprendendo inglês", "Eu aprendi inglês", "Eu ensino inglês", "Eu amo inglês"], 
+    answer: 0,
+    difficulty: "medium",
+    libraryRef: "frases-basicas"
+  },
+  { 
+    question: "How do you say 'Onde você mora?' in English?", 
+    options: ["Where are you living?", "Where do you live?", "Where is you live?", "Where you live?"], 
+    answer: 1,
+    difficulty: "medium",
+    libraryRef: "frases-basicas"
+  },
+  { 
+    question: "What is the plural of 'child'?", 
+    options: ["Childs", "Children", "Childes", "Childern"], 
+    answer: 1,
+    difficulty: "hard",
+    libraryRef: "verbos"
+  },
+  // Novas perguntas adicionadas:
+  { 
+    question: "How do you say 'bom dia' in English?", 
+    options: ["Good morning", "Good evening", "Good night", "Hello"], 
+    answer: 0,
+    difficulty: "easy",
+    libraryRef: "greetings"
+  },
+  {
+    question: "What is the past tense of 'go'?",
+    options: ["Go", "Went", "Gone", "Going"],
+    answer: 1,
+    difficulty: "easy",
+    libraryRef: "verbos"
+  },
+  {
+    question: "Which sentence is correct?",
+    options: ["He don't like apples", "He doesn't like apples", "He like apples", "He doesn't likes apples"],
+    answer: 1,
+    difficulty: "medium",
+    libraryRef: "grammar"
+  },
+  {
+    question: "What does 'break a leg' mean?",
+    options: ["Good luck", "Break your leg", "Run fast", "Don't trip"],
+    answer: 0,
+    difficulty: "medium",
+    libraryRef: "idioms"
+  }
+];
+
+let questions = [];
+let perguntasQuestions = [];
+let score = 0;
+let perguntasScore = 0;
+let currentQuestion = 0;
+let currentPerguntaQuestion = 0;
+let errors = [];
+let perguntasErrors = [];
+let quizTimer = 0;
+let perguntasTimer = 0;
+let timerInterval;
+let perguntasTimerInterval;
+
+// Funções do Quiz Principal
 function getRandomQuestions() {
-  const shuffled = allQuestions.sort(() => Math.random() - 0.5);
+  const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 15);
 }
 
-// Inicia o timer do quiz
 function startTimer() {
   quizTimer = 0;
   timerElement.textContent = quizTimer;
+  clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     quizTimer++;
     timerElement.textContent = quizTimer;
   }, 1000);
 }
 
-// Para o timer
 function stopTimer() {
   clearInterval(timerInterval);
 }
 
-// Carrega a pergunta atual
 function loadQuestion() {
   if (currentQuestion < questions.length) {
     const q = questions[currentQuestion];
@@ -93,7 +207,7 @@ function loadQuestion() {
     q.options.forEach((option, index) => {
       const li = document.createElement("li");
       li.textContent = option;
-      li.onclick = () => checkAnswer(index);
+      li.addEventListener('click', () => checkAnswer(index));
       optionsElement.appendChild(li);
     });
   } else {
@@ -103,17 +217,17 @@ function loadQuestion() {
 
 function checkAnswer(selected) {
   const q = questions[currentQuestion];
-  const options = optionsElement.getElementsByTagName("li");
+  const options = optionsElement.querySelectorAll('li');
   
-  for (let i = 0; i < options.length; i++) {
-    options[i].classList.remove("correct", "wrong");
-    if (i === q.answer) {
-      options[i].classList.add("correct");
-    } else if (i === selected) {
-      options[i].classList.add("wrong");
+  options.forEach((option, index) => {
+    option.classList.remove("correct", "wrong");
+    if (index === q.answer) {
+      option.classList.add("correct");
+    } else if (index === selected) {
+      option.classList.add("wrong");
     }
-    options[i].style.pointerEvents = "none";
-  }
+    option.style.pointerEvents = "none";
+  });
   
   if (selected === q.answer) {
     score++;
@@ -138,49 +252,136 @@ function endQuiz() {
   endScreen.style.display = "block";
   finalMessageElement.textContent = `Pontuação Final: ${score}/15 | Tempo: ${quizTimer}s`;
   errorListElement.innerHTML = errors.map(err => `<li class="error-item">${err}</li>`).join("");
-  // Salva pontuação e tempo para o ranking
   const userName = document.getElementById("name").value;
   saveScore(userName, score, quizTimer);
 }
 
-restartButton.onclick = () => {
-  score = 0;
-  currentQuestion = 0;
-  errors = [];
-  questions = getRandomQuestions();
-  endScreen.style.display = "none";
-  quizContainer.style.display = "block";
-  updateScore();
-  startTimer();
-  loadQuestion();
-};
+// Funções do Quiz de Perguntas
+function startPerguntasTimer() {
+  perguntasTimer = 0;
+  perguntasTimerElement.textContent = perguntasTimer;
+  clearInterval(perguntasTimerInterval);
+  perguntasTimerInterval = setInterval(() => {
+    perguntasTimer++;
+    perguntasTimerElement.textContent = perguntasTimer;
+  }, 1000);
+}
 
-// Salva pontuação e tempo no Firestore
-async function saveScore(userName, score, time) {
-  const querySnapshot = await getDocs(collection(db, "users"));
-  let userDoc;
-  querySnapshot.forEach((doc) => {
-    if (doc.data().name === userName) {
-      userDoc = doc.ref;
-    }
-  });
-  if (userDoc) {
-    await updateDoc(userDoc, { score, time });
+function stopPerguntasTimer() {
+  clearInterval(perguntasTimerInterval);
+}
+
+function loadPerguntasQuestion() {
+  if (currentPerguntaQuestion < perguntasQuestions.length) {
+    const q = perguntasQuestions[currentPerguntaQuestion];
+    perguntasQuestionElement.textContent = q.question;
+    perguntasOptionsElement.innerHTML = "";
+    q.options.forEach((option, index) => {
+      const li = document.createElement("li");
+      li.textContent = option;
+      li.addEventListener('click', () => checkPerguntasAnswer(index));
+      perguntasOptionsElement.appendChild(li);
+    });
+  } else {
+    endPerguntasQuiz();
   }
 }
 
-// Função para esconder todas as seções
-function hideAllSections() {
-  quizContainer.style.display = "none";
-  perguntasContainer.style.display = "none";
-  libraryContainer.style.display = "none";
-  rankingContainer.style.display = "none";
-  endScreen.style.display = "none";
-  menuContainer.style.display = "none";
+function checkPerguntasAnswer(selected) {
+  const q = perguntasQuestions[currentPerguntaQuestion];
+  const options = perguntasOptionsElement.querySelectorAll('li');
+  
+  options.forEach((option, index) => {
+    option.classList.remove("correct", "wrong");
+    if (index === q.answer) {
+      option.classList.add("correct");
+    } else if (index === selected) {
+      option.classList.add("wrong");
+    }
+    option.style.pointerEvents = "none";
+  });
+  
+  if (selected === q.answer) {
+    perguntasScore++;
+    updatePerguntasScore();
+  } else {
+    perguntasErrors.push({
+      question: q.question,
+      correct: q.options[q.answer],
+      libraryRef: q.libraryRef
+    });
+  }
+  
+  setTimeout(() => {
+    currentPerguntaQuestion++;
+    loadPerguntasQuestion();
+  }, 1500);
 }
 
-// Eventos de menu
-btnQuiz.onclick = () => {
+function updatePerguntasScore() {
+  perguntasScoreElement.textContent = perguntasScore;
+}
+
+function endPerguntasQuiz() {
+  stopPerguntasTimer();
+  perguntasQuizContainer.style.display = "none";
+  perguntasEndScreen.style.display = "block";
+  perguntasFinalMessageElement.textContent = `Pontuação Final: ${perguntasScore}/10 | Tempo: ${perguntasTimer}s`;
+  
+  perguntasErrorListElement.innerHTML = perguntasErrors.map(err => `
+    <li class="error-item">
+      ${err.question}<br>
+      Resposta correta: ${err.correct}
+      <button onclick="showLibrarySection('${err.libraryRef}')">Aprenda Mais</button>
+    </li>
+  `).join("");
+}
+
+window.showLibrarySection = function(sectionId) {
+  hideAllSections();
+  libraryContainer.style.display = "block";
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+};
+
+// Inicia o Quiz de Perguntas por nível
+function startPerguntasQuiz(difficulty) {
+  perguntasQuestions = allQuestions
+    .filter(q => q.difficulty === difficulty)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10);
+  
+  perguntasScore = 0;
+  currentPerguntaQuestion = 0;
+  perguntasErrors = [];
+  updatePerguntasScore();
+  
+  hideAllSections();
+  perguntasQuizContainer.style.display = "block";
+  startPerguntasTimer();
+  loadPerguntasQuestion();
+}
+
+// Event Listeners
+restartButton.addEventListener('click', () => {
+  score = 0;
+  currentQuestion = 0;
+  errors = [];
+  questions = getRandomQuestions();
+  endScreen.style.display = "none";
+  quizContainer.style.display = "block";
+  updateScore();
+  startTimer();
+  loadQuestion();
+});
+
+perguntasRestartButton.addEventListener('click', () => {
+  const currentDifficulty = perguntasQuestions[0]?.difficulty || 'easy';
+  startPerguntasQuiz(currentDifficulty);
+});
+
+perguntasMenuButton.addEventListener('click', backToMenu);
+
+btnQuiz.addEventListener('click', () => {
   hideAllSections();
   quizContainer.style.display = "block";
   questions = getRandomQuestions();
@@ -190,19 +391,23 @@ btnQuiz.onclick = () => {
   updateScore();
   startTimer();
   loadQuestion();
-};
+});
 
-btnPerguntas.onclick = () => {
+btnPerguntas.addEventListener('click', () => {
   hideAllSections();
   perguntasContainer.style.display = "block";
-};
+});
 
-btnLibrary.onclick = () => {
+btnFacil.addEventListener('click', () => startPerguntasQuiz('easy'));
+btnMedio.addEventListener('click', () => startPerguntasQuiz('medium'));
+btnDificil.addEventListener('click', () => startPerguntasQuiz('hard'));
+
+btnLibrary.addEventListener('click', () => {
   hideAllSections();
   libraryContainer.style.display = "block";
-};
+});
 
-btnRanking.onclick = async () => {
+btnRanking.addEventListener('click', async () => {
   hideAllSections();
   rankingContainer.style.display = "block";
   rankingList.innerHTML = "";
@@ -212,7 +417,6 @@ btnRanking.onclick = async () => {
     let userData = doc.data();
     users.push({ name: userData.name, score: userData.score || 0, time: userData.time || 9999 });
   });
-  // Ordena por score decrescente; em caso de empate, menor tempo vence
   users.sort((a, b) => {
     if(a.score === b.score) {
       return a.time - b.time;
@@ -226,9 +430,9 @@ btnRanking.onclick = async () => {
     li.innerHTML = `<span>${index + 1}. ${user.name}</span><span>Pontos: ${user.score} | Tempo: ${user.time}s</span>`;
     rankingList.appendChild(li);
   });
-};
+});
 
-// Lógica de cadastro – após cadastro, mostra o menu principal
+// Lógica de cadastro
 startButton.addEventListener("click", async () => {
   const name = document.getElementById("name").value;
   const number = document.getElementById("number").value;
@@ -245,20 +449,16 @@ startButton.addEventListener("click", async () => {
   }
 });
 
-// Lógica para expandir/retrair os temas de Perguntas
-document.querySelectorAll('.tema-titulo').forEach(titulo => {
-  titulo.addEventListener('click', () => {
-    const conteudo = titulo.nextElementSibling;
-    if (conteudo.style.display === "none" || conteudo.style.display === "") {
-      conteudo.style.display = "block";
-    } else {
-      conteudo.style.display = "none";
+// Salva pontuação e tempo no Firestore
+async function saveScore(userName, score, time) {
+  const querySnapshot = await getDocs(collection(db, "users"));
+  let userDoc;
+  querySnapshot.forEach((doc) => {
+    if (doc.data().name === userName) {
+      userDoc = doc.ref;
     }
   });
-});
-
-// Função para tratar respostas nos temas (exibe uma mensagem explicativa)
-window.responderTema = function (element, correta, mensagem) {
-  alert(mensagem);
-  // Opcional: marcar a resposta escolhida ou desabilitar opções
-};
+  if (userDoc) {
+    await updateDoc(userDoc, { score, time });
+  }
+}
