@@ -362,17 +362,7 @@ function startPerguntasQuiz(difficulty) {
 }
 
 // Event Listeners
-restartButton.addEventListener('click', () => {
-  score = 0;
-  currentQuestion = 0;
-  errors = [];
-  questions = getRandomQuestions();
-  endScreen.style.display = "none";
-  quizContainer.style.display = "block";
-  updateScore();
-  startTimer();
-  loadQuestion();
-});
+
 
 perguntasRestartButton.addEventListener('click', () => {
   const currentDifficulty = perguntasQuestions[0]?.difficulty || 'easy';
