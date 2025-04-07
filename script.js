@@ -14,6 +14,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);  
 const db = getFirestore(app);
 
+// usuario test
+
+
+let userId = localStorage.getItem("userId");
+if (!userId) {
+  userId = push(ref(database, "users")).key;
+  localStorage.setItem("userId", userId);
+}
+
 // Elementos da interface
 const registerContainer = document.getElementById("register-container");
 const menuContainer = document.getElementById("menu-container");
@@ -72,6 +81,31 @@ Object.values(backButtons).forEach(button => {
     button.addEventListener('click', backToMenu);
   }
 });
+
+
+// usuario test
+
+function checkQuizCompletion() {
+  const userRef = ref(database, `users/${userId}/completed`);
+  get(userRef).then((snapshot) => {
+    // Verifica se o usuário já completou o quiz pelo Firebase ou pelo localStorage
+    if (snapshot.exists() || localStorage.getItem("quizCompleted") === "true") {  /* NOVA ALTERAÇÃO: Adicionada verificação no localStorage */
+      quizContainer.innerHTML = "<h3>Você já completou o quiz.</h3>";
+      startButton.disabled = true;
+    }
+  });
+}
+
+/
+function startQuiz() {
+  // Verifica novamente se o quiz já foi concluído para evitar iniciar novamente
+  if (startButton.disabled) return;  /* NOVA ALTERAÇÃO: Verificação extra para impedir reinício */
+  loadQuestions().then(() => {
+    startButton.style.display = "none";
+    showQuestion();
+  });
+}/
+
 
 // Função atualizada para voltar ao menu (para garantir que os timers sejam parados)
 function backToMenu() {
@@ -336,6 +370,13 @@ function endPerguntasQuiz() {
     </li>
   `).join("");
 }
+
+
+
+/// usuario  test
+
+  localStorage.setItem("quizCompleted", "true");  /* NOVA ALTERAÇÃO: Armazena a conclusão do quiz no localStorage */
+
 
 window.showLibrarySection = function(sectionId) {
   hideAllSections();
