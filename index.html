@@ -30,15 +30,87 @@
       <button id="btnLibrary" class="tab-button animate-in">
         <i class="fas fa-book-open"></i> Biblioteca
       </button>
+      <button id="btnSpanish" class="tab-button animate-in">
+        <i class="fas fa-globe"></i> Español
+      </button>
       <button id="btnRanking" class="tab-button animate-in">
         <i class="fas fa-trophy"></i> Ranking
       </button>
     </div>
   </div>
 
+  <!-- Menu Español: Seleção de Contenido en Español -->
+  <div id="spanish-menu-container" class="menu-container" style="display:none;">
+    <h2>Contenido en Español</h2>
+    <div class="tabs">
+      <button id="btnSpanishQuiz" class="tab-button animate-in">
+         <i class="fas fa-question-circle"></i> Preguntas
+      </button>
+      <button id="btnSpanishLibrary" class="tab-button animate-in">
+         <i class="fas fa-book-open"></i> Biblioteca
+      </button>
+    </div>
+    <button class="back-button" id="backButtonSpanishMenu">
+      <i class="fas fa-arrow-left"></i> Volver al Menú Principal
+    </button>
+  </div>
+
+  <!-- Quiz en Español -->
+  <div id="spanish-container" class="quiz-container" style="display:none;">
+    <button class="back-button" id="backButtonSpanish">
+      <i class="fas fa-arrow-left"></i> Volver al Menú
+    </button>
+    <div id="spanish-quiz">
+      <p id="spanish-question"></p>
+      <ul id="spanish-options"></ul>
+    </div>
+    <div class="score-container">
+      <p>Puntuación: <span id="spanish-score">0</span>/15</p>
+      <p>Tiempo: <span id="spanish-timer">0</span> s</p>
+    </div>
+  </div>
+
+  <!-- Biblioteca en Español -->
+  <div id="spanish-library-container" class="library-container" style="display:none;">
+    <button class="back-button" id="backButtonSpanishLibrary">
+      <i class="fas fa-arrow-left"></i> Volver al Menú
+    </button>
+    <h2><i class="fas fa-book-open"></i> Biblioteca en Español</h2>
+    <!-- Exemplo de seção: Frases Básicas en español -->
+    <div id="frases-basicas-es" class="text-card animate-in">
+      <div class="text-header">
+        <i class="fas fa-star"></i>
+        <h3>Frases Básicas</h3>
+      </div>
+      <div class="text-content">
+        <p class="spanish">Me gusta estudiar español</p>
+        <p class="spanish">Soy estudiante</p>
+      </div>
+    </div>
+    <!-- Exemplo de seção: Verbos -->
+    <div id="verbos-es" class="text-card animate-in">
+      <div class="text-header">
+        <i class="fas fa-star"></i>
+        <h3>Verbos</h3>
+      </div>
+      <div class="text-content">
+        <p>Ejemplo de verbos: leer, escribir, hablar, comer, vivir.</p>
+      </div>
+    </div>
+    <!-- Exemplo de seção: Expresiones Idiomáticas -->
+    <div id="expresiones-es" class="text-card animate-in">
+      <div class="text-header">
+        <i class="fas fa-star"></i>
+        <h3>Expresiones Idiomáticas</h3>
+      </div>
+      <div class="text-content">
+        <p>Ejemplo: "echar una mano" significa ayudar.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Quiz Principal -->
   <div id="quiz-container" class="quiz-container" style="display:none;">
-    </button>
     <div id="quiz">
       <p id="question"></p>
       <ul id="options"></ul>
@@ -153,7 +225,6 @@
         <p class="portuguese">Como vai você?</p>
         <p class="english">Have a good night</p>
         <p class="portuguese">Tenha uma boa noite</p>
-
       </div>
     </div>
   </div>
