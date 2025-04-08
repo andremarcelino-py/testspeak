@@ -44,10 +44,10 @@
     <h2>Contenido en Español</h2>
     <div class="tabs">
       <button id="btnSpanishQuiz" class="tab-button animate-in">
-         <i class="fas fa-question-circle"></i> Preguntas
+        <i class="fas fa-question-circle"></i> Preguntas
       </button>
       <button id="btnSpanishLibrary" class="tab-button animate-in">
-         <i class="fas fa-book-open"></i> Biblioteca
+        <i class="fas fa-book-open"></i> Biblioteca
       </button>
     </div>
     <button class="back-button" id="backButtonSpanishMenu">
@@ -68,6 +68,21 @@
       <p>Puntuación: <span id="spanish-score">0</span>/15</p>
       <p>Tiempo: <span id="spanish-timer">0</span> s</p>
     </div>
+  </div>
+
+  <!-- Tela Final do Quiz en Español -->
+  <div id="spanish-end-screen" class="end-screen" style="display:none;">
+    <button class="back-button" id="backButtonSpanishEndScreen">
+      <i class="fas fa-arrow-left"></i> Volver al Menú
+    </button>
+    <p id="spanish-final-message"></p>
+    <ul id="spanish-error-list"></ul>
+    <button id="spanish-restart-button" class="restart-button">
+      <i class="fas fa-sync-alt"></i> Reiniciar Quiz
+    </button>
+    <button id="spanish-menu-button" class="restart-button">
+      <i class="fas fa-home"></i> Menú Principal
+    </button>
   </div>
 
   <!-- Biblioteca en Español -->
@@ -168,10 +183,11 @@
         <p class="portuguese">Eu sou estudante</p>
       </div>
     </div>
-    
-    
+
     <!-- Outras seções da biblioteca em inglês podem ser adicionadas aqui -->
        <!-- Seção de Verbos -->
+
+
     <div id="verbos" class="text-card animate-in">
       <div class="text-header">
         <i class="fas fa-star"></i>
