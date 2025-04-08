@@ -69,6 +69,13 @@ const spanishOptionsElement = document.getElementById("spanish-options");
 const spanishScoreElement = document.getElementById("spanish-score");
 const spanishTimerElement = document.getElementById("spanish-timer");
 
+const spanishEndScreen = document.getElementById("spanish-end-screen");
+const backButtonSpanishEndScreen = document.getElementById("backButtonSpanishEndScreen");
+const spanishFinalMessageElement = document.getElementById("spanish-final-message");
+const spanishErrorListElement = document.getElementById("spanish-error-list");
+const spanishRestartButton = document.getElementById("spanish-restart-button");
+const spanishMenuButton = document.getElementById("spanish-menu-button");
+
 const spanishLibraryContainer = document.getElementById("spanish-library-container");
 const backButtonSpanishLibrary = document.getElementById("backButtonSpanishLibrary");
 
@@ -111,6 +118,7 @@ function hideAllSections() {
     perguntasEndScreen,
     spanishMenuContainer,
     spanishQuizContainer,
+    spanishEndScreen,
     spanishLibraryContainer
   ];
   
@@ -296,10 +304,22 @@ function updateSpanishScore() {
 function endSpanishQuiz() {
   stopSpanishTimer();
   spanishQuizContainer.style.display = "none";
-  alert(`Puntuación Final: ${spanishScore}/${spanishQuestions.length} | Tiempo: ${spanishTimer}s`);
-  backToMenu();
+  spanishEndScreen.style.display = "block";
+  spanishFinalMessageElement.textContent = `Puntuación Final: ${spanishScore}/${spanishQuestions.length} | Tiempo: ${spanishTimer}s`;
+  spanishErrorListElement.innerHTML = spanishErrors.map(err => `
+    <li class="error-item">
+      ${err}<br>
+      <button class="aprenda-mais-button" onclick="showLibrarySectionSpanish()">Aprenda Mais</button>
+    </li>
+  `).join("");
 }
 
+window.showLibrarySectionSpanish = function() {
+  hideAllSections();
+  spanishLibraryContainer.style.display = "block";
+};
+
+// Funções para o quiz em inglês e quiz de perguntas
 let questions = [];
 let perguntasQuestions = [];
 let score = 0;
@@ -621,3 +641,18 @@ btnSpanishLibrary.addEventListener('click', () => {
 backButtonSpanishMenu.addEventListener('click', backToMenu);
 backButtonSpanish.addEventListener('click', backToMenu);
 backButtonSpanishLibrary.addEventListener('click', backToMenu);
+backButtonSpanishEndScreen.addEventListener('click', backToMenu);
+
+spanishRestartButton.addEventListener('click', () => {
+  spanishQuestions = getRandomSpanishQuestions();
+  spanishScore = 0;
+  currentSpanishQuestion = 0;
+  spanishErrors = [];
+  updateSpanishScore();
+  hideAllSections();
+  spanishQuizContainer.style.display = "block";
+  startSpanishTimer();
+  loadSpanishQuestion();
+});
+
+spanishMenuButton.addEventListener('click', backToMenu);
