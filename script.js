@@ -38,7 +38,7 @@ const restartButton = document.getElementById("restart-button");
 const perguntasRestartButton = document.getElementById("perguntas-restart-button");
 const perguntasMenuButton = document.getElementById("perguntas-menu-button");
 
-// Elementos do quiz
+// Elementos do quiz (inglês)
 const questionElement = document.getElementById("question");
 const optionsElement = document.getElementById("options");
 const scoreElement = document.getElementById("score");
@@ -120,6 +120,7 @@ function hideAllSections() {
 }
 
 // Perguntas do quiz (em inglês)
+// (Adicione as perguntas completas conforme sua necessidade)
 let allQuestions = [
   { 
     question: "What is 'eu sou estudante' in English?", 
@@ -491,7 +492,7 @@ function startPerguntasQuiz(difficulty) {
   loadPerguntasQuestion();
 }
 
-// Event Listeners
+// Event Listeners dos quizzes e menus
 restartButton.addEventListener('click', () => {
   score = 0;
   currentQuestion = 0;
