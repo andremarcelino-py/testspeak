@@ -25,7 +25,7 @@ body {
 /* Tela de Cadastro */
 .register-container {
   text-align: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.1);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
@@ -252,10 +252,8 @@ body {
 #ranking-list {
   list-style: none;
   padding: 0;
-}
-#ranking-list {
-  counter-reset: ranking;
   margin: 2rem 0;
+  counter-reset: ranking;
 }
 #ranking-list li {
   counter-increment: ranking;
@@ -375,9 +373,8 @@ body {
   .restart-button, .level-button { padding: 0.8rem 1.2rem; font-size: 0.9rem; }
 }
 
-/* Destaque para as seções dos idiomas */
-#spanish-container, #spanish-library-container,
-#french-container, #french-library-container {
+/* Destaque para os idiomas */
+#spanish-container, #spanish-library-container, #french-container, #french-library-container {
   border-left: 5px solid #f39c12;
   padding-left: 1rem;
   animation: fadeIn 0.5s ease-in-out;
