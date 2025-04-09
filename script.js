@@ -1,7 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
-// Configuração Firebase
+// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBCVGQk1Ctp1IZJrHQdM6YUSItaD3pypjg",
   authDomain: "testspeakeasy.firebaseapp.com",
@@ -11,6 +17,7 @@ const firebaseConfig = {
   appId: "1:732379388945:web:a46304dd51b10e2850e5b0",
   measurementId: "G-WNB4XS2YJB"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -18,23 +25,23 @@ const db = getFirestore(app);
 const registerContainer       = document.getElementById("register-container");
 const menuContainer           = document.getElementById("menu-container");
 const quizContainer           = document.getElementById("quiz-container");
-const perguntasContainer      = document.getElementById("perguntas-container");
-const perguntasQuizContainer  = document.getElementById("perguntas-quiz-container");
-const libraryContainer        = document.getElementById("library-container");
+const englishMenuContainer    = document.getElementById("english-menu-container");
+const englishQuestionsQuizContainer = document.getElementById("english-questions-quiz-container");
+const englishLibraryContainer = document.getElementById("english-library-container");
 const rankingContainer        = document.getElementById("ranking-container");
 const endScreen               = document.getElementById("end-screen");
-const perguntasEndScreen      = document.getElementById("perguntas-end-screen");
-const englishMenuContainer    = document.getElementById("english-menu-container");
+
 const spanishMenuContainer    = document.getElementById("spanish-menu-container");
 const spanishContainer        = document.getElementById("spanish-container");
 const spanishEndScreen        = document.getElementById("spanish-end-screen");
 const spanishLibraryContainer = document.getElementById("spanish-library-container");
+
 const frenchMenuContainer     = document.getElementById("french-menu-container");
 const frenchContainer         = document.getElementById("french-container");
 const frenchEndScreen         = document.getElementById("french-end-screen");
 const frenchLibraryContainer  = document.getElementById("french-library-container");
-  
-/* Botões */
+
+/* Botões Principais */
 const startButton             = document.getElementById("start-button");
 const btnQuiz                 = document.getElementById("btnQuiz");
 const btnEnglish              = document.getElementById("btnEnglish");
@@ -42,19 +49,17 @@ const btnSpanish              = document.getElementById("btnSpanish");
 const btnFrench               = document.getElementById("btnFrench");
 const btnRanking              = document.getElementById("btnRanking");
 
+/* Botões do Submenu Inglês */
 const btnEnglishQuestions     = document.getElementById("btnEnglishQuestions");
 const btnEnglishLibrary       = document.getElementById("btnEnglishLibrary");
 const backButtonEnglishMenu   = document.getElementById("backButtonEnglishMenu");
 
+/* Botões de Nível para o Quiz de Perguntas em Inglês */
 const btnFacil                = document.getElementById("btnFacil");
 const btnMedio                = document.getElementById("btnMedio");
 const btnDificil              = document.getElementById("btnDificil");
 
-const restartButton           = document.getElementById("restart-button");
-const perguntasRestartButton  = document.getElementById("perguntas-restart-button");
-const perguntasMenuButton     = document.getElementById("perguntas-menu-button");
-
-/* Elementos do Quiz Original em Inglês */
+/* Elementos do Quiz Original (Inglês) */
 const questionElement         = document.getElementById("question");
 const optionsElement          = document.getElementById("options");
 const scoreElement            = document.getElementById("score");
@@ -64,23 +69,14 @@ const errorListElement        = document.getElementById("error-list");
 const rankingList             = document.getElementById("ranking-list");
 
 /* Elementos do Quiz de Perguntas em Inglês */
-const perguntasQuestionElement = document.getElementById("perguntas-question");
-const perguntasOptionsElement  = document.getElementById("perguntas-options");
-const perguntasScoreElement    = document.getElementById("perguntas-score");
-const perguntasTimerElement    = document.getElementById("perguntas-timer");
-const perguntasFinalMessageElement = document.getElementById("perguntas-final-message");
-const perguntasErrorListElement    = document.getElementById("perguntas-error-list");
+const englishQuestionsQuestion    = document.getElementById("english-questions-question");
+const englishQuestionsOptions     = document.getElementById("english-questions-options");
+const englishQuestionsScore       = document.getElementById("english-questions-score");
+const englishQuestionsTimer       = document.getElementById("english-questions-timer");
+const englishQuestionsFinalMessage= document.getElementById("english-questions-final-message");
+const englishQuestionsErrorList   = document.getElementById("english-questions-error-list");
 
-/* Elementos para o Quiz e Tela Final de Inglês (Questions) */
-const englishQuestionsQuizContainer = document.getElementById("english-questions-quiz-container");
-const englishQuestionsQuestion      = document.getElementById("english-questions-question");
-const englishQuestionsOptions       = document.getElementById("english-questions-options");
-const englishQuestionsScore         = document.getElementById("english-questions-score");
-const englishQuestionsTimer         = document.getElementById("english-questions-timer");
-const englishQuestionsFinalMessage  = document.getElementById("english-questions-final-message");
-const englishQuestionsErrorList     = document.getElementById("english-questions-error-list");
-
-/* Elementos para o Quiz em Español */
+/* Elementos do Quiz em Español */
 const spanishQuestionElement    = document.getElementById("spanish-question");
 const spanishOptionsElement     = document.getElementById("spanish-options");
 const spanishScoreElement       = document.getElementById("spanish-score");
@@ -88,7 +84,7 @@ const spanishTimerElement       = document.getElementById("spanish-timer");
 const spanishFinalMessageEl     = document.getElementById("spanish-final-message");
 const spanishErrorListEl        = document.getElementById("spanish-error-list");
 
-/* Elementos para o Quiz em Français */
+/* Elementos do Quiz en Français */
 const frenchQuestionElement     = document.getElementById("french-question");
 const frenchOptionsElement      = document.getElementById("french-options");
 const frenchScoreElement        = document.getElementById("french-score");
@@ -96,13 +92,13 @@ const frenchTimerElement        = document.getElementById("french-timer");
 const frenchFinalMessageEl      = document.getElementById("french-final-message");
 const frenchErrorListEl         = document.getElementById("french-error-list");
 
-/* Botões para reiniciar e voltar em Español e Français */
+/* Botões de reinício e menu para Español e Français */
 const spanishRestartButton      = document.getElementById("spanish-restart-button");
 const spanishMenuButton         = document.getElementById("spanish-menu-button");
 const frenchRestartButton       = document.getElementById("french-restart-button");
 const frenchMenuButton          = document.getElementById("french-menu-button");
 
-/* Dados Fixos para o Quiz (Inglês) */
+/* Dados Fixos para o Quiz (usados nos modos Quiz original e Questions) */
 const allQuestionsData = [
   { question: "What is 'eu sou estudante' in English?", options: ["I am a student","I am student","I student am","A student I am"], answer: 0, difficulty:"easy", libraryRef:"phrases-english" },
   { question: "Which one is correct?", options: ["Do you like pizza?","Like pizza you?","Pizza do you like?","You pizza like?"], answer: 0, difficulty:"easy", libraryRef:"phrases-english" },
@@ -115,25 +111,20 @@ const allQuestionsData = [
   { question: "What does 'break a leg' mean?", options: ["Good luck","Break your leg","Run fast","Don't trip"], answer: 0, difficulty:"medium", libraryRef:"idioms" }
 ];
 
-/* Variáveis do Quiz em Inglês (Modo Quiz Original) */
+/* Variáveis do Quiz Original */
 let questions = [], score = 0, currentQuestion = 0, errors = [], quizTimer = 0, timerInterval;
-
-/* Variáveis do Quiz de Perguntas em Inglês (Questions) */
-let perguntasQuestions = [], perguntasScore = 0, currentPerguntaQuestion = 0, perguntasErrors = [], perguntasTimer = 0, perguntasTimerInterval;
-
+/* Variáveis do Quiz de Perguntas (Inglês) */
+let englishQuestions = [], englishScore = 0, currentEnglishQuestion = 0, englishErrors = [], englishTimer = 0, englishTimerInterval;
 /* Variáveis do Quiz em Español */
 let spanishQuestions = [], spanishScore = 0, currentSpanishQuestion = 0, spanishErrors = [], spanishTimer = 0, spanishTimerInterval;
-
 /* Variáveis do Quiz en Français */
 let frenchQuestions = [], frenchScore = 0, currentFrenchQuestion = 0, frenchErrors = [], frenchTimer = 0, frenchTimerInterval;
 
 /* Função para esconder todas as seções */
 function hideAllSections() {
   [
-    registerContainer, menuContainer,
-    quizContainer, perguntasContainer, perguntasQuizContainer,
-    libraryContainer, rankingContainer, endScreen, perguntasEndScreen,
-    englishMenuContainer,
+    registerContainer, menuContainer, quizContainer, englishMenuContainer,
+    englishQuestionsQuizContainer, englishLibraryContainer, rankingContainer, endScreen,
     spanishMenuContainer, spanishContainer, spanishEndScreen, spanishLibraryContainer,
     frenchMenuContainer, frenchContainer, frenchEndScreen, frenchLibraryContainer
   ].forEach(sec => { if(sec) sec.style.display = "none"; });
@@ -142,7 +133,7 @@ function hideAllSections() {
 /* Função para voltar ao menu principal */
 function backToMenu() {
   stopTimer();
-  stopPerguntasTimer();
+  stopEnglishTimer();
   stopSpanishTimer();
   stopFrenchTimer();
   hideAllSections();
@@ -150,24 +141,24 @@ function backToMenu() {
 }
 
 /* Conecta botões de voltar */
-["backButtonEnglishMenu", "backButtonPerguntas", "backButtonPerguntasQuiz", "backButtonLibrary", "backButtonRanking", "backButtonEndScreen", "backButtonPerguntasEndScreen", "backButtonSpanish", "backButtonSpanishLibrary", "backButtonSpanishEndScreen", "backButtonFrench", "backButtonFrenchLibrary", "backButtonFrenchEndScreen"].forEach(id => {
+["backButtonEnglishMenu", "backButtonPerguntas", "backButtonLibrary", "backButtonRanking", "backButtonEndScreen", "backButtonSpanishMenu", "backButtonSpanishEndScreen", "backButtonFrenchMenu", "backButtonFrenchEndScreen"].forEach(id => {
   const btn = document.getElementById(id);
   if(btn) btn.addEventListener("click", backToMenu);
 });
 
 /* --- CADASTRO --- */
 startButton.addEventListener("click", async () => {
-  const nameInput = document.getElementById("name").value.trim();
-  const numberInput = document.getElementById("number").value.trim();
-  if (!nameInput || !numberInput) {
+  const nameVal = document.getElementById("name").value.trim();
+  const numberVal = document.getElementById("number").value.trim();
+  if(!nameVal || !numberVal) {
     alert("Por favor, preencha todos os campos!");
     return;
   }
   try {
-    await addDoc(collection(db, "users"), { name: nameInput, number: numberInput });
+    await addDoc(collection(db, "users"), { name: nameVal, number: numberVal });
     hideAllSections();
     menuContainer.style.display = "block";
-  } catch(err) {
+  } catch (err) {
     console.error("Erro ao salvar no Firestore:", err);
     alert("Erro no cadastro. Tente novamente.");
     registerContainer.style.display = "block";
@@ -179,13 +170,9 @@ function getRandomQuestions() {
   return [...allQuestionsData].sort(() => Math.random() - 0.5).slice(0, 15);
 }
 function startTimer() {
-  quizTimer = 0;
-  timerElement.textContent = quizTimer;
+  quizTimer = 0; timerElement.textContent = quizTimer;
   clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    quizTimer++;
-    timerElement.textContent = quizTimer;
-  }, 1000);
+  timerInterval = setInterval(() => { quizTimer++; timerElement.textContent = quizTimer; }, 1000);
 }
 function stopTimer() { clearInterval(timerInterval); }
 function loadQuestion() {
@@ -199,9 +186,7 @@ function loadQuestion() {
       li.addEventListener("click", () => checkAnswer(i));
       optionsElement.appendChild(li);
     });
-  } else {
-    endQuiz();
-  }
+  } else { endQuiz(); }
 }
 function checkAnswer(sel) {
   const q = questions[currentQuestion];
@@ -213,7 +198,7 @@ function checkAnswer(sel) {
     li.style.pointerEvents = "none";
   });
   if(sel === q.answer) { score++; scoreElement.textContent = score; }
-  else errors.push(`Pergunta: ${q.question} - Resposta correta: ${q.options[q.answer]}`);
+  else { errors.push(`Pergunta: ${q.question} - Resposta correta: ${q.options[q.answer]}`); }
   setTimeout(() => { currentQuestion++; loadQuestion(); }, 1500);
 }
 function endQuiz() {
@@ -233,144 +218,99 @@ btnQuiz.addEventListener("click", () => {
   startTimer();
   loadQuestion();
 });
-restartButton.addEventListener("click", () => btnQuiz.click());
+document.getElementById("restart-button").addEventListener("click", () => btnQuiz.click());
 
-/* --- QUIZ DE PERGUNTAS (Modo Questions) em Inglês --- */
-function startPerguntasTimer() {
-  perguntasTimer = 0;
-  perguntasTimerElement.textContent = perguntasTimer;
-  clearInterval(perguntasTimerInterval);
-  perguntasTimerInterval = setInterval(() => {
-    perguntasTimer++;
-    perguntasTimerElement.textContent = perguntasTimer;
-  }, 1000);
+/* --- QUIZ DE PERGUNTAS (Inglês - Questions) --- */
+function startEnglishTimer() {
+  englishTimer = 0; englishQuestionsTimer.textContent = englishTimer;
+  clearInterval(englishTimerInterval);
+  englishTimerInterval = setInterval(() => { englishTimer++; englishQuestionsTimer.textContent = englishTimer; }, 1000);
 }
-function stopPerguntasTimer() { clearInterval(perguntasTimerInterval); }
-function loadPerguntasQuestion() {
-  if(currentPerguntaQuestion < perguntasQuestions.length) {
-    const q = perguntasQuestions[currentPerguntaQuestion];
-    perguntasQuestionElement.textContent = q.question;
-    perguntasOptionsElement.innerHTML = "";
+function stopEnglishTimer() { clearInterval(englishTimerInterval); }
+function loadEnglishQuestion() {
+  if(currentEnglishQuestion < englishQuestions.length) {
+    const q = englishQuestions[currentEnglishQuestion];
+    englishQuestionsQuestion.textContent = q.question;
+    englishQuestionsOptions.innerHTML = "";
     q.options.forEach((opt, i) => {
       const li = document.createElement("li");
       li.textContent = opt;
-      li.addEventListener("click", () => checkPerguntasAnswer(i));
-      perguntasOptionsElement.appendChild(li);
+      li.addEventListener("click", () => englishCheckAnswer(i));
+      englishQuestionsOptions.appendChild(li);
     });
-  } else {
-    endPerguntasQuiz();
-  }
+  } else { endEnglishQuestionsQuiz(); }
 }
-function checkPerguntasAnswer(sel) {
-  const q = perguntasQuestions[currentPerguntaQuestion];
-  const opts = perguntasOptionsElement.querySelectorAll("li");
+function englishCheckAnswer(sel) {
+  const q = englishQuestions[currentEnglishQuestion];
+  const opts = englishQuestionsOptions.querySelectorAll("li");
   opts.forEach((li, i) => {
     li.classList.remove("correct", "wrong");
     if(i === q.answer) li.classList.add("correct");
     else if(i === sel) li.classList.add("wrong");
     li.style.pointerEvents = "none";
   });
-  if(sel === q.answer) { perguntasScore++; perguntasScoreElement.textContent = perguntasScore; }
+  if(sel === q.answer) { englishScore++; englishQuestionsScore.textContent = englishScore; }
   else {
-    perguntasErrors.push({
+    englishErrors.push({
       question: q.question,
       correct: q.options[q.answer],
       libraryRef: q.libraryRef
     });
   }
-  setTimeout(() => { currentPerguntaQuestion++; loadPerguntasQuestion(); }, 1500);
+  setTimeout(() => { currentEnglishQuestion++; loadEnglishQuestion(); }, 1500);
 }
-function endPerguntasQuiz() {
-  stopPerguntasTimer();
-  perguntasQuizContainer.style.display = "none";
-  perguntasEndScreen.style.display = "block";
-  perguntasFinalMessageElement.textContent = `Pontuação Final: ${perguntasScore}/${perguntasQuestions.length} | Tempo: ${perguntasTimer}s`;
-  perguntasErrorListElement.innerHTML = perguntasErrors.map(err => `
+function endEnglishQuestionsQuiz() {
+  stopEnglishTimer();
+  englishQuestionsQuizContainer.style.display = "none";
+  document.getElementById("english-questions-end-screen").style.display = "block";
+  englishQuestionsFinalMessage.textContent = `Pontuação Final: ${englishScore}/${englishQuestions.length} | Tempo: ${englishTimer}s`;
+  englishQuestionsErrorList.innerHTML = englishErrors.map(err => `
     <li class="error-item">
       ${err.question}<br>
       Resposta correta: ${err.correct}
-      <button onclick="showLibrarySection(err.libraryRef)" class="aprenda-mais-button">Aprenda Mais</button>
+      <button class="aprenda-mais-button" onclick="showLibrarySection(err.libraryRef)">Aprenda Mais</button>
     </li>
   `).join("");
 }
-function startPerguntasQuiz(difficulty) {
-  // Filtra as perguntas pelo nível e pega 10 aleatórias
-  perguntasQuestions = allQuestionsData.filter(q => q.difficulty === difficulty)
+btnEnglishQuestions.addEventListener("click", () => {
+  hideAllSections();
+  englishQuestionsQuizContainer.style.display = "block";
+  // Filtra perguntas do idioma inglês (usando allQuestionsData)
+  englishQuestions = allQuestionsData.filter(q => q.libraryRef === "phrases-english" || q.libraryRef !== "")
     .sort(() => Math.random() - 0.5)
     .slice(0, 10);
-  perguntasScore = 0; currentPerguntaQuestion = 0; perguntasErrors = [];
-  perguntasScoreElement.textContent = perguntasScore;
-  hideAllSections();
-  perguntasQuizContainer.style.display = "block";
-  startPerguntasTimer();
-  loadPerguntasQuestion();
-}
-document.getElementById("btnFacil").addEventListener("click", () => startPerguntasQuiz("easy"));
-document.getElementById("btnMedio").addEventListener("click", () => startPerguntasQuiz("medium"));
-document.getElementById("btnDificil").addEventListener("click", () => startPerguntasQuiz("hard"));
-document.getElementById("perguntas-restart-button").addEventListener("click", () => {
-  let diff = perguntasQuestions[0] ? perguntasQuestions[0].difficulty : "easy";
-  startPerguntasQuiz(diff);
+  englishScore = 0; currentEnglishQuestion = 0; englishErrors = [];
+  englishQuestionsScore.textContent = englishScore;
+  startEnglishTimer();
+  loadEnglishQuestion();
 });
-document.getElementById("perguntas-menu-button").addEventListener("click", backToMenu);
-
-/* --- Biblioteca (Modo Biblioteca) em Inglês --- */
-// A biblioteca em inglês já está definida na seção "english-library-container" do HTML
-
-/* --- FUNÇÕES DE RANKING --- */
-document.getElementById("btnRanking").addEventListener("click", async () => {
-  hideAllSections();
-  rankingContainer.style.display = "block";
-  rankingList.innerHTML = "";
-  const snap = await getDocs(collection(db, "users"));
-  let users = [];
-  snap.forEach(doc => {
-    let data = doc.data();
-    users.push({ name: data.name, score: data.score || 0, time: data.time || 9999 });
-  });
-  users = users.filter(u => u.time !== 9999).sort((a, b) => (b.score - a.score) || (a.time - b.time));
-  users.forEach((u, i) => {
-    const li = document.createElement("li");
-    li.className = "animate-in";
-    li.style.animationDelay = `${i * 0.1}s`;
-    li.innerHTML = `<span>${i + 1}. ${u.name}</span><span>Pontos: ${u.score} | Tempo: ${u.time}s</span>`;
-    rankingList.appendChild(li);
-  });
+document.getElementById("english-questions-restart-button").addEventListener("click", () => {
+  btnEnglishQuestions.click();
 });
+document.getElementById("english-questions-menu-button").addEventListener("click", backToMenu);
 
-/* --- SALVAR PONTUAÇÃO --- */
-async function saveScore(userName, score, time) {
-  const snap = await getDocs(collection(db, "users"));
-  let userDoc = null;
-  snap.forEach(doc => {
-    if (doc.data().name === userName) userDoc = doc.ref;
-  });
-  if (userDoc) await updateDoc(userDoc, { score, time });
-}
+/* --- Biblioteca em Inglês (original) --- */
+// Já definida na seção "english-library-container" do HTML
 
-/* --- QUIZ em Español --- */
+/* --- MENU e Funcionalidades para Español --- */
 function getRandomSpanishQuestions() {
   const all = [
-    { question: "¿Cómo se dice 'Hello' en español?", options: ["Hola", "Adiós", "Gracias", "Por favor"], answer: 0, difficulty: "easy" },
-    { question: "¿Qué significa 'Goodbye' en español?", options: ["Hola", "Adiós", "Buenas noches", "Gracias"], answer: 1, difficulty: "easy" },
-    { question: "¿Cómo se dice 'Thank you' en español?", options: ["Por favor", "Gracias", "De nada", "Perdón"], answer: 1, difficulty: "easy" },
-    { question: "¿Cuál es el plural de 'amigo'?", options: ["Amigos", "Amigas", "Amigoes", "Amigues"], answer: 0, difficulty: "medium" },
-    { question: "¿Cómo se dice 'I am learning Spanish' en español?", options: ["Estoy aprendiendo español", "Aprendo español", "Yo español aprendo", "Aprendiendo estoy español"], answer: 0, difficulty: "medium" }
+    { question: "¿Cómo se dice 'Hello' en español?", options:["Hola","Adiós","Gracias","Por favor"], answer: 0, difficulty:"easy" },
+    { question: "¿Qué significa 'Goodbye' en español?", options:["Hola","Adiós","Buenas noches","Gracias"], answer: 1, difficulty:"easy" },
+    { question: "¿Cómo se dice 'Thank you' en español?", options:["Por favor","Gracias","De nada","Perdón"], answer: 1, difficulty:"easy" },
+    { question: "¿Cuál es el plural de 'amigo'?", options:["Amigos","Amigas","Amigoes","Amigues"], answer: 0, difficulty:"medium" },
+    { question: "¿Cómo se dice 'I am learning Spanish' en español?", options:["Estoy aprendiendo español","Aprendo español","Yo español aprendo","Aprendiendo estoy español"], answer: 0, difficulty:"medium" }
   ];
-  return [...all].sort(() => Math.random() - 0.5).slice(0,15);
+  return [...all].sort(() => Math.random() - 0.5).slice(0, 15);
 }
 function startSpanishTimer() {
-  spanishTimer = 0;
-  spanishTimerElement.textContent = spanishTimer;
+  spanishTimer = 0; spanishTimerElement.textContent = spanishTimer;
   clearInterval(spanishTimerInterval);
-  spanishTimerInterval = setInterval(() => {
-    spanishTimer++;
-    spanishTimerElement.textContent = spanishTimer;
-  }, 1000);
+  spanishTimerInterval = setInterval(() => { spanishTimer++; spanishTimerElement.textContent = spanishTimer; }, 1000);
 }
 function stopSpanishTimer() { clearInterval(spanishTimerInterval); }
 function loadSpanishQuestion() {
-  if (currentSpanishQuestion < spanishQuestions.length) {
+  if(currentSpanishQuestion < spanishQuestions.length) {
     const q = spanishQuestions[currentSpanishQuestion];
     spanishQuestionElement.textContent = q.question;
     spanishOptionsElement.innerHTML = "";
@@ -380,20 +320,18 @@ function loadSpanishQuestion() {
       li.addEventListener("click", () => spanishCheckAnswer(i));
       spanishOptionsElement.appendChild(li);
     });
-  } else {
-    endSpanishQuiz();
-  }
+  } else { endSpanishQuiz(); }
 }
 function spanishCheckAnswer(sel) {
   const q = spanishQuestions[currentSpanishQuestion];
   const opts = spanishOptionsElement.querySelectorAll("li");
   opts.forEach((li, i) => {
     li.classList.remove("correct", "wrong");
-    if (i === q.answer) li.classList.add("correct");
-    else if (i === sel) li.classList.add("wrong");
+    if(i === q.answer) li.classList.add("correct");
+    else if(i === sel) li.classList.add("wrong");
     li.style.pointerEvents = "none";
   });
-  if (sel === q.answer) { spanishScore++; spanishScoreElement.textContent = spanishScore; }
+  if(sel === q.answer) { spanishScore++; spanishScoreElement.textContent = spanishScore; }
   else { spanishErrors.push(`Pregunta: ${q.question} - Respuesta correcta: ${q.options[q.answer]}`); }
   setTimeout(() => { currentSpanishQuestion++; loadSpanishQuestion(); }, 1500);
 }
@@ -412,7 +350,7 @@ function endSpanishQuiz() {
 window.showLibrarySectionSpanish = function() {
   hideAllSections();
   spanishLibraryContainer.style.display = "block";
-}
+};
 btnSpanish.addEventListener("click", () => {
   hideAllSections();
   spanishMenuContainer.style.display = "block";
@@ -440,26 +378,22 @@ document.getElementById("spanish-menu-button").addEventListener("click", backToM
 /* --- QUIZ en Français --- */
 function getRandomFrenchQuestions() {
   const all = [
-    { question: "Comment dit-on 'Hello' en français?", options: ["Bonjour", "Au revoir", "Merci", "S'il vous plaît"], answer: 0, difficulty: "easy" },
-    { question: "Que signifie 'Goodbye' en français?", options: ["Bonjour", "Au revoir", "Bonne nuit", "Merci"], answer: 1, difficulty: "easy" },
-    { question: "Comment dit-on 'Thank you' en français?", options: ["S'il vous plaît", "Merci", "De rien", "Pardon"], answer: 1, difficulty: "easy" },
-    { question: "Quel est le pluriel de 'ami'?", options: ["Amis", "Amies", "Amis", "Ami(e)s"], answer: 0, difficulty: "medium" },
-    { question: "Comment dit-on 'I am learning French' en français?", options: ["J'apprends le français", "Je français apprends", "J'apprendrai le français", "Je suis en train d'apprendre le français"], answer: 0, difficulty: "medium" }
+    { question: "Comment dit-on 'Hello' en français?", options:["Bonjour","Au revoir","Merci","S'il vous plaît"], answer: 0, difficulty:"easy" },
+    { question: "Que signifie 'Goodbye' en français?", options:["Bonjour","Au revoir","Bonne nuit","Merci"], answer: 1, difficulty:"easy" },
+    { question: "Comment dit-on 'Thank you' en français?", options:["S'il vous plaît","Merci","De rien","Pardon"], answer: 1, difficulty:"easy" },
+    { question: "Quel est le pluriel de 'ami'?", options:["Amis","Amies","Amis","Ami(e)s"], answer: 0, difficulty:"medium" },
+    { question: "Comment dit-on 'I am learning French' en français?", options:["J'apprends le français","Je français apprends","J'apprendrai le français","Je suis en train d'apprendre le français"], answer: 0, difficulty:"medium" }
   ];
-  return [...all].sort(() => Math.random() - 0.5).slice(0,15);
+  return [...all].sort(() => Math.random() - 0.5).slice(0, 15);
 }
 function startFrenchTimer() {
-  frenchTimer = 0;
-  frenchTimerElement.textContent = frenchTimer;
+  frenchTimer = 0; frenchTimerElement.textContent = frenchTimer;
   clearInterval(frenchTimerInterval);
-  frenchTimerInterval = setInterval(() => {
-    frenchTimer++;
-    frenchTimerElement.textContent = frenchTimer;
-  }, 1000);
+  frenchTimerInterval = setInterval(() => { frenchTimer++; frenchTimerElement.textContent = frenchTimer; }, 1000);
 }
 function stopFrenchTimer() { clearInterval(frenchTimerInterval); }
 function loadFrenchQuestion() {
-  if (currentFrenchQuestion < frenchQuestions.length) {
+  if(currentFrenchQuestion < frenchQuestions.length) {
     const q = frenchQuestions[currentFrenchQuestion];
     frenchQuestionElement.textContent = q.question;
     frenchOptionsElement.innerHTML = "";
@@ -469,9 +403,7 @@ function loadFrenchQuestion() {
       li.addEventListener("click", () => frenchCheckAnswer(i));
       frenchOptionsElement.appendChild(li);
     });
-  } else {
-    endFrenchQuiz();
-  }
+  } else { endFrenchQuiz(); }
 }
 function frenchCheckAnswer(sel) {
   const q = frenchQuestions[currentFrenchQuestion];
@@ -501,7 +433,7 @@ function endFrenchQuiz() {
 window.showLibrarySectionFrench = function() {
   hideAllSections();
   frenchLibraryContainer.style.display = "block";
-}
+};
 btnFrench.addEventListener("click", () => {
   hideAllSections();
   frenchMenuContainer.style.display = "block";
@@ -534,15 +466,49 @@ async function saveScore(userName, score, time) {
   if(userDoc) await updateDoc(userDoc, { score, time });
 }
 
-/* --- Dados Fixos para o Quiz (usados nos modos Quiz original e Questions) --- */
-const allQuestionsData = allQuestionsData || allQuestionsData = allQuestionsData = allQuestionsData = allQuestionsData = allQuestionsData = [...allQuestionsData] || [
-  { question: "What is 'eu sou estudante' in English?", options: ["I am a student", "I am student", "I student am", "A student I am"], answer: 0, difficulty: "easy", libraryRef:"phrases-english" },
-  { question: "Which one is correct?", options: ["Do you like pizza?", "Like pizza you?", "Pizza do you like?", "You pizza like?"], answer: 0, difficulty:"easy", libraryRef:"phrases-english" },
-  { question: "What does 'I am learning English' mean?", options: ["Eu estou aprendendo inglês", "Eu aprendi inglês", "Eu ensino inglês", "Eu amo inglês"], answer: 0, difficulty:"medium", libraryRef:"phrases-english" },
-  { question: "How do you say 'Onde você mora?' in English?", options: ["Where are you living?", "Where do you live?", "Where is you live?", "Where you live?"], answer: 1, difficulty:"medium", libraryRef:"phrases-english" },
-  { question: "What is the plural of 'child'?", options: ["Childs", "Children", "Childes", "Childern"], answer: 1, difficulty:"hard", libraryRef:"verbos" },
-  { question: "How do you say 'bom dia' in English?", options: ["Good morning", "Good evening", "Good night", "Hello"], answer: 0, difficulty:"easy", libraryRef:"greetings" },
-  { question: "What is the past tense of 'go'?", options: ["Go", "Went", "Gone", "Going"], answer: 1, difficulty:"easy", libraryRef:"verbos" },
-  { question: "Which sentence is correct?", options: ["He don't like apples", "He doesn't like apples", "He like apples", "He doesn't likes apples"], answer: 1, difficulty:"medium", libraryRef:"grammar" },
-  { question: "What does 'break a leg' mean?", options: ["Good luck", "Break your leg", "Run fast", "Don't trip"], answer: 0, difficulty:"medium", libraryRef:"idioms" }
-];
+/* --- MENU RANKING --- */
+document.getElementById("btnRanking").addEventListener("click", async () => {
+  hideAllSections();
+  rankingContainer.style.display = "block";
+  rankingList.innerHTML = "";
+  const snap = await getDocs(collection(db, "users"));
+  let users = [];
+  snap.forEach(doc => {
+    let data = doc.data();
+    users.push({ name: data.name, score: data.score || 0, time: data.time || 9999 });
+  });
+  users = users.filter(u => u.time !== 9999)
+    .sort((a, b) => (b.score - a.score) || (a.time - b.time));
+  users.forEach((u, i) => {
+    const li = document.createElement("li");
+    li.className = "animate-in";
+    li.style.animationDelay = `${i * 0.1}s`;
+    li.innerHTML = `<span>${i+1}. ${u.name}</span><span>Pontos: ${u.score} | Tempo: ${u.time}s</span>`;
+    rankingList.appendChild(li);
+  });
+});
+
+/* --- Dados Fixos para o Quiz (Inglês) --- */
+// allQuestionsData já está definida
+
+/* Eventos para navegar nos submenus */
+// Para Inglês
+btnEnglish.addEventListener("click", () => {
+  hideAllSections();
+  englishMenuContainer.style.display = "block";
+});
+btnEnglishLibrary.addEventListener("click", () => {
+  hideAllSections();
+  englishLibraryContainer.style.display = "block";
+});
+btnEnglishQuestions.addEventListener("click", () => {
+  hideAllSections();
+  englishQuestionsQuizContainer.style.display = "block";
+  // Aqui, você pode filtrar as perguntas se desejar; neste exemplo usamos todas
+  englishQuestions = [...allQuestionsData].sort(() => Math.random() - 0.5).slice(0, 10);
+  englishScore = 0; currentEnglishQuestion = 0; englishErrors = [];
+  englishQuestionsScore.textContent = englishScore;
+  startEnglishTimer();
+  loadEnglishQuestion();
+});
+/* --- Fim do script.js --- */
