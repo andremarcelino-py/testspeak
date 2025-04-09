@@ -76,7 +76,7 @@ body {
   box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
 }
 
-/* Containers gerais */
+/* Containers Gerais */
 .menu-container,
 .container,
 .quiz-container,
@@ -93,7 +93,7 @@ body {
   padding-top: 60px;
 }
 
-/* Botão Voltar (agora no canto inferior esquerdo) */
+/* Botão Voltar */
 .back-button {
   position: fixed;
   bottom: 20px;
@@ -116,7 +116,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* Título e Tabs */
+/* Títulos e Tabs */
 .title {
   font-size: 3rem;
   background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
@@ -172,10 +172,11 @@ body {
   color: white;
 }
 
-/* Seletores unificados para opções de quiz (Inglês, Perguntas e Español) */
+/* Opções unificadas para quiz (Inglês, Perguntas, Español e Français) */
 #options li,
 #perguntas-options li,
-#spanish-options li {
+#spanish-options li,
+#french-options li {
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid transparent;
   padding: 1rem;
@@ -191,21 +192,24 @@ body {
 
 #options li:hover,
 #perguntas-options li:hover,
-#spanish-options li:hover {
+#spanish-options li:hover,
+#french-options li:hover {
   transform: translateX(10px);
   border-color: var(--primary-color);
 }
 
 #options li.correct,
 #perguntas-options li.correct,
-#spanish-options li.correct {
+#spanish-options li.correct,
+#french-options li.correct {
   background: rgba(72, 187, 120, 0.2);
   border-color: #48BB78;
 }
 
 #options li.wrong,
 #perguntas-options li.wrong,
-#spanish-options li.wrong {
+#spanish-options li.wrong,
+#french-options li.wrong {
   background: rgba(245, 101, 101, 0.2);
   border-color: #F56565;
 }
@@ -257,6 +261,11 @@ body {
   margin-right: 8px;
 }
 
+.french::before {
+  content: "🇫🇷";
+  margin-right: 8px;
+}
+
 /* Ranking */
 #ranking-list {
   list-style: none;
@@ -271,7 +280,7 @@ body {
 
 #ranking-list li {
   counter-increment: ranking;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   padding: 1.2rem;
   margin: 0.8rem 0;
   border-radius: 15px;
@@ -436,9 +445,11 @@ body {
   }
 }
 
-/* Destaque para as seções em Español */
+/* Destaque para as seções em Español e Français */
 #spanish-container,
-#spanish-library-container {
+#spanish-library-container,
+#french-container,
+#french-library-container {
   border-left: 5px solid #f39c12;
   padding-left: 1rem;
   animation: fadeIn 0.5s ease-in-out;
@@ -449,12 +460,21 @@ body {
   color: white;
 }
 
+.tab-button#btnFrench {
+  background-color: #b319b8;
+  color: white;
+}
+
 @media (max-width: 768px) {
   #spanish-container,
-  #spanish-library-container {
+  #spanish-library-container,
+  #french-container,
+  #french-library-container {
     padding: 1rem;
   }
 }
+
+/* Botão "Aprenda Mais" (ou "En savoir plus") */
 .aprenda-mais-button {
   background-color: var(--secondary-color);
   border: none;
