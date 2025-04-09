@@ -2,17 +2,11 @@
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Speak Easy - Quiz de Inglês</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="styles.css"/>
   </head>
   <body>
     <!-- Tela de Cadastro -->
@@ -29,11 +23,11 @@
     <div id="menu-container" class="menu-container" style="display:none;">
       <h1 class="title">Speak Easy</h1>
       <div class="tabs">
-        <!-- Quiz original (Modo Quiz principal) -->
+        <!-- Quiz original -->
         <button id="btnQuiz" class="tab-button animate-in">
           <i class="fas fa-question-circle"></i> Quiz
         </button>
-        <!-- Conteúdo para Inglês (sub-menu) -->
+        <!-- Conteúdo para Inglês -->
         <button id="btnEnglish" class="tab-button animate-in english">
           <i class="fas fa-globe"></i> Inglês
         </button>
@@ -155,7 +149,7 @@
         </div>
         <div class="text-content">
           <p>Uma boa compreensão da gramática inglesa é essencial para formar frases corretas.</p>
-          <p>Dicas: preste atenção aos tempos verbais, concordância entre sujeito e verbo e à estrutura da frase.</p>
+          <p>Dicas: preste atenção aos tempos verbais, à concordância entre sujeito e verbo e à estrutura da frase.</p>
           <p>Exemplo: use "doesn't" com sujeitos singulares (He doesn't like apples).</p>
         </div>
       </div>
@@ -178,7 +172,7 @@
       </div>
     </div>
 
-    <!-- Quiz Original (Modo Quiz principal) em Inglês -->
+    <!-- Quiz Original (Modo Quiz principal) -->
     <div id="quiz-container" class="quiz-container" style="display:none;">
       <div id="quiz">
         <p id="question"></p>
@@ -190,50 +184,23 @@
       </div>
     </div>
 
-    <!-- Menu de Perguntas (modo Questions) em Inglês -->
-    <div id="perguntas-container" class="perguntas-container" style="display:none;">
-      <button class="back-button" id="backButtonPerguntas">
-        <i class="fas fa-arrow-left"></i> Voltar ao Menu
-      </button>
-      <h2><i class="fas fa-edit"></i> Escolha o Nível</h2>
-      <div class="level-buttons">
-        <button id="btnFacil" class="level-button">Fácil</button>
-        <button id="btnMedio" class="level-button">Médio</button>
-        <button id="btnDificil" class="level-button">Difícil</button>
-      </div>
-    </div>
+    <!-- MENU para Quiz de Perguntas (Modo Questions) em Inglês -->
+    <!-- Como agora o modo Questions está integrado no submenu de Inglês,
+         eliminamos a seção genérica de "perguntas-container" -->
 
-    <!-- Quiz de Perguntas (modo Questions) em Inglês -->
-    <div id="perguntas-quiz-container" class="quiz-container" style="display:none;">
-      <button class="back-button" id="backButtonPerguntasQuiz">
+    <!-- Tela Final do Quiz Original (Modo Quiz principal) -->
+    <div id="end-screen" class="end-screen" style="display:none;">
+      <button class="back-button" id="backButtonEndScreen">
         <i class="fas fa-arrow-left"></i> Voltar ao Menu
       </button>
-      <div id="perguntas-quiz">
-        <p id="perguntas-question"></p>
-        <ul id="perguntas-options"></ul>
-      </div>
-      <div class="score-container">
-        <p>Pontuação: <span id="perguntas-score">0</span>/10</p>
-        <p>Tempo: <span id="perguntas-timer">0</span> s</p>
-      </div>
-    </div>
-
-    <!-- Tela Final do Quiz de Perguntas em Inglês -->
-    <div id="perguntas-end-screen" class="end-screen" style="display:none;">
-      <button class="back-button" id="backButtonPerguntasEndScreen">
-        <i class="fas fa-arrow-left"></i> Voltar ao Menu
-      </button>
-      <p id="perguntas-final-message"></p>
-      <ul id="perguntas-error-list"></ul>
-      <button id="perguntas-restart-button" class="restart-button">
-        <i class="fas fa-sync-alt"></i> Tentar Novamente
-      </button>
-      <button id="perguntas-menu-button" class="restart-button">
-        <i class="fas fa-home"></i> Menu Principal
+      <p id="final-message"></p>
+      <ul id="error-list"></ul>
+      <button id="restart-button" class="restart-button">
+        <i class="fas fa-sync-alt"></i> Reiniciar Quiz
       </button>
     </div>
 
-    <!-- Menu para Español -->
+    <!-- MENU e funcionalidades para Español -->
     <div id="spanish-menu-container" class="menu-container" style="display:none;">
       <h2>Contenido en Español</h2>
       <div class="tabs">
@@ -249,7 +216,6 @@
       </button>
     </div>
 
-    <!-- Quiz en Español -->
     <div id="spanish-container" class="quiz-container" style="display:none;">
       <button class="back-button" id="backButtonSpanish">
         <i class="fas fa-arrow-left"></i> Volver al Menú
@@ -264,7 +230,6 @@
       </div>
     </div>
 
-    <!-- Tela Final del Quiz en Español -->
     <div id="spanish-end-screen" class="end-screen" style="display:none;">
       <button class="back-button" id="backButtonSpanishEndScreen">
         <i class="fas fa-arrow-left"></i> Volver al Menú
@@ -279,43 +244,29 @@
       </button>
     </div>
 
-    <!-- Biblioteca en Español -->
     <div id="spanish-library-container" class="library-container" style="display:none;">
       <button class="back-button" id="backButtonSpanishLibrary">
         <i class="fas fa-arrow-left"></i> Volver al Menú
       </button>
       <h2><i class="fas fa-book-open"></i> Biblioteca en Español</h2>
       <div id="frases-basicas-es" class="text-card animate-in">
-        <div class="text-header">
-          <i class="fas fa-star"></i>
-          <h3>Frases Básicas</h3>
-        </div>
+        <div class="text-header"><i class="fas fa-star"></i><h3>Frases Básicas</h3></div>
         <div class="text-content">
           <p class="spanish">Me gusta estudiar español</p>
           <p class="spanish">Soy estudiante</p>
         </div>
       </div>
       <div id="verbos-es" class="text-card animate-in">
-        <div class="text-header">
-          <i class="fas fa-star"></i>
-          <h3>Verbos</h3>
-        </div>
-        <div class="text-content">
-          <p>Ejemplo: leer, escribir, hablar, comer y vivir.</p>
-        </div>
+        <div class="text-header"><i class="fas fa-star"></i><h3>Verbos</h3></div>
+        <div class="text-content"><p>Ejemplo: leer, escribir, hablar, comer y vivir.</p></div>
       </div>
       <div id="expresiones-es" class="text-card animate-in">
-        <div class="text-header">
-          <i class="fas fa-star"></i>
-          <h3>Expresiones Idiomáticas</h3>
-        </div>
-        <div class="text-content">
-          <p>Ejemplo: "echar una mano" significa ayudar.</p>
-        </div>
+        <div class="text-header"><i class="fas fa-star"></i><h3>Expresiones Idiomáticas</h3></div>
+        <div class="text-content"><p>Ejemplo: "echar una mano" significa ayudar.</p></div>
       </div>
     </div>
 
-    <!-- Menu para Français -->
+    <!-- MENU para Français -->
     <div id="french-menu-container" class="menu-container" style="display:none;">
       <h2>Contenu en Français</h2>
       <div class="tabs">
@@ -331,7 +282,6 @@
       </button>
     </div>
 
-    <!-- Quiz en Français -->
     <div id="french-container" class="quiz-container" style="display:none;">
       <button class="back-button" id="backButtonFrench">
         <i class="fas fa-arrow-left"></i> Retour au Menu
@@ -346,7 +296,6 @@
       </div>
     </div>
 
-    <!-- Écran Final du Quiz en Français -->
     <div id="french-end-screen" class="end-screen" style="display:none;">
       <button class="back-button" id="backButtonFrenchEndScreen">
         <i class="fas fa-arrow-left"></i> Retour au Menu
@@ -361,7 +310,6 @@
       </button>
     </div>
 
-    <!-- Bibliothèque en Français -->
     <div id="french-library-container" class="library-container" style="display:none;">
       <button class="back-button" id="backButtonFrenchLibrary">
         <i class="fas fa-arrow-left"></i> Retour au Menu
@@ -406,7 +354,7 @@
       <ul id="ranking-list"></ul>
     </div>
 
-    <!-- Tela Final do Quiz Original (Modo Quiz principal) em Inglês -->
+    <!-- Tela Final do Quiz Original (Modo Quiz) em Inglês -->
     <div id="end-screen" class="end-screen" style="display:none;">
       <button class="back-button" id="backButtonEndScreen">
         <i class="fas fa-arrow-left"></i> Voltar ao Menu
