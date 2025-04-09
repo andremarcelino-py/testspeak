@@ -172,11 +172,12 @@ body {
   color: white;
 }
 
-/* Opções unificadas para quiz (Inglês, Perguntas, Español e Français) */
+/* Opções unificadas para Quiz */
 #options li,
 #perguntas-options li,
 #spanish-options li,
-#french-options li {
+#french-options li,
+#english-questions-options li {
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid transparent;
   padding: 1rem;
@@ -193,7 +194,8 @@ body {
 #options li:hover,
 #perguntas-options li:hover,
 #spanish-options li:hover,
-#french-options li:hover {
+#french-options li:hover,
+#english-questions-options li:hover {
   transform: translateX(10px);
   border-color: var(--primary-color);
 }
@@ -201,7 +203,8 @@ body {
 #options li.correct,
 #perguntas-options li.correct,
 #spanish-options li.correct,
-#french-options li.correct {
+#french-options li.correct,
+#english-questions-options li.correct {
   background: rgba(72, 187, 120, 0.2);
   border-color: #48BB78;
 }
@@ -209,7 +212,8 @@ body {
 #options li.wrong,
 #perguntas-options li.wrong,
 #spanish-options li.wrong,
-#french-options li.wrong {
+#french-options li.wrong,
+#english-questions-options li.wrong {
   background: rgba(245, 101, 101, 0.2);
   border-color: #F56565;
 }
@@ -271,13 +275,11 @@ body {
   list-style: none;
   padding: 0;
 }
-
 #ranking-list {
   counter-reset: ranking;
   padding: 0;
   margin: 2rem 0;
 }
-
 #ranking-list li {
   counter-increment: ranking;
   background: rgba(255, 255, 255, 0.05);
@@ -285,28 +287,24 @@ body {
   margin: 0.8rem 0;
   border-radius: 15px;
   display: grid;
-  grid-template-columns: px fr 100px 100px;
+  grid-template-columns: 1fr 100px 100px;
   align-items: center;
   transition: all 0.3s ease;
 }
-
 #ranking-list li:first-child {
   background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
   color: #2F2F2F;
   font-weight: bold;
   box-shadow: 0 4px 20px rgba(255,215,0,0.3);
 }
-
 #ranking-list li:first-child::after {
   content: "👑";
   margin-left: 1rem;
   font-size: 1.8em;
 }
-
 #ranking-list li:nth-child(2) {
   background: linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%);
 }
-
 #ranking-list li:nth-child(3) {
   background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);
 }
@@ -321,14 +319,15 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 #error-list,
-#perguntas-error-list {
+#perguntas-error-list,
+#english-questions-error-list,
+#spanish-error-list,
+#french-error-list {
   list-style: none;
   margin-bottom: 1.5rem;
   text-align: left;
 }
-
 .error-item {
   background: rgba(255, 255, 255, 0.05);
   padding: 0.8rem;
@@ -337,7 +336,7 @@ body {
   border-left: 4px solid var(--accent-color);
 }
 
-/* Botão Reiniciar */
+/* Botões Reiniciar */
 .restart-button {
   background: var(--primary-color);
   padding: 1rem 2rem;
@@ -350,7 +349,6 @@ body {
   font-size: 1rem;
   margin: 0.5rem;
 }
-
 .restart-button:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
@@ -364,7 +362,6 @@ body {
   margin: 2rem 0;
   flex-wrap: wrap;
 }
-
 .level-button {
   padding: 1rem 2rem;
   border: none;
@@ -374,19 +371,15 @@ body {
   font-size: 1.1rem;
   transition: transform 0.2s;
 }
-
 .level-button:hover {
   transform: scale(1.05);
 }
-
 #btnFacil {
   background: #4CAF50;
 }
-
 #btnMedio {
   background: #FFC107;
 }
-
 #btnDificil {
   background: #F44336;
 }
@@ -396,7 +389,6 @@ body {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 .animate-in {
   animation: fadeIn 0.5s ease-out;
 }
@@ -421,7 +413,6 @@ body {
     gap: 1rem;
   }
 }
-
 @media (max-width: 480px) {
   .title {
     font-size: 1.8rem;
@@ -445,7 +436,7 @@ body {
   }
 }
 
-/* Destaque para as seções em Español e Français */
+/* Destaque para as seções de idiomas */
 #spanish-container,
 #spanish-library-container,
 #french-container,
@@ -454,27 +445,11 @@ body {
   padding-left: 1rem;
   animation: fadeIn 0.5s ease-in-out;
 }
+.tab-button.english::before { content: "🇬🇧"; margin-right: 8px; }
+.tab-button.spanish::before { content: "🇪🇸"; margin-right: 8px; }
+.tab-button.french::before { content: "🇫🇷"; margin-right: 8px; }
 
-.tab-button#btnSpanish {
-  background-color: #f39c12;
-  color: white;
-}
-
-.tab-button#btnFrench {
-  background-color: #b319b8;
-  color: white;
-}
-
-@media (max-width: 768px) {
-  #spanish-container,
-  #spanish-library-container,
-  #french-container,
-  #french-library-container {
-    padding: 1rem;
-  }
-}
-
-/* Botão "Aprenda Mais" (ou "En savoir plus") */
+/* Botão "Aprenda Mais" */
 .aprenda-mais-button {
   background-color: var(--secondary-color);
   border: none;
