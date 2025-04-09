@@ -29,18 +29,16 @@ body {
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.1);
   max-width: 400px;
   width: 100%;
   margin-bottom: 20px;
 }
-
 .register-container h2 {
   margin-bottom: 1.5rem;
   color: white;
 }
-
 .register-container input {
   display: block;
   width: 100%;
@@ -48,16 +46,14 @@ body {
   margin: 10px 0;
   border-radius: 8px;
   border: 2px solid var(--primary-color);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255,255,255,0.9);
   transition: all 0.3s ease;
 }
-
 .register-container input:focus {
   transform: scale(1.02);
   box-shadow: 0 0 15px var(--secondary-color);
   outline: none;
 }
-
 .register-container button {
   padding: 12px 24px;
   border: none;
@@ -69,16 +65,14 @@ body {
   margin-top: 1rem;
   transition: all 0.3s ease;
 }
-
 .register-container button:hover {
   background-color: var(--secondary-color);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 15px rgba(124,58,237,0.4);
 }
 
 /* Containers Gerais */
 .menu-container,
-.container,
 .quiz-container,
 .perguntas-container,
 .library-container,
@@ -99,7 +93,7 @@ body {
   bottom: 20px;
   left: 20px;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.1);
   border: none;
   padding: 10px 15px;
   border-radius: 50px;
@@ -110,9 +104,8 @@ body {
   gap: 5px;
   transition: all 0.3s ease;
 }
-
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255,255,255,0.2);
   transform: translateY(-2px);
 }
 
@@ -122,10 +115,9 @@ body {
   background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 4px 6px rgba(0,0,0,0.1);
   margin-bottom: 1.5rem;
 }
-
 .tabs {
   display: flex;
   justify-content: center;
@@ -133,11 +125,10 @@ body {
   margin-bottom: 2rem;
   flex-wrap: wrap;
 }
-
 .tab-button {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.1);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255,255,255,0.2);
   padding: 12px 24px;
   border-radius: 12px;
   cursor: pointer;
@@ -147,38 +138,37 @@ body {
   color: white;
   transition: all 0.3s ease;
 }
-
 .tab-button:hover {
   background: var(--primary-color);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 15px rgba(124,58,237,0.4);
 }
 
 /* Quiz e Perguntas */
 .quiz-container {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255,255,255,0.05);
   backdrop-filter: blur(12px);
   border-radius: 20px;
   padding: 2rem;
   margin: 1rem 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.1);
 }
-
 #question,
-#perguntas-question {
+#english-questions-question,
+#spanish-question,
+#french-question {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   color: white;
 }
 
-/* Opções unificadas para Quiz */
+/* Opções (unificadas para os quizzes) */
 #options li,
-#perguntas-options li,
+#english-questions-options li,
 #spanish-options li,
-#french-options li,
-#english-questions-options li {
-  background: rgba(255, 255, 255, 0.1);
+#french-options li {
+  background: rgba(255,255,255,0.1);
   border: 2px solid transparent;
   padding: 1rem;
   margin: 0.5rem 0;
@@ -190,31 +180,25 @@ body {
   cursor: pointer;
   color: white;
 }
-
 #options li:hover,
-#perguntas-options li:hover,
+#english-questions-options li:hover,
 #spanish-options li:hover,
-#french-options li:hover,
-#english-questions-options li:hover {
+#french-options li:hover {
   transform: translateX(10px);
   border-color: var(--primary-color);
 }
-
 #options li.correct,
-#perguntas-options li.correct,
+#english-questions-options li.correct,
 #spanish-options li.correct,
-#french-options li.correct,
-#english-questions-options li.correct {
-  background: rgba(72, 187, 120, 0.2);
+#french-options li.correct {
+  background: rgba(72,187,120,0.2);
   border-color: #48BB78;
 }
-
 #options li.wrong,
-#perguntas-options li.wrong,
+#english-questions-options li.wrong,
 #spanish-options li.wrong,
-#french-options li.wrong,
-#english-questions-options li.wrong {
-  background: rgba(245, 101, 101, 0.2);
+#french-options li.wrong {
+  background: rgba(245,101,101,0.2);
   border-color: #F56565;
 }
 
@@ -226,15 +210,14 @@ body {
   color: var(--secondary-color);
 }
 
-/* Cards Biblioteca */
+/* Cards da Biblioteca */
 .text-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255,255,255,0.05);
   border-radius: 12px;
   padding: 1.5rem;
   margin: 1rem 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255,255,255,0.1);
 }
-
 .text-header {
   display: flex;
   align-items: center;
@@ -242,29 +225,24 @@ body {
   margin-bottom: 1rem;
   color: var(--secondary-color);
 }
-
 .text-content p {
   margin: 0.5rem 0;
   padding: 0.5rem;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255,255,255,0.03);
 }
-
 .english::before {
   content: "🇬🇧";
   margin-right: 8px;
 }
-
 .portuguese::before {
   content: "🇧🇷";
   margin-right: 8px;
 }
-
 .spanish::before {
   content: "🇪🇸";
   margin-right: 8px;
 }
-
 .french::before {
   content: "🇫🇷";
   margin-right: 8px;
@@ -277,12 +255,11 @@ body {
 }
 #ranking-list {
   counter-reset: ranking;
-  padding: 0;
   margin: 2rem 0;
 }
 #ranking-list li {
   counter-increment: ranking;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255,255,255,0.05);
   padding: 1.2rem;
   margin: 0.8rem 0;
   border-radius: 15px;
@@ -311,16 +288,15 @@ body {
 
 /* Tela Final */
 .end-screen {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255,255,255,0.05);
   backdrop-filter: blur(12px);
   border-radius: 20px;
   padding: 2rem;
   margin: 1rem 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 #error-list,
-#perguntas-error-list,
 #english-questions-error-list,
 #spanish-error-list,
 #french-error-list {
@@ -329,7 +305,7 @@ body {
   text-align: left;
 }
 .error-item {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255,255,255,0.05);
   padding: 0.8rem;
   margin: 0.5rem 0;
   border-radius: 8px;
@@ -342,16 +318,16 @@ body {
   padding: 1rem 2rem;
   border-radius: 50px;
   font-weight: 600;
-  transition: all 0.3s ease;
   border: none;
   color: white;
   cursor: pointer;
   font-size: 1rem;
   margin: 0.5rem;
+  transition: all 0.3s ease;
 }
 .restart-button:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 15px rgba(124,58,237,0.4);
 }
 
 /* Botões de Nível */
@@ -374,73 +350,34 @@ body {
 .level-button:hover {
   transform: scale(1.05);
 }
-#btnFacil {
-  background: #4CAF50;
-}
-#btnMedio {
-  background: #FFC107;
-}
-#btnDificil {
-  background: #F44336;
-}
+#btnFacil { background: #4CAF50; }
+#btnMedio { background: #FFC107; }
+#btnDificil { background: #F44336; }
 
 /* Animação */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-in {
-  animation: fadeIn 0.5s ease-out;
-}
+.animate-in { animation: fadeIn 0.5s ease-out; }
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .title {
-    font-size: 2.2rem;
-  }
-  .tab-button {
-    padding: 10px 15px;
-    font-size: 0.9rem;
-  }
-  .back-button {
-    bottom: 15px;
-    left: 10px;
-    padding: 8px 12px;
-    font-size: 0.9rem;
-  }
-  .level-buttons {
-    flex-direction: column;
-    gap: 1rem;
-  }
+  .title { font-size: 2.2rem; }
+  .tab-button { padding: 10px 15px; font-size: 0.9rem; }
+  .back-button { bottom: 15px; left: 10px; padding: 8px 12px; font-size: 0.9rem; }
+  .level-buttons { flex-direction: column; gap: 1rem; }
 }
 @media (max-width: 480px) {
-  .title {
-    font-size: 1.8rem;
-  }
-  .register-container,
-  .menu-container,
-  .quiz-container,
-  .library-container,
-  .ranking-container,
-  .end-screen {
-    padding: 1rem;
-  }
-  .tab-button {
-    padding: 8px 12px;
-    font-size: 0.8rem;
-  }
-  .restart-button,
-  .level-button {
-    padding: 0.8rem 1.2rem;
-    font-size: 0.9rem;
-  }
+  .title { font-size: 1.8rem; }
+  .register-container, .menu-container, .quiz-container, .library-container, .ranking-container, .end-screen { padding: 1rem; }
+  .tab-button { padding: 8px 12px; font-size: 0.8rem; }
+  .restart-button, .level-button { padding: 0.8rem 1.2rem; font-size: 0.9rem; }
 }
 
-/* Destaque para as seções de idiomas */
-#spanish-container,
-#spanish-library-container,
-#french-container,
-#french-library-container {
+/* Destaque para as seções dos idiomas */
+#spanish-container, #spanish-library-container,
+#french-container, #french-library-container {
   border-left: 5px solid #f39c12;
   padding-left: 1rem;
   animation: fadeIn 0.5s ease-in-out;
