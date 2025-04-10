@@ -490,3 +490,17 @@ body {
   transform: translateY(-2px);
   background-color: var(--accent-color);
 }
+
+/* Inicialmente, o conteúdo das seções ficará oculto */
+.text-card .text-content {
+  display: none;
+  /* Para animação opcional, você pode usar transição em altura, opacidade, etc. */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Quando ativa, o conteúdo fica visível */
+.text-card .text-content.active {
+  display: block;
+  opacity: 1;
+}
