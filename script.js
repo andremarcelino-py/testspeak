@@ -467,6 +467,23 @@ async function saveScore(userName, score, time) {
   }
 }
 
+
+// Aguarda o DOM carregar para garantir que os elementos existam
+document.addEventListener("DOMContentLoaded", () => {
+  // Seleciona todos os headers das seções da biblioteca
+  const headers = document.querySelectorAll(".text-card .text-header");
+
+  headers.forEach(header => {
+    // Adiciona um listener de clique em cada header
+    header.addEventListener("click", () => {
+      // O próximo elemento do header é o .text-content correspondente
+      const content = header.nextElementSibling;
+      // Alterna a classe 'active' para mostrar/ocultar o conteúdo
+      content.classList.toggle("active");
+    });
+  });
+});
+
 // --- DADOS FIXOS ---
 const allQuestions = [
   { question: "What is 'eu sou estudante' in English?", options: ["I am student", "A student I am", "I student am", "I am a student"], answer: 3, difficulty: "easy", libraryRef: "frases-basicas" },
