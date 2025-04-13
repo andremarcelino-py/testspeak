@@ -1,5 +1,7 @@
+// Importações do Firebase App, Firestore e Authentication
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
 
 // Configuração Firebase
 const firebaseConfig = {
@@ -13,6 +15,8 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
 // Containers principais
 const registerContainer      = document.getElementById("register-container");
@@ -36,7 +40,7 @@ const frenchLibraryContainer = document.getElementById("french-library-container
 
 // Elementos de cadastro/login
 const startButton        = document.getElementById("start-button");
-const loginButton        = document.getElementById("login-button");
+const googleLoginButton  = document.getElementById("google-login-button");
 const goLoginLink        = document.getElementById("go-login");
 const goRegisterLink     = document.getElementById("go-register");
 
@@ -64,7 +68,7 @@ const backButtonFrenchMenu = document.getElementById("backButtonFrenchMenu");
 const frenchRestartButton  = document.getElementById("french-restart-button");
 const frenchMenuButton     = document.getElementById("french-menu-button");
 
-// Elementos do Quiz (inglês, perguntas, español, francês)
+// Elementos dos quizzes (inglês, perguntas, espanhol, francês)
 const questionElement       = document.getElementById("question");
 const optionsElement        = document.getElementById("options");
 const scoreElement          = document.getElementById("score");
@@ -166,33 +170,37 @@ startButton.addEventListener("click", async () => {
   }
 });
 
-// --- LOGIN ---
-loginButton.addEventListener("click", async () => {
-  const loginName     = document.getElementById("login-name").value.trim();
-  const loginPassword = document.getElementById("login-password").value.trim();
-
-  if (!loginName || !loginPassword) {
-    alert("Por favor, preencha todos os campos!");
-    return;
-  }
-  
+// --- LOGIN COM GOOGLE ---
+googleLoginButton.addEventListener("click", async () => {
   try {
+    const result = await signInWithPopup(auth, provider);
+    // O objeto result.user contém informações do usuário autenticado pelo Google.
+    const user = result.user;
+    // Verifique se o usuário já existe no Firestore. Se não, crie um registro.
     const snap = await getDocs(collection(db, "users"));
-    let userFound = false;
+    let userExists = false;
     snap.forEach(doc => {
-      const userData = doc.data();
-      if (userData.name === loginName && userData.password === loginPassword) {
-        userFound = true;
-        hideAllSections();
-        menuContainer.style.display = "block";
+      const data = doc.data();
+      // Comparação pode ser feita pelo email, pois o Google garante que seja único.
+      if (data.email === user.email) {
+        userExists = true;
       }
     });
-    if (!userFound) {
-      alert("Dados de login incorretos! Tente novamente.");
+    if (!userExists) {
+      // Se o usuário não existir, crie um registro com os dados obtidos do Google.
+      await addDoc(collection(db, "users"), { 
+        name: user.displayName,
+        email: user.email,
+        character: user.photoURL || "default", // Você pode definir um avatar padrão ou implementar seleção
+        // Outros dados podem ser salvos conforme necessário
+      });
     }
+    // Redireciona para o menu principal.
+    hideAllSections();
+    menuContainer.style.display = "block";
   } catch (err) {
-    console.error("Erro no login:", err);
-    alert("Erro ao efetuar login. Tente novamente.");
+    console.error("Erro ao efetuar login com Google:", err);
+    alert("Não foi possível realizar o login com Google. Tente novamente.");
   }
 });
 
@@ -205,6 +213,9 @@ goRegisterLink.addEventListener("click", () => {
   loginContainer.style.display = "none";
   registerContainer.style.display = "block";
 });
+
+// --- CONTINUAÇÃO DO CÓDIGO EXISTENTE ---
+// (Mantenha o restante do código para quizzes, biblioteca, ranking etc., conforme na versão anterior)
 
 // --- QUIZ INGLÊS ---
 let questions = [], score = 0, currentQuestion = 0, errors = [], quizTimer = 0, timerInterval;
@@ -321,43 +332,43 @@ function endPerguntasQuiz() {
 }
 function startPerguntasQuiz(dif) {
   perguntasQuestions = allQuestions.filter(q=>q.difficulty===dif).sort(()=>Math.random()-0.5).slice(0,10);
-  perguntasScore=0; currentPerguntaQuestion=0; perguntasErrors=[];
-  perguntasScoreElement.textContent=perguntasScore;
+  perguntasScore = 0; currentPerguntaQuestion = 0; perguntasErrors = [];
+  perguntasScoreElement.textContent = perguntasScore;
   hideAllSections();
-  perguntasQuizContainer.style.display="block";
+  perguntasQuizContainer.style.display = "block";
   startPerguntasTimer();
   loadPerguntasQuestion();
 }
-btnPerguntas.addEventListener("click", ()=>{ hideAllSections(); perguntasContainer.style.display="block"; });
+btnPerguntas.addEventListener("click", ()=>{ hideAllSections(); perguntasContainer.style.display = "block"; });
 btnFacil.addEventListener("click", ()=> startPerguntasQuiz("easy"));
 btnMedio.addEventListener("click", ()=> startPerguntasQuiz("medium"));
 btnDificil.addEventListener("click", ()=> startPerguntasQuiz("hard"));
-perguntasRestartButton.addEventListener("click", ()=> startPerguntasQuiz(perguntasQuestions[0]?.difficulty||"easy"));
+perguntasRestartButton.addEventListener("click", ()=> startPerguntasQuiz(perguntasQuestions[0]?.difficulty || "easy"));
 perguntasMenuButton.addEventListener("click", backToMenu);
 
 // --- BIBLIOTECA ---
-btnLibrary.addEventListener("click", ()=>{ hideAllSections(); libraryContainer.style.display="block"; });
+btnLibrary.addEventListener("click", ()=>{ hideAllSections(); libraryContainer.style.display = "block"; });
 window.showLibrarySection = function(sectionId){
   hideAllSections();
-  libraryContainer.style.display="block";
+  libraryContainer.style.display = "block";
   document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
 };
 
 // --- RANKING ---
 btnRanking.addEventListener("click", async ()=>{
   hideAllSections();
-  rankingContainer.style.display="block";
+  rankingContainer.style.display = "block";
   const rankingList = document.getElementById("ranking-list");
-  rankingList.innerHTML="";
-  const snap = await getDocs(collection(db,"users"));
+  rankingList.innerHTML = "";
+  const snap = await getDocs(collection(db, "users"));
   let users = [];
-  snap.forEach(doc=> users.push({ name: doc.data().name, score: doc.data().score||0, time: doc.data().time||9999 }));
-  users = users.filter(u=>u.time!==9999).sort((a,b)=>(b.score-a.score) || (a.time-b.time));
-  users.forEach((u,i)=>{
+  snap.forEach(doc => users.push({ name: doc.data().name, score: doc.data().score || 0, time: doc.data().time || 9999 }));
+  users = users.filter(u => u.time !== 9999).sort((a, b) => (b.score - a.score) || (a.time - b.time));
+  users.forEach((u, i) => {
     const li = document.createElement("li");
-    li.className="animate-in";
-    li.style.animationDelay=`${i*0.1}s`;
-    li.innerHTML=`<span>${i+1}. ${u.name}</span><span>Pontos: ${u.score} | Tempo: ${u.time}s</span>`;
+    li.className = "animate-in";
+    li.style.animationDelay = `${i * 0.1}s`;
+    li.innerHTML = `<span>${i+1}. ${u.name}</span><span>Pontos: ${u.score} | Tempo: ${u.time}s</span>`;
     rankingList.appendChild(li);
   });
 });
@@ -372,50 +383,50 @@ function getRandomSpanishQuestions() {
     { question: "¿Cuál es el plural de 'amigo'?", options:["Amigos","Amigas","Amigoes","Amigues"], answer:0 },
     { question: "¿Cómo se dice 'I am learning Spanish' en español?", options:["Estoy aprendiendo español","Aprendo español","Yo español aprendo","Aprendiendo estoy español"], answer:0 }
   ];
-  return [...all].sort(()=>Math.random()-0.5).slice(0,15);
+  return [...all].sort(() => Math.random() - 0.5).slice(0,15);
 }
 function startSpanishTimer() {
-  spanishTimer=0; spanishTimerElement.textContent=spanishTimer;
+  spanishTimer = 0; spanishTimerElement.textContent = spanishTimer;
   clearInterval(spanishTimerInterval);
-  spanishTimerInterval=setInterval(()=>{
-    spanishTimer++; spanishTimerElement.textContent=spanishTimer;
-  },1000);
+  spanishTimerInterval = setInterval(() => {
+    spanishTimer++; spanishTimerElement.textContent = spanishTimer;
+  }, 1000);
 }
-function stopSpanishTimer(){ clearInterval(spanishTimerInterval); }
+function stopSpanishTimer() { clearInterval(spanishTimerInterval); }
 function loadSpanishQuestion() {
   if (currentSpanishQuestion < spanishQuestions.length) {
     const q = spanishQuestions[currentSpanishQuestion];
     spanishQuestionElement.textContent = q.question;
     spanishOptionsElement.innerHTML = "";
-    q.options.forEach((opt,i)=>{
-      const li=document.createElement("li");
-      li.textContent=opt;
-      li.addEventListener("click", ()=> spanishCheckAnswer(i));
+    q.options.forEach((opt,i) => {
+      const li = document.createElement("li");
+      li.textContent = opt;
+      li.addEventListener("click", () => spanishCheckAnswer(i));
       spanishOptionsElement.appendChild(li);
     });
   } else endSpanishQuiz();
 }
 function spanishCheckAnswer(sel) {
-  const q=spanishQuestions[currentSpanishQuestion];
-  const opts=spanishOptionsElement.querySelectorAll("li");
-  opts.forEach((li,i)=>{
-    li.classList.remove("correct","wrong");
-    if (i===q.answer) li.classList.add("correct");
-    else if (i===sel) li.classList.add("wrong");
-    li.style.pointerEvents="none";
+  const q = spanishQuestions[currentSpanishQuestion];
+  const opts = spanishOptionsElement.querySelectorAll("li");
+  opts.forEach((li,i) => {
+    li.classList.remove("correct", "wrong");
+    if (i === q.answer) li.classList.add("correct");
+    else if (i === sel) li.classList.add("wrong");
+    li.style.pointerEvents = "none";
   });
-  if (sel===q.answer) { spanishScore++; spanishScoreElement.textContent=spanishScore; }
+  if (sel === q.answer) { spanishScore++; spanishScoreElement.textContent = spanishScore; }
   else spanishErrors.push(`Pregunta: ${q.question} - Respuesta: ${q.options[q.answer]}`);
-  setTimeout(()=>{
+  setTimeout(() => {
     currentSpanishQuestion++; loadSpanishQuestion();
-  },1500);
+  }, 1500);
 }
 function endSpanishQuiz() {
   stopSpanishTimer();
-  spanishQuizContainer.style.display="none";
-  spanishEndScreen.style.display="block";
+  spanishQuizContainer.style.display = "none";
+  spanishEndScreen.style.display = "block";
   spanishFinalMessageEl.textContent = `Puntuación Final: ${spanishScore}/${spanishQuestions.length} | Tiempo: ${spanishTimer}s`;
-  spanishErrorListEl.innerHTML = spanishErrors.map(e=>`
+  spanishErrorListEl.innerHTML = spanishErrors.map(e => `
     <li class="error-item">
       ${e}<br>
       <button class="aprenda-mais-button" onclick="showLibrarySectionSpanish()">Aprenda Mais</button>
@@ -424,19 +435,19 @@ function endSpanishQuiz() {
 }
 window.showLibrarySectionSpanish = function() {
   hideAllSections();
-  spanishLibraryContainer.style.display="block";
+  spanishLibraryContainer.style.display = "block";
 }
-btnSpanish.addEventListener("click", ()=>{ hideAllSections(); spanishMenuContainer.style.display="block"; });
-btnSpanishQuiz.addEventListener("click", ()=>{
-  hideAllSections(); spanishQuizContainer.style.display="block";
+btnSpanish.addEventListener("click", () => { hideAllSections(); spanishMenuContainer.style.display = "block"; });
+btnSpanishQuiz.addEventListener("click", () => {
+  hideAllSections(); spanishQuizContainer.style.display = "block";
   spanishQuestions = getRandomSpanishQuestions();
-  spanishScore=0; currentSpanishQuestion=0; spanishErrors=[];
-  spanishScoreElement.textContent=spanishScore;
+  spanishScore = 0; currentSpanishQuestion = 0; spanishErrors = [];
+  spanishScoreElement.textContent = spanishScore;
   startSpanishTimer(); loadSpanishQuestion();
 });
-btnSpanishLibrary.addEventListener("click", ()=>{ hideAllSections(); spanishLibraryContainer.style.display="block"; });
+btnSpanishLibrary.addEventListener("click", () => { hideAllSections(); spanishLibraryContainer.style.display = "block"; });
 backButtonSpanishMenu.addEventListener("click", backToMenu);
-spanishRestartButton.addEventListener("click", ()=>{
+spanishRestartButton.addEventListener("click", () => {
   btnSpanishQuiz.click();
 });
 spanishMenuButton.addEventListener("click", backToMenu);
@@ -451,50 +462,50 @@ function getRandomFrenchQuestions() {
     { question: "Quel est le pluriel de 'ami'?", options:["Amis","Amies","Amis","Ami(e)s"], answer:0 },
     { question: "Comment dit-on 'I am learning French' en français?", options:["J'apprends le français","Je français apprends","J'apprendrai le français","Je suis en train d'apprendre le français"], answer:0 }
   ];
-  return [...all].sort(()=>Math.random()-0.5).slice(0,15);
+  return [...all].sort(() => Math.random() - 0.5).slice(0,15);
 }
 function startFrenchTimer() {
-  frenchTimer=0; frenchTimerElement.textContent=frenchTimer;
+  frenchTimer = 0; frenchTimerElement.textContent = frenchTimer;
   clearInterval(frenchTimerInterval);
-  frenchTimerInterval=setInterval(()=>{
-    frenchTimer++; frenchTimerElement.textContent=frenchTimer;
-  },1000);
+  frenchTimerInterval = setInterval(() => {
+    frenchTimer++; frenchTimerElement.textContent = frenchTimer;
+  }, 1000);
 }
-function stopFrenchTimer(){ clearInterval(frenchTimerInterval); }
+function stopFrenchTimer() { clearInterval(frenchTimerInterval); }
 function loadFrenchQuestion() {
   if (currentFrenchQuestion < frenchQuestions.length) {
     const q = frenchQuestions[currentFrenchQuestion];
     frenchQuestionElement.textContent = q.question;
     frenchOptionsElement.innerHTML = "";
-    q.options.forEach((opt,i)=>{
-      const li=document.createElement("li");
-      li.textContent=opt;
-      li.addEventListener("click", ()=> frenchCheckAnswer(i));
+    q.options.forEach((opt,i) => {
+      const li = document.createElement("li");
+      li.textContent = opt;
+      li.addEventListener("click", () => frenchCheckAnswer(i));
       frenchOptionsElement.appendChild(li);
     });
   } else endFrenchQuiz();
 }
 function frenchCheckAnswer(sel) {
-  const q=frenchQuestions[currentFrenchQuestion];
-  const opts=frenchOptionsElement.querySelectorAll("li");
-  opts.forEach((li,i)=>{
-    li.classList.remove("correct","wrong");
-    if (i===q.answer) li.classList.add("correct");
-    else if (i===sel) li.classList.add("wrong");
-    li.style.pointerEvents="none";
+  const q = frenchQuestions[currentFrenchQuestion];
+  const opts = frenchOptionsElement.querySelectorAll("li");
+  opts.forEach((li,i) => {
+    li.classList.remove("correct", "wrong");
+    if (i === q.answer) li.classList.add("correct");
+    else if (i === sel) li.classList.add("wrong");
+    li.style.pointerEvents = "none";
   });
-  if (sel===q.answer) { frenchScore++; frenchScoreElement.textContent=frenchScore; }
+  if (sel === q.answer) { frenchScore++; frenchScoreElement.textContent = frenchScore; }
   else frenchErrors.push(`Question: ${q.question} - Réponse: ${q.options[q.answer]}`);
-  setTimeout(()=>{
+  setTimeout(() => {
     currentFrenchQuestion++; loadFrenchQuestion();
-  },1500);
+  }, 1500);
 }
 function endFrenchQuiz() {
   stopFrenchTimer();
-  frenchQuizContainer.style.display="none";
-  frenchEndScreen.style.display="block";
+  frenchQuizContainer.style.display = "none";
+  frenchEndScreen.style.display = "block";
   frenchFinalMessageEl.textContent = `Score Final: ${frenchScore}/${frenchQuestions.length} | Temps: ${frenchTimer}s`;
-  frenchErrorListEl.innerHTML = frenchErrors.map(e=>`
+  frenchErrorListEl.innerHTML = frenchErrors.map(e => `
     <li class="error-item">
       ${e}<br>
       <button class="aprenda-mais-button" onclick="showLibrarySectionFrench()">En savoir plus</button>
@@ -503,26 +514,26 @@ function endFrenchQuiz() {
 }
 window.showLibrarySectionFrench = function() {
   hideAllSections();
-  frenchLibraryContainer.style.display="block";
+  frenchLibraryContainer.style.display = "block";
 }
-btnFrench.addEventListener("click", ()=>{ hideAllSections(); frenchMenuContainer.style.display="block"; });
-btnFrenchQuiz.addEventListener("click", ()=>{
-  hideAllSections(); frenchQuizContainer.style.display="block";
+btnFrench.addEventListener("click", () => { hideAllSections(); frenchMenuContainer.style.display = "block"; });
+btnFrenchQuiz.addEventListener("click", () => {
+  hideAllSections(); frenchQuizContainer.style.display = "block";
   frenchQuestions = getRandomFrenchQuestions();
-  frenchScore=0; currentFrenchQuestion=0; frenchErrors=[];
-  frenchScoreElement.textContent=frenchScore;
+  frenchScore = 0; currentFrenchQuestion = 0; frenchErrors = [];
+  frenchScoreElement.textContent = frenchScore;
   startFrenchTimer(); loadFrenchQuestion();
 });
-btnFrenchLibrary.addEventListener("click", ()=>{ hideAllSections(); frenchLibraryContainer.style.display="block"; });
+btnFrenchLibrary.addEventListener("click", () => { hideAllSections(); frenchLibraryContainer.style.display = "block"; });
 backButtonFrenchMenu.addEventListener("click", backToMenu);
-frenchRestartButton.addEventListener("click", ()=> btnFrenchQuiz.click());
+frenchRestartButton.addEventListener("click", () => btnFrenchQuiz.click());
 frenchMenuButton.addEventListener("click", backToMenu);
 
 // --- SALVAR PONTUAÇÃO ---
 async function saveScore(userName, score, time) {
-  const snap = await getDocs(collection(db,"users"));
+  const snap = await getDocs(collection(db, "users"));
   let userDoc = null;
-  snap.forEach(doc=>{
+  snap.forEach(doc => {
     if (doc.data().name === userName) userDoc = doc.ref;
   });
   if (userDoc) {
