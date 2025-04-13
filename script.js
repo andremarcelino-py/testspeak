@@ -138,19 +138,23 @@ startButton.addEventListener("click", async () => {
   const numberInput   = document.getElementById("number").value.trim();
   const passwordInput = document.getElementById("register-password").value.trim();
 
-  if (!nameInput || !passwordInput) {
+  if (!nameInput || !numberInput || !passwordInput) {
     alert("Por favor, preencha todos os campos!");
     return;
   }
   
+  if (!selectedCharacter) {
+    alert("Por favor, escolha um personagem!");
+    return;
+  }
   
   hideAllSections();
   try {
     await addDoc(collection(db, "users"), { 
       name: nameInput, 
-    
+      number: numberInput,
       password: passwordInput, // Em produção, utilize Firebase Authentication para segurança
-       
+      character: selectedCharacter 
     });
     // Após cadastro, redireciona para a tela de login
     registerContainer.style.display = "none";
