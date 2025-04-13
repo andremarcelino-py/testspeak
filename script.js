@@ -1,3 +1,4 @@
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
@@ -122,29 +123,15 @@ function backToMenu() {
   if (btn) btn.addEventListener("click", backToMenu);
 });
 
-// --- Seleção de Personagem ---
-let selectedCharacter = null;
-document.querySelectorAll('.character-option').forEach(img => {
-  img.addEventListener('click', () => {
-    document.querySelectorAll('.character-option').forEach(option => option.classList.remove('selected'));
-    img.classList.add('selected');
-    selectedCharacter = img.getAttribute('data-character');
-  });
-});
-
 // --- CADASTRO ---
 startButton.addEventListener("click", async () => {
   const nameInput     = document.getElementById("name").value.trim();
-  const numberInput   = document.getElementById("number").value.trim();
+  // Removido: const numberInput = document.getElementById("number").value.trim();
   const passwordInput = document.getElementById("register-password").value.trim();
 
-  if (!nameInput || !numberInput || !passwordInput) {
+  // Validação apenas do nome e senha
+  if (!nameInput || !passwordInput) {
     alert("Por favor, preencha todos os campos!");
-    return;
-  }
-  
-  if (!selectedCharacter) {
-    alert("Por favor, escolha um personagem!");
     return;
   }
   
@@ -152,9 +139,7 @@ startButton.addEventListener("click", async () => {
   try {
     await addDoc(collection(db, "users"), { 
       name: nameInput, 
-      number: numberInput,
-      password: passwordInput, // Em produção, utilize Firebase Authentication para segurança
-      character: selectedCharacter 
+      password: passwordInput // Em produção, utilize Firebase Authentication para segurança
     });
     // Após cadastro, redireciona para a tela de login
     registerContainer.style.display = "none";
