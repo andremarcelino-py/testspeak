@@ -10,15 +10,21 @@
 </head>
 <body>
 
+  <!-- Tela de Boas-Vindas -->
+  <div id="welcome-container" class="welcome-container animate-in">
+    <h1>Bem-vindo ao Speak Easy!</h1>
+    <button id="btn-register-now" class="welcome-button">Comece agora</button>
+    <button id="btn-login" class="welcome-button">Já tenho uma conta</button>
+  </div>
 
-  <!-- Tela de Cadastro -->
-<div id="register-container" class="register-container animate-in">
-  <h2>Cadastro</h2>
-  <input type="text" id="name" placeholder="Digite seu nome"/>
-  <input type="password" id="register-password" placeholder="Crie uma senha"/>
-  <button id="start-button">Cadastrar <i class="fas fa-arrow-right"></i></button>
-  <p>Já tem uma conta? <a href="#" id="go-login">Login</a></p>
-</div>
+  <!-- Tela de Cadastro (mantida igual ao original) -->
+  <div id="register-container" class="register-container animate-in" style="display:none;">
+    <h2>Cadastro</h2>
+    <input type="text" id="name" placeholder="Digite seu nome" required/>
+    <input type="password" id="register-password" placeholder="Crie uma senha" required/>
+    <button id="start-button">Cadastrar <i class="fas fa-arrow-right"></i></button>
+    <p>Já tem uma conta? <a href="#" id="go-login">Login</a></p>
+  </div>
 
   <!-- Tela de Login -->
   <div id="login-container" class="login-container" style="display:none;">
@@ -212,7 +218,7 @@
     </div>
   </div>
 
-  <!-- Quiz Principal (en anglais) -->
+  <!-- Quiz Principal (em inglês) -->
   <div id="quiz-container" class="quiz-container" style="display:none;">
     <div id="quiz">
       <p id="question"></p>

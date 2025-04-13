@@ -1,4 +1,3 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
@@ -16,51 +15,56 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Containers principais
-const registerContainer      = document.getElementById("register-container");
-const loginContainer         = document.getElementById("login-container");
-const menuContainer          = document.getElementById("menu-container");
-const quizContainer          = document.getElementById("quiz-container");
-const perguntasContainer     = document.getElementById("perguntas-container");
-const perguntasQuizContainer = document.getElementById("perguntas-quiz-container");
-const libraryContainer       = document.getElementById("library-container");
-const rankingContainer       = document.getElementById("ranking-container");
-const endScreen              = document.getElementById("end-screen");
-const perguntasEndScreen     = document.getElementById("perguntas-end-screen");
-const spanishMenuContainer   = document.getElementById("spanish-menu-container");
-const spanishQuizContainer   = document.getElementById("spanish-container");
-const spanishEndScreen       = document.getElementById("spanish-end-screen");
+const welcomeContainer      = document.getElementById("welcome-container");
+const registerContainer     = document.getElementById("register-container");
+const loginContainer        = document.getElementById("login-container");
+const menuContainer         = document.getElementById("menu-container");
+const quizContainer         = document.getElementById("quiz-container");
+const perguntasContainer    = document.getElementById("perguntas-container");
+const perguntasQuizContainer= document.getElementById("perguntas-quiz-container");
+const libraryContainer      = document.getElementById("library-container");
+const rankingContainer      = document.getElementById("ranking-container");
+const endScreen             = document.getElementById("end-screen");
+const perguntasEndScreen    = document.getElementById("perguntas-end-screen");
+const spanishMenuContainer  = document.getElementById("spanish-menu-container");
+const spanishQuizContainer  = document.getElementById("spanish-container");
+const spanishEndScreen      = document.getElementById("spanish-end-screen");
 const spanishLibraryContainer= document.getElementById("spanish-library-container");
-const frenchMenuContainer    = document.getElementById("french-menu-container");
-const frenchQuizContainer    = document.getElementById("french-container");
-const frenchEndScreen        = document.getElementById("french-end-screen");
-const frenchLibraryContainer = document.getElementById("french-library-container");
+const frenchMenuContainer   = document.getElementById("french-menu-container");
+const frenchQuizContainer   = document.getElementById("french-container");
+const frenchEndScreen       = document.getElementById("french-end-screen");
+const frenchLibraryContainer= document.getElementById("french-library-container");
+
+// Elementos de boas-vindas
+const btnRegisterNow = document.getElementById("btn-register-now");
+const btnLoginWelcome  = document.getElementById("btn-login");
 
 // Elementos de cadastro/login
-const startButton        = document.getElementById("start-button");
-const loginButton        = document.getElementById("login-button");
-const goLoginLink        = document.getElementById("go-login");
-const goRegisterLink     = document.getElementById("go-register");
+const startButton         = document.getElementById("start-button");
+const loginButton         = document.getElementById("login-button");
+const goLoginLink         = document.getElementById("go-login");
+const goRegisterLink      = document.getElementById("go-register");
 
 // Outros botões (menu, quiz, etc.)
-const btnQuiz            = document.getElementById("btnQuiz");
-const btnPerguntas       = document.getElementById("btnPerguntas");
-const btnLibrary         = document.getElementById("btnLibrary");
-const btnRanking         = document.getElementById("btnRanking");
-const btnFacil           = document.getElementById("btnFacil");
-const btnMedio           = document.getElementById("btnMedio");
-const btnDificil         = document.getElementById("btnDificil");
-const restartButton      = document.getElementById("restart-button");
+const btnQuiz             = document.getElementById("btnQuiz");
+const btnPerguntas        = document.getElementById("btnPerguntas");
+const btnLibrary          = document.getElementById("btnLibrary");
+const btnRanking          = document.getElementById("btnRanking");
+const btnFacil            = document.getElementById("btnFacil");
+const btnMedio            = document.getElementById("btnMedio");
+const btnDificil          = document.getElementById("btnDificil");
+const restartButton       = document.getElementById("restart-button");
 const perguntasRestartButton = document.getElementById("perguntas-restart-button");
 const perguntasMenuButton    = document.getElementById("perguntas-menu-button");
-const btnSpanish         = document.getElementById("btnSpanish");
-const btnSpanishQuiz     = document.getElementById("btnSpanishQuiz");
-const btnSpanishLibrary  = document.getElementById("btnSpanishLibrary");
+const btnSpanish          = document.getElementById("btnSpanish");
+const btnSpanishQuiz      = document.getElementById("btnSpanishQuiz");
+const btnSpanishLibrary   = document.getElementById("btnSpanishLibrary");
 const backButtonSpanishMenu = document.getElementById("backButtonSpanishMenu");
-const spanishRestartButton = document.getElementById("spanish-restart-button");
-const spanishMenuButton    = document.getElementById("spanish-menu-button");
-const btnFrench          = document.getElementById("btnFrench");
-const btnFrenchQuiz      = document.getElementById("btnFrenchQuiz");
-const btnFrenchLibrary   = document.getElementById("btnFrenchLibrary");
+const spanishRestartButton  = document.getElementById("spanish-restart-button");
+const spanishMenuButton     = document.getElementById("spanish-menu-button");
+const btnFrench           = document.getElementById("btnFrench");
+const btnFrenchQuiz       = document.getElementById("btnFrenchQuiz");
+const btnFrenchLibrary    = document.getElementById("btnFrenchLibrary");
 const backButtonFrenchMenu = document.getElementById("backButtonFrenchMenu");
 const frenchRestartButton  = document.getElementById("french-restart-button");
 const frenchMenuButton     = document.getElementById("french-menu-button");
@@ -97,7 +101,7 @@ const frenchErrorListEl     = document.getElementById("french-error-list");
 // Função genérica para esconder todas as seções
 function hideAllSections() {
   [
-    registerContainer, loginContainer, menuContainer,
+    welcomeContainer, registerContainer, loginContainer, menuContainer,
     quizContainer, perguntasContainer, perguntasQuizContainer,
     libraryContainer, rankingContainer, endScreen, perguntasEndScreen,
     spanishMenuContainer, spanishQuizContainer, spanishEndScreen, spanishLibraryContainer,
@@ -123,13 +127,21 @@ function backToMenu() {
   if (btn) btn.addEventListener("click", backToMenu);
 });
 
+// Eventos para a tela de boas-vindas
+btnRegisterNow.addEventListener("click", () => {
+  hideAllSections();
+  registerContainer.style.display = "block";
+});
+btnLoginWelcome.addEventListener("click", () => {
+  hideAllSections();
+  loginContainer.style.display = "block";
+});
+
 // --- CADASTRO ---
 startButton.addEventListener("click", async () => {
   const nameInput     = document.getElementById("name").value.trim();
-  // Removido: const numberInput = document.getElementById("number").value.trim();
   const passwordInput = document.getElementById("register-password").value.trim();
 
-  // Validação apenas do nome e senha
   if (!nameInput || !passwordInput) {
     alert("Por favor, preencha todos os campos!");
     return;
@@ -141,7 +153,6 @@ startButton.addEventListener("click", async () => {
       name: nameInput, 
       password: passwordInput // Em produção, utilize Firebase Authentication para segurança
     });
-    // Após cadastro, redireciona para a tela de login
     registerContainer.style.display = "none";
     loginContainer.style.display = "block";
   } catch (err) {
