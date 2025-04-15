@@ -10,6 +10,16 @@
 </head>
 <body>
 
+   <!-- Tela de Carrossel de Fases (antes da English Track) -->
+   <div id="phase-carousel" class="carousel-container hidden">
+    <button id="prev-phase" class="carousel-nav"><i class="fas fa-chevron-left"></i></button>
+    <div class="carousel-slides">
+      <!-- Slides gerados dinamicamente -->
+    </div>
+    <button id="next-phase" class="carousel-nav"><i class="fas fa-chevron-right"></i></button>
+    <button id="start-english-track" class="carousel-start">Iniciar English Track</button>
+  </div>
+
   <!-- Tela de Boas-Vindas -->
   <div id="welcome-container" class="welcome-container animate-in">
     <h1>Bem-vindo ao Speak Easy!</h1>
@@ -17,14 +27,14 @@
     <button id="btn-login" class="welcome-button">Já tenho uma conta</button>
   </div>
 
-  <!-- Tela de Cadastro (mantida igual ao original) -->
-  <div id="register-container" class="register-container animate-in" style="display:none;">
-    <h2>Cadastro</h2>
-    <input type="text" id="name" placeholder="Digite seu nome" required/>
-    <input type="password" id="register-password" placeholder="Crie uma senha" required/>
-    <button id="start-button">Cadastrar <i class="fas fa-arrow-right"></i></button>
-    <p>Já tem uma conta? <a href="#" id="go-login">Login</a></p>
-  </div>
+ <!-- Tela de Cadastro -->
+<div id="register-container" class="register-container animate-in" style="display:none;">
+  <h2>Cadastro</h2>
+  <input type="text" id="name" placeholder="Digite seu nome" required />
+  <input type="password" id="register-password" placeholder="Crie uma senha" required />
+  <button id="start-button">Cadastrar <i class="fas fa-arrow-right"></i></button>
+  <p>Já tem uma conta? <a href="#" id="go-login">Login</a></p>
+</div>
 
   <!-- Tela de Login -->
   <div id="login-container" class="login-container" style="display:none;">
@@ -45,6 +55,8 @@
       <button id="btnSpanish" class="tab-button animate-in spanish"><i class="fas fa-globe"></i> Español</button>
       <button id="btnFrench" class="tab-button animate-in french"><i class="fas fa-globe"></i> Français</button>
       <button id="btnRanking" class="tab-button animate-in"><i class="fas fa-trophy"></i> Ranking</button>
+      <!-- Novo botão para acesso à English Learning Track -->
+      <button id="btnLearning" class="tab-button animate-in"><i class="fas fa-graduation-cap"></i> Learning Track</button>
     </div>
   </div>
 
@@ -218,7 +230,7 @@
     </div>
   </div>
 
-  <!-- Quiz Principal (em inglês) -->
+  <!-- QUIZ PRINCIPAL (em inglês) -->
   <div id="quiz-container" class="quiz-container" style="display:none;">
     <div id="quiz">
       <p id="question"></p>
@@ -414,6 +426,39 @@
     </button>
   </div>
 
-  <script type="module" src="script.js"></script>
+  <!-- Tela de Carrossel de Fases -->
+  <div id="phase-carousel" class="carousel-container hidden">
+    <button id="prev-phase" class="carousel-nav"><i class="fas fa-chevron-left"></i></button>
+    <div class="carousel-slides">
+      <!-- Slides gerados dinamicamente -->
+    </div>
+    <button id="next-phase" class="carousel-nav"><i class="fas fa-chevron-right"></i></button>
+    <button id="start-english-track" class="carousel-start">Iniciar English Track</button>
+  
+  
+ <!-- NOVO: English Learning Track -->
+  <div id="learning-track-container" class="learning-track-container hidden">
+    <div id="level-content">
+      <h2 id="level-title"></h2>
+      <p id="reading-text"></p>
+      <p id="explanation-text"></p>
+      <div id="question-box">
+        <p id="level-question"></p>
+        <ul id="level-options"></ul>
+      </div>
+      <div id="translation-section" class="translation-section hidden">
+        <h3>Faça as ligações corretas:</h3>
+        <div id="english-buttons" class="translation-buttons"></div>
+        <div id="portuguese-buttons" class="translation-buttons"></div>
+        <button id="check-all-translations" class="translation-check hidden">Verificar todas</button>
+      </div>
+      <button id="next-level-btn" class="next-level-btn hidden">Próximo Nível</button>
+    </div>
+  </div>
+
+
+
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
