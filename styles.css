@@ -530,3 +530,12 @@ body {
   display: block;
   opacity: 1;
 }
+
+#user-info {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fefefe;
+}
