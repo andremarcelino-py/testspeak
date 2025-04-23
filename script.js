@@ -1,4 +1,3 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
@@ -152,15 +151,27 @@ startButton.addEventListener("click", async () => {
 });
 
 // --- LOGIN ---
+let currentUserName = ""; // Variável para armazenar o nome do usuário logado
+
+// Atualiza o nome do usuário no menu
+function updateUserName(name) {
+  currentUserName = name;
+  const userNameElement = document.getElementById("user-name");
+  if (userNameElement) {
+    userNameElement.textContent = `Bem-vindo, ${name}!`;
+  }
+}
+
+// Modifique o login para atualizar o nome do usuário
 loginButton.addEventListener("click", async () => {
-  const loginName     = document.getElementById("login-name").value.trim();
+  const loginName = document.getElementById("login-name").value.trim();
   const loginPassword = document.getElementById("login-password").value.trim();
 
   if (!loginName || !loginPassword) {
     alert("Por favor, preencha todos os campos!");
     return;
   }
-  
+
   try {
     const snap = await getDocs(collection(db, "users"));
     let userFound = false;
@@ -168,6 +179,7 @@ loginButton.addEventListener("click", async () => {
       const userData = doc.data();
       if (userData.name === loginName && userData.password === loginPassword) {
         userFound = true;
+        updateUserName(loginName); // Atualiza o nome do usuário
         hideAllSections();
         menuContainer.style.display = "block";
       }
