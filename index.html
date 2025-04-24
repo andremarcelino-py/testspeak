@@ -1,563 +1,821 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Speak Easy - Quiz de Inglês</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
-  <link rel="stylesheet" href="styles.css"/>
-</head>
-<body>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
+// Configuração Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBCVGQk1Ctp1IZJrHQdM6YUSItaD3pypjg",
+  authDomain: "testspeakeasy.firebaseapp.com",
+  projectId: "testspeakeasy",
+  storageBucket: "testspeakeasy.appspot.com",
+  messagingSenderId: "732379388945",
+  appId: "1:732379388945:web:a46304dd51b10e2850e5b0",
+  measurementId: "G-WNB4XS2YJB"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  <!-- Tela de Cadastro -->
-<div id="register-container" class="register-container animate-in">
-  <h2>Cadastro</h2>
-  <input type="text" id="name" placeholder="Digite seu nome"/>
-  <input type="password" id="register-password" placeholder="Crie uma senha"/>
-  <button id="start-button">Cadastrar <i class="fas fa-arrow-right"></i></button>
-  <p>Já tem uma conta? <a href="#" id="go-login">Login</a></p>
-</div>
+// Containers principais
+const registerContainer      = document.getElementById("register-container");
+const loginContainer         = document.getElementById("login-container");
+const menuContainer          = document.getElementById("menu-container");
+const quizContainer          = document.getElementById("quiz-container");
+const perguntasContainer     = document.getElementById("perguntas-container");
+const perguntasQuizContainer = document.getElementById("perguntas-quiz-container");
+const libraryContainer       = document.getElementById("library-container");
+const rankingContainer       = document.getElementById("ranking-container");
+const endScreen              = document.getElementById("end-screen");
+const perguntasEndScreen     = document.getElementById("perguntas-end-screen");
+const spanishMenuContainer   = document.getElementById("spanish-menu-container");
+const spanishQuizContainer   = document.getElementById("spanish-container");
+const spanishEndScreen       = document.getElementById("spanish-end-screen");
+const spanishLibraryContainer= document.getElementById("spanish-library-container");
+const frenchMenuContainer    = document.getElementById("french-menu-container");
+const frenchQuizContainer    = document.getElementById("french-container");
+const frenchEndScreen        = document.getElementById("french-end-screen");
+const frenchLibraryContainer = document.getElementById("french-library-container");
 
-  <!-- Tela de Login -->
-<div id="login-container" class="login-container" style="display:none;">
-  <h2>Login</h2>
-  <input type="text" id="login-name" placeholder="Digite seu nome">
-  <input type="password" id="login-password" placeholder="Digite sua senha">
-  <button id="login-button">Entrar</button>
-  <p>Não tem uma conta? <a href="#" id="go-register">Cadastre-se</a></p>
-</div>
+// Elementos de cadastro/login
+const startButton        = document.getElementById("start-button");
+const loginButton        = document.getElementById("login-button");
+const goLoginLink        = document.getElementById("go-login");
+const goRegisterLink     = document.getElementById("go-register");
 
-  <!-- Menu Principal -->
-  <div id="menu-container" class="menu-container" style="display:none;">
-    <h1 class="title">Speak Easy</h1>
-    <div id="user-info">
-      <img id="user-photo" src="images/default.png" alt="Foto de Perfil" class="user-photo"/>
-      <span id="user-name"></span>
-    </div>
-    <div class="tabs">
-      <button id="btnQuiz" class="tab-button animate-in"><i class="fas fa-question-circle"></i> Quiz</button>
-      <button id="btnPerguntas" class="tab-button animate-in"><i class="fas fa-edit"></i> Perguntas</button>
-      <button id="btnLibrary" class="tab-button animate-in"><i class="fas fa-book-open"></i> Biblioteca</button>
-      <button id="btnSpanish" class="tab-button animate-in spanish"><i class="fas fa-globe"></i> Español</button>
-      <button id="btnFrench" class="tab-button animate-in french"><i class="fas fa-globe"></i> Français</button>
-      <button id="btnRanking" class="tab-button animate-in"><i class="fas fa-trophy"></i> Ranking</button>
-    </div>
-    <!-- Botão de logout no menu principal -->
-<button id="logout-button" class="restart-button" style="position: absolute; top: 10px; right: 10px;">
-  Sair
-</button>
-  </div>
+// Outros botões (menu, quiz, etc.)
+const btnQuiz            = document.getElementById("btnQuiz");
+const btnPerguntas       = document.getElementById("btnPerguntas");
+const btnLibrary         = document.getElementById("btnLibrary");
+const btnRanking         = document.getElementById("btnRanking");
+const btnFacil           = document.getElementById("btnFacil");
+const btnMedio           = document.getElementById("btnMedio");
+const btnDificil         = document.getElementById("btnDificil");
+const restartButton      = document.getElementById("restart-button");
+const perguntasRestartButton = document.getElementById("perguntas-restart-button");
+const perguntasMenuButton    = document.getElementById("perguntas-menu-button");
+const btnSpanish         = document.getElementById("btnSpanish");
+const btnSpanishQuiz     = document.getElementById("btnSpanishQuiz");
+const btnSpanishLibrary  = document.getElementById("btnSpanishLibrary");
+const backButtonSpanishMenu = document.getElementById("backButtonSpanishMenu");
+const spanishRestartButton = document.getElementById("spanish-restart-button");
+const spanishMenuButton    = document.getElementById("spanish-menu-button");
+const btnFrench          = document.getElementById("btnFrench");
+const btnFrenchQuiz      = document.getElementById("btnFrenchQuiz");
+const btnFrenchLibrary   = document.getElementById("btnFrenchLibrary");
+const backButtonFrenchMenu = document.getElementById("backButtonFrenchMenu");
+const frenchRestartButton  = document.getElementById("french-restart-button");
+const frenchMenuButton     = document.getElementById("french-menu-button");
 
-  <!-- Menu Español: Selección de Contenido en Español -->
-  <div id="spanish-menu-container" class="menu-container" style="display:none;">
-    <h2>Contenido en Español</h2>
-    <div class="tabs">
-      <button id="btnSpanishQuiz" class="tab-button animate-in spanish">
-         <i class="fas fa-question-circle"></i> Preguntas
-      </button>
-      <button id="btnSpanishLibrary" class="tab-button animate-in spanish">
-         <i class="fas fa-book-open"></i> Biblioteca
-      </button>
-    </div>
-    <button class="back-button" id="backButtonSpanishMenu">
-      <i class="fas fa-arrow-left"></i> Volver al Menú Principal
-    </button>
-  </div>
+// Elementos do Quiz (inglês, perguntas, español, francês)
+const questionElement       = document.getElementById("question");
+const optionsElement        = document.getElementById("options");
+const scoreElement          = document.getElementById("score");
+const timerElement          = document.getElementById("timer");
+const finalMessageElement   = document.getElementById("final-message");
+const errorListElement      = document.getElementById("error-list");
 
-  <!-- Quiz en Español -->
-  <div id="spanish-container" class="quiz-container" style="display:none;">
-    <button class="back-button" id="backButtonSpanish">
-      <i class="fas fa-arrow-left"></i> Volver al Menú
-    </button>
-    <div id="spanish-quiz">
-      <p id="spanish-question"></p>
-      <ul id="spanish-options"></ul>
-    </div>
-    <div class="score-container">
-      <p>Puntuación: <span id="spanish-score">0</span>/15</p>
-      <p>Tiempo: <span id="spanish-timer">0</span> s</p>
-    </div>
-  </div>
+const perguntasQuestionElement = document.getElementById("perguntas-question");
+const perguntasOptionsElement  = document.getElementById("perguntas-options");
+const perguntasScoreElement    = document.getElementById("perguntas-score");
+const perguntasTimerElement    = document.getElementById("perguntas-timer");
+const perguntasFinalMessageElement = document.getElementById("perguntas-final-message");
+const perguntasErrorListElement    = document.getElementById("perguntas-error-list");
 
-  <!-- Tela Final do Quiz en Español -->
-  <div id="spanish-end-screen" class="end-screen" style="display:none;">
-    <button class="back-button" id="backButtonSpanishEndScreen">
-      <i class="fas fa-arrow-left"></i> Volver al Menú
-    </button>
-    <p id="spanish-final-message"></p>
-    <ul id="spanish-error-list"></ul>
-    <button id="spanish-restart-button" class="restart-button">
-      <i class="fas fa-sync-alt"></i> Reiniciar Quiz
-    </button>
-    <button id="spanish-menu-button" class="restart-button">
-      <i class="fas fa-home"></i> Menú Principal
-    </button>
-  </div>
+const spanishQuestionElement = document.getElementById("spanish-question");
+const spanishOptionsElement  = document.getElementById("spanish-options");
+const spanishScoreElement    = document.getElementById("spanish-score");
+const spanishTimerElement    = document.getElementById("spanish-timer");
+const spanishFinalMessageEl  = document.getElementById("spanish-final-message");
+const spanishErrorListEl     = document.getElementById("spanish-error-list");
 
-  <!-- Biblioteca en Español -->
-  <div id="spanish-library-container" class="library-container" style="display:none;">
-  <button class="back-button" id="backButtonSpanishLibrary">
-    <i class="fas fa-arrow-left"></i> Volver al Menú
-  </button>
-  <h2><i class="fas fa-book-open"></i> Biblioteca de Textos en Español</h2>
+const frenchQuestionElement = document.getElementById("french-question");
+const frenchOptionsElement  = document.getElementById("french-options");
+const frenchScoreElement    = document.getElementById("french-score");
+const frenchTimerElement    = document.getElementById("french-timer");
+const frenchFinalMessageEl  = document.getElementById("french-final-message");
+const frenchErrorListEl     = document.getElementById("french-error-list");
 
-  <!-- Sección: Frases Básicas -->
-  <div id="frases-basicas-es" class="text-card animate-in">
-    <div class="text-header">
-      <i class="fas fa-star"></i>
-      <h3>Frases Básicas</h3>
-    </div>
-    <div class="text-content">
-      <p class="spanish">Hola - Olá</p>
-      <p class="spanish">Adiós - Adeus</p>
-      <p class="spanish">Gracias - Obrigado</p>
-      <p class="spanish">Por favor - Por favor</p>
-      <p class="spanish">¿Cómo estás? - Como você está?</p>
-    </div>
-  </div>
+// Função genérica para esconder todas as seções
+function hideAllSections() {
+  [
+    registerContainer, loginContainer, menuContainer,
+    quizContainer, perguntasContainer, perguntasQuizContainer,
+    libraryContainer, rankingContainer, endScreen, perguntasEndScreen,
+    spanishMenuContainer, spanishQuizContainer, spanishEndScreen, spanishLibraryContainer,
+    frenchMenuContainer, frenchQuizContainer, frenchEndScreen, frenchLibraryContainer,
+    profileContainer // Adicione esta linha
+  ].forEach(sec => sec && (sec.style.display = "none"));
+}
 
-  <!-- Sección: Verbos Importantes -->
-  <div id="verbos-importantes-es" class="text-card animate-in">
-    <div class="text-header">
-      <i class="fas fa-star"></i>
-      <h3>Verbos Importantes</h3>
-    </div>
-    <div class="text-content">
-      <p>Ejemplo: hablar, comer, vivir, estudiar, trabajar.</p>
-      <p class="spanish">Yo hablo español - Eu falo espanhol</p>
-      <p class="spanish">Ella come manzanas - Ela come maçãs</p>
-      <p class="spanish">Nosotros vivimos en México - Nós moramos no México</p>
-    </div>
-  </div>
+// Função para voltar ao menu
+function backToMenu() {
+  stopTimer(); stopPerguntasTimer(); stopSpanishTimer(); stopFrenchTimer();
+  hideAllSections();
+  menuContainer.style.display = "block";
+}
 
-  <!-- Sección: Preguntas Comunes -->
-  <div id="preguntas-comunes-es" class="text-card animate-in">
-    <div class="text-header">
-      <i class="fas fa-star"></i>
-      <h3>Preguntas Comunes</h3>
-    </div>
-    <div class="text-content">
-      <p class="spanish">¿Dónde vives? - Onde você mora?</p>
-      <p class="spanish">¿Qué hora es? - Que horas são?</p>
-      <p class="spanish">¿Cuánto cuesta? - Quanto custa?</p>
-      <p class="spanish">¿Puedes ayudarme? - Você pode me ajudar?</p>
-      <p class="spanish">¿Cómo te llamas? - Qual é o seu nome?</p>
-    </div>
-  </div>
+// Conecta botões de voltar
+[
+  "backButtonQuiz", "backButtonPerguntas", "backButtonPerguntasQuiz",
+  "backButtonLibrary", "backButtonRanking", "backButtonEndScreen", "backButtonPerguntasEndScreen",
+  "backButtonSpanish", "backButtonSpanishLibrary", "backButtonSpanishEndScreen",
+  "backButtonFrench", "backButtonFrenchLibrary", "backButtonFrenchEndScreen"
+].forEach(id => {
+  const btn = document.getElementById(id);
+  if (btn) btn.addEventListener("click", backToMenu);
+});
 
-  <!-- Sección: Expresiones Idiomáticas -->
-  <div id="expresiones-idiomaticas-es" class="text-card animate-in">
-    <div class="text-header">
-      <i class="fas fa-star"></i>
-      <h3>Expresiones Idiomáticas</h3>
-    </div>
-    <div class="text-content">
-      <p class="spanish">Estar en las nubes - Estar nas nuvens</p>
-      <p class="spanish">Tener la sartén por el mango - Ter a faca e o queijo na mão</p>
-      <p class="spanish">Ser pan comido - Ser muito fácil</p>
-      <p class="spanish">Llover a cántaros - Chover muito</p>
-    </div>
-  </div>
-</div>
+// --- CADASTRO ---
+startButton.addEventListener("click", async () => {
+  const nameInput = document.getElementById("name").value.trim();
+  const passwordInput = document.getElementById("register-password").value.trim();
+  if (!nameInput || !passwordInput) {
+    alert("Por favor, preencha todos os campos!");
+    return;
+  }
+  try {
+    await addDoc(collection(db, "users"), {
+      name: nameInput,
+      password: passwordInput,
+      score: 0,
+      photoURL: "images/default.png"
+    });
+    hideAllSections();
+    loginContainer.style.display = "block";
+  } catch (err) {
+    console.error(err);
+    alert("Não foi possível cadastrar. Tente novamente.");
+  }
+});
 
-  <!-- Menu Français: Sélection de Contenu en Français -->
-  <div id="french-menu-container" class="menu-container" style="display:none;">
-    <h2>Contenu en Français</h2>
-    <div class="tabs">
-      <button id="btnFrenchQuiz" class="tab-button animate-in french">
-         <i class="fas fa-question-circle"></i> Questions
-      </button>
-      <button id="btnFrenchLibrary" class="tab-button animate-in french">
-         <i class="fas fa-book-open"></i> Bibliothèque
-      </button>
-    </div>
-    <button class="back-button" id="backButtonFrenchMenu">
-      <i class="fas fa-arrow-left"></i> Retour au Menu Principal
-    </button>
-  </div>
+// --- LOGIN ---
+let currentUserName = ""; // Variável para armazenar o nome do usuário logado
 
-  <!-- Quiz en Français -->
-  <div id="french-container" class="quiz-container" style="display:none;">
-    <button class="back-button" id="backButtonFrench">
-      <i class="fas fa-arrow-left"></i> Retour au Menu
-    </button>
-    <div id="french-quiz">
-      <p id="french-question"></p>
-      <ul id="french-options"></ul>
-    </div>
-    <div class="score-container">
-      <p>Score : <span id="french-score">0</span>/15</p>
-      <p>Temps : <span id="french-timer">0</span> s</p>
-    </div>
-  </div>
+// Atualiza o nome do usuário no menu
+function updateUserName(name, photoURL = "images/default.png") {
+  currentUserName = name;
+  const userNameElement = document.getElementById("user-name");
+  const userPhotoElement = document.getElementById("user-photo");
 
-  <!-- Écran Final du Quiz en Français -->
-  <div id="french-end-screen" class="end-screen" style="display:none;">
-    <button class="back-button" id="backButtonFrenchEndScreen">
-      <i class="fas fa-arrow-left"></i> Retour au Menu
-    </button>
-    <p id="french-final-message"></p>
-    <ul id="french-error-list"></ul>
-    <button id="french-restart-button" class="restart-button">
-      <i class="fas fa-sync-alt"></i> Réessayer
-    </button>
-    <button id="french-menu-button" class="restart-button">
-      <i class="fas fa-home"></i> Menu Principal
-    </button>
-  </div>
+  if (userNameElement) {
+    userNameElement.textContent = `Bem-vindo, ${name}!`;
+  }
+  if (userPhotoElement) {
+    userPhotoElement.src = photoURL;
+  }
+}
 
-  <!-- Bibliothèque en Français -->
-  <div id="french-library-container" class="library-container" style="display:none;">
-    <button class="back-button" id="backButtonFrenchLibrary">
-      <i class="fas fa-arrow-left"></i> Retour au Menu
-    </button>
-    <h2><i class="fas fa-book-open"></i> Bibliothèque en Français</h2>
-    <!-- Section: Phrases de Base -->
-    <div id="phrases-de-base-fr" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Phrases de Base</h3>
-      </div>
-      <div class="text-content">
-        <p class="french">J'aime étudier le français</p>
-        <p class="french">Je suis étudiant(e)</p>
-      </div>
-    </div>
-    <!-- Section: Verbes -->
-    <div id="verbes-fr" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Verbes</h3>
-      </div>
-      <div class="text-content">
-        <p>Exemple : lire, écrire, parler, manger et vivre.</p>
-      </div>
-    </div>
-    <!-- Section: Expressions Idiomatiques -->
-    <div id="expressions-fr" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Expressions Idiomatiques</h3>
-      </div>
-      <div class="text-content">
-        <p>Exemple : "donner un coup de main" signifie aider.</p>
-      </div>
-    </div>
-  </div>
+// Modifique o login para atualizar o nome do usuário
+loginButton.addEventListener("click", async () => {
+  const loginName = document.getElementById("login-name").value.trim();
+  const loginPassword = document.getElementById("login-password").value.trim();
 
-  <!-- Quiz Principal (en anglais) -->
-  <div id="quiz-container" class="quiz-container" style="display:none;">
-    <div id="quiz">
-      <p id="question"></p>
-      <ul id="options"></ul>
-    </div>
-    <div class="score-container">
-      <p>Pontuação: <span id="score">0</span>/15</p>
-      <p>Tempo: <span id="timer">0</span> s</p>
-    </div>
-  </div>
+  if (!loginName || !loginPassword) {
+    alert("Por favor, preencha todos os campos!");
+    return;
+  }
 
-  <!-- Seleção de Nível para Perguntas -->
-  <div id="perguntas-container" class="perguntas-container" style="display:none;">
-    <button class="back-button" id="backButtonPerguntas">
-      <i class="fas fa-arrow-left"></i> Voltar ao Menu
-    </button>
-    <h2><i class="fas fa-edit"></i> Escolha o Nível</h2>
-    <div class="level-buttons">
-      <button id="btnFacil" class="level-button">Fácil</button>
-      <button id="btnMedio" class="level-button">Médio</button>
-      <button id="btnDificil" class="level-button">Difícil</button>
-    </div>
-  </div>
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    let userFound = false;
 
-  <!-- Quiz de Perguntas -->
-  <div id="perguntas-quiz-container" class="quiz-container" style="display:none;">
-    <button class="back-button" id="backButtonPerguntasQuiz">
-      <i class="fas fa-arrow-left"></i> Voltar ao Menu
-    </button>
-    <div id="perguntas-quiz">
-      <p id="perguntas-question"></p>
-      <ul id="perguntas-options"></ul>
-    </div>
-    <div class="score-container">
-      <p>Pontuação: <span id="perguntas-score">0</span>/10</p>
-      <p>Tempo: <span id="perguntas-timer">0</span> s</p>
-    </div>
-  </div>
+    snap.forEach(doc => {
+      const userData = doc.data();
+      if (userData.name === loginName && userData.password === loginPassword) {
+        userFound = true;
+        updateUserName(loginName, userData.photoURL); // Atualiza o nome e a foto do usuário
+        hideAllSections();
+        menuContainer.style.display = "block"; // Mostra o menu principal
+      }
+    });
 
-  <!-- Biblioteca (em inglês) -->
-  <div id="library-container" class="library-container" style="display:none;">
-    <button class="back-button" id="backButtonLibrary">
-      <i class="fas fa-arrow-left"></i> Voltar ao Menu
-    </button>
-    <h2><i class="fas fa-book-open"></i> Biblioteca de Textos</h2>
-    <!-- Seção: Frases Básicas -->
-    <div id="frases-basicas" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Frases Básicas</h3>
-      </div>
-      <div class="text-content">
-        <p class="english">I like to study English</p>
-        <p class="portuguese">Eu gosto de estudar inglês</p>
-        <p class="english">I am a student</p>
-        <p class="portuguese">Eu sou estudante</p>
-      </div>
-    </div>
-    <!-- Seção: Verbos -->
-    <div id="verbos" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Verbos</h3>
-      </div>
-      <div class="text-content">
-        <p>Verbos são palavras de ação. Por exemplo, ler "read", escrever "write", e falar "speak" ajudam a descrever as atividades.</p>
-        <p>Exemplos:</p>
-        <p class="english">I like to read books</p>
-        <p class="portuguese">Eu gosto de ler livros</p>
-        <p class="english">She doesn't like coffee</p>
-        <p class="portuguese">Ela não gosta de café</p>
-      </div>
-    </div>
-    <!-- Seção: Idioms -->
-    <div id="idioms" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Idioms</h3>
-      </div>
-      <div class="text-content">
-        <p>"Idioms" também chamada de expressões idiomáticas, são expressões cujo significado não pode ser deduzido literalmente pelas palavras. Por exemplo, "break a leg" significa "boa sorte", não quebrar a perna.</p>
-        <p>Exemplos:</p>
-        <p class="english">A piece of cake</p>
-        <p class="portuguese">Algo muito fácil</p>
-        <p class="english">Help yourself</p>
-        <p class="portuguese">Sirva-se</p>
-      </div>
-    </div>
-    <!-- Seção: Gramática -->
-    <div id="grammar" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Lição de Gramática</h3>
-      </div>
-      <div class="text-content">
-        <p>Uma boa compreensão da gramática inglesa é essencial para formar frases corretas.</p>
-        <p>Dicas importantes: preste atenção aos tempos verbais, concordância entre sujeito e verbo e à estrutura da frase.</p>
-        <p>Exemplo: use "doesn't" com sujeitos singulares (He doesn't like apples).</p>
-      </div>
-    </div>
-    <!-- Seção: Cumprimentos -->
-    <div id="greetings" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Cumprimentos e Apresentações</h3>
-      </div>
-      <div class="text-content">
-        <p>Aprenda expressões comuns para saudações e apresentações, como "Good morning", "How are you?" e "Nice to meet you".</p>
-        <p>Exemplos:</p>
-        <p class="english">It's good to see you</p>
-        <p class="portuguese">Que bom ver você</p>
-        <p class="english">How are you doing?</p>
-        <p class="portuguese">Como vai você?</p>
-        <p class="english">Have a good night</p>
-        <p class="portuguese">Tenha uma boa noite</p>
-      </div>
-    </div>
-    <!-- NOVA SEÇÃO: Expressões Idiomáticas Avançadas -->
-<div id="idioms-advanced" class="text-card animate-in">
-  <div class="text-header">
-    <i class="fas fa-star"></i>
-    <h3>Expressões Idiomáticas Avançadas</h3>
-  </div>
-  <div class="text-content">
-    <p class="english">Burn the midnight oil - Trabalhar até tarde da noite</p>
-    <p class="english">Bite the bullet - Enfrentar algo difícil</p>
-    <p class="english">Hit the nail on the head - Acertar em cheio</p>
-    <p class="english">Let the cat out of the bag - Revelar um segredo</p>
-    <p class="english">Throw in the towel - Desistir</p>
-  </div>
-</div>
+    if (!userFound) {
+      alert("Dados de login incorretos! Tente novamente.");
+    }
+  } catch (err) {
+    console.error("Erro no login:", err);
+    alert("Erro ao efetuar login. Tente novamente.");
+  }
+});
 
-<!-- NOVA SEÇÃO: Tempos Verbais -->
-<div id="verb-tenses" class="text-card animate-in">
-  <div class="text-header">
-    <i class="fas fa-star"></i>
-    <h3>Tempos Verbais</h3>
-  </div>
-  <div class="text-content">
-    <p><strong>Present Perfect:</strong> I have been to London - Eu estive em Londres</p>
-    <p><strong>Past Perfect:</strong> She had finished her homework before dinner - Ela tinha terminado a lição de casa antes do jantar</p>
-    <p><strong>Future Perfect:</strong> By next year, I will have graduated - No próximo ano, eu terei me formado</p>
-    <p><strong>Present Continuous:</strong> They are studying for the exam - Eles estão estudando para o exame</p>
-    <p><strong>Past Continuous:</strong> I was reading when the phone rang - Eu estava lendo quando o telefone tocou</p>
-  </div>
-</div>
+// Navegação entre telas de cadastro e login
+goLoginLink.addEventListener("click", () => {
+  registerContainer.style.display = "none";
+  loginContainer.style.display = "block";
+});
+goRegisterLink.addEventListener("click", () => {
+  loginContainer.style.display = "none";
+  registerContainer.style.display = "block";
+});
 
-<!-- NOVA SEÇÃO: Vocabulário Técnico -->
-<div id="technical-vocabulary" class="text-card animate-in">
-  <div class="text-header">
-    <i class="fas fa-star"></i>
-    <h3>Vocabulário Técnico</h3>
-  </div>
-  <div class="text-content">
-    <p class="english">Algorithm - Algoritmo</p>
-    <p class="english">Database - Banco de dados</p>
-    <p class="english">Cloud Computing - Computação em nuvem</p>
-    <p class="english">Artificial Intelligence - Inteligência artificial</p>
-    <p class="english">Machine Learning - Aprendizado de máquina</p>
-  </div>
-</div>
-    <!-- NOVO CONTEÚDO: Palavras Interrogativas -->
-    <div id="interrogative-words" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Palavras Interrogativas</h3>
-      </div>
-      <div class="text-content">
-        <p>Essas palavras são essenciais para formular perguntas:</p>
-        <ul>
-          <li class="english">Who - Quem</li>
-          <li class="english">What - O que</li>
-          <li class="english">When - Quando</li>
-          <li class="english">Where - Onde</li>
-          <li class="english">Why - Por que</li>
-          <li class="english">How - Como</li>
-        </ul>
-        <p>Observe que cada uma tem sua função para determinar o tipo de resposta que esperamos.</p>
-      </div>
-    </div>
-  
-    <!-- NOVO CONTEÚDO: Mais Perguntas -->
-    <div id="more-questions" class="text-card animate-in">
-      <div class="text-header">
-        <i class="fas fa-star"></i>
-        <h3>Mais Perguntas</h3>
-      </div>
-      <div class="text-content">
-        <p>Abaixo, veja exemplos de perguntas comuns com suas traduções:</p>
-        <p class="english">What is your favorite food?</p>
-        <p class="portuguese">Qual é a sua comida favorita?</p>
-        <p class="english">When did you start learning English?</p>
-        <p class="portuguese">Quando você começou a aprender inglês?</p>
-        <p class="english">How often do you practice speaking?</p>
-        <p class="portuguese">Com que frequência você pratica falar?</p>
-        <p class="english">Who is your role model?</p>
-        <p class="portuguese">Quem é o seu ídolo?</p>
-        <p class="english">What do you do in your free time?</p>
-        <p class="portuguese">O que você faz no seu tempo livre?</p>
-      </div>
-    </div>
-  </div>
+// --- QUIZ INGLÊS ---
+let questions = [], score = 0, currentQuestion = 0, errors = [], quizTimer = 0, timerInterval;
+function getRandomQuestions() {
+  return [...allQuestions].sort(() => Math.random() - 0.5).slice(0,15);
+}
+function startTimer() {
+  quizTimer = 0; timerElement.textContent = quizTimer;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    quizTimer++; timerElement.textContent = quizTimer;
+  },1000);
+}
+function stopTimer() { clearInterval(timerInterval); }
+function loadQuestion() {
+  if (currentQuestion < questions.length) {
+    const q = questions[currentQuestion];
+    questionElement.textContent = q.question;
+    optionsElement.innerHTML = "";
+    q.options.forEach((opt,i)=>{
+      const li = document.createElement("li");
+      li.textContent = opt;
+      li.addEventListener("click", ()=> checkAnswer(i));
+      optionsElement.appendChild(li);
+    });
+  } else endQuiz();
+}
+function checkAnswer(sel) {
+  const q = questions[currentQuestion];
+  const opts = optionsElement.querySelectorAll("li");
+  opts.forEach((li,i)=>{
+    li.classList.remove("correct","wrong");
+    if (i === q.answer) li.classList.add("correct");
+    else if (i === sel) li.classList.add("wrong");
+    li.style.pointerEvents = "none";
+  });
+  if (sel === q.answer) { score++; scoreElement.textContent = score; }
+  else errors.push(`Pergunta: ${q.question} - Resposta: ${q.options[q.answer]}`);
+  saveProgress(currentUserName, { questions, score, currentQuestion, errors, quizTimer });
+  setTimeout(()=>{
+    currentQuestion++; loadQuestion();
+  },1500);
+}
+function endQuiz() {
+  stopTimer();
+  quizContainer.style.display = "none";
+  endScreen.style.display = "block";
+  finalMessageElement.textContent = `Pontuação Final: ${score}/${questions.length} | Tempo: ${quizTimer}s`;
+  errorListElement.innerHTML = errors.map(e=>`<li class="error-item">${e}</li>`).join("");
+  saveScore(document.getElementById("name").value.trim(), score, quizTimer);
+}
+btnQuiz.addEventListener("click", async () => {
+  hideAllSections();
+  quizContainer.style.display = "block";
+  const savedProgress = await loadProgress(currentUserName);
+  if (savedProgress) {
+    const resume = confirm("Você tem progresso salvo. Deseja continuar de onde parou?");
+    if (resume) {
+      questions = savedProgress.questions;
+      score = savedProgress.score;
+      currentQuestion = savedProgress.currentQuestion;
+      errors = savedProgress.errors;
+      quizTimer = savedProgress.quizTimer;
+    } else {
+      questions = getRandomQuestions();
+      score = 0;
+      currentQuestion = 0;
+      errors = [];
+      quizTimer = 0;
+    }
+  } else {
+    questions = getRandomQuestions();
+    score = 0;
+    currentQuestion = 0;
+    errors = [];
+    quizTimer = 0;
+  }
+  scoreElement.textContent = score;
+  startTimer();
+  loadQuestion();
+});
+restartButton.addEventListener("click", ()=>{
+  btnQuiz.click();
+});
 
-  <!-- Ranking -->
-  <div id="ranking-container" class="ranking-container" style="display:none;">
-  <button class="back-button" id="backButtonRanking">
-    <i class="fas fa-arrow-left"></i> Voltar ao Menu
-  </button>
-  <h2><i class="fas fa-trophy"></i> Ranking</h2>
-  <div class="podium">
-  <div class="podium-item top-2">
-    <div class="podium-photo">
-      <img src="images/default.png" alt="Avatar" class="ranking-photo" id="top-2-photo" />
-    </div>
-    <span id="top-2-name" class="podium-name">2º Lugar</span>
-    <div class="podium-details">
-      <span id="top-2-score">0 pontos</span>
-      <span id="top-2-time">0s</span>
-    </div>
-  </div>
-  <div class="podium-item top-1">
-    <div class="podium-photo">
-      <img src="images/default.png" alt="Avatar" class="ranking-photo" id="top-1-photo" />
-    </div>
-    <span id="top-1-name" class="podium-name">1º Lugar</span>
-    <div class="podium-details">
-      <span id="top-1-score">0 pontos</span>
-      <span id="top-1-time">0s</span>
-    </div>
-  </div>
-  <div class="podium-item top-3">
-    <div class="podium-photo">
-      <img src="images/default.png" alt="Avatar" class="ranking-photo" id="top-3-photo" />
-    </div>
-    <span id="top-3-name" class="podium-name">3º Lugar</span>
-    <div class="podium-details">
-      <span id="top-3-score">0 pontos</span>
-      <span id="top-3-time">0s</span>
-    </div>
-  </div>
-</div>
-<ul id="ranking-list" class="ranking-list">
-  <!-- Exemplo de item do ranking a partir do 4º lugar -->
-  <li class="ranking-item">
-    <div class="ranking-photo">
-      <img src="images/default.png" alt="Avatar" />
-    </div>
-    <div class="ranking-details">
-      <span class="ranking-name">Nome do Jogador</span>
-      <span class="ranking-score-time">0 pontos - 0s</span>
-    </div>
-  </li>
-</ul>
-</div>
+// --- QUIZ PERGUNTAS ---
+let perguntasQuestions = [], perguntasScore = 0, currentPerguntaQuestion = 0, perguntasErrors = [], perguntasTimer = 0, perguntasTimerInterval;
+function startPerguntasTimer() {
+  perguntasTimer = 0; perguntasTimerElement.textContent = perguntasTimer;
+  clearInterval(perguntasTimerInterval);
+  perguntasTimerInterval = setInterval(()=>{
+    perguntasTimer++; perguntasTimerElement.textContent = perguntasTimer;
+  },1000);
+}
+function stopPerguntasTimer(){ clearInterval(perguntasTimerInterval); }
+function loadPerguntasQuestion(){
+  if (currentPerguntaQuestion < perguntasQuestions.length) {
+    const q = perguntasQuestions[currentPerguntaQuestion];
+    perguntasQuestionElement.textContent = q.question;
+    perguntasOptionsElement.innerHTML = "";
+    q.options.forEach((opt,i)=>{
+      const li = document.createElement("li");
+      li.textContent = opt;
+      li.addEventListener("click", ()=> checkPerguntasAnswer(i));
+      perguntasOptionsElement.appendChild(li);
+    });
+  } else endPerguntasQuiz();
+}
+function checkPerguntasAnswer(sel) {
+  const q = perguntasQuestions[currentPerguntaQuestion];
+  const opts = perguntasOptionsElement.querySelectorAll("li");
+  opts.forEach((li,i)=>{
+    li.classList.remove("correct","wrong");
+    if (i === q.answer) li.classList.add("correct");
+    else if (i === sel) li.classList.add("wrong");
+    li.style.pointerEvents = "none";
+  });
+  if (sel === q.answer) { perguntasScore++; perguntasScoreElement.textContent = perguntasScore; }
+  else perguntasErrors.push({ question: q.question, correct: q.options[q.answer], libraryRef: q.libraryRef });
+  setTimeout(()=>{
+    currentPerguntaQuestion++; loadPerguntasQuestion();
+  },1500);
+}
+function endPerguntasQuiz() {
+  stopPerguntasTimer();
+  perguntasQuizContainer.style.display="none";
+  perguntasEndScreen.style.display="block";
+  perguntasFinalMessageElement.textContent = `Pontuação Final: ${perguntasScore}/${perguntasQuestions.length} | Tempo: ${perguntasTimer}s`;
+  perguntasErrorListElement.innerHTML = perguntasErrors.map(err=>`
+    <li class="error-item">
+      ${err.question}<br>
+      Resposta correta: ${err.correct}
+      <button onclick="showLibrarySection('${err.libraryRef}')">Aprenda Mais</button>
+    </li>
+  `).join("");
+}
+function startPerguntasQuiz(dif) {
+  perguntasQuestions = allQuestions.filter(q=>q.difficulty===dif).sort(()=>Math.random()-0.5).slice(0,10);
+  perguntasScore=0; currentPerguntaQuestion=0; perguntasErrors=[];
+  perguntasScoreElement.textContent=perguntasScore;
+  hideAllSections();
+  perguntasQuizContainer.style.display="block";
+  startPerguntasTimer();
+  loadPerguntasQuestion();
+}
+btnPerguntas.addEventListener("click", ()=>{ hideAllSections(); perguntasContainer.style.display="block"; });
+btnFacil.addEventListener("click", ()=> startPerguntasQuiz("easy"));
+btnMedio.addEventListener("click", ()=> startPerguntasQuiz("medium"));
+btnDificil.addEventListener("click", ()=> startPerguntasQuiz("hard"));
+perguntasRestartButton.addEventListener("click", ()=> startPerguntasQuiz(perguntasQuestions[0]?.difficulty||"easy"));
+perguntasMenuButton.addEventListener("click", backToMenu);
 
-  <!-- Tela Final do Quiz Principal -->
-  <div id="end-screen" class="end-screen" style="display:none;">
-    <button class="back-button" id="backButtonEndScreen">
-      <i class="fas fa-arrow-left"></i> Voltar ao Menu
-    </button>
-    <p id="final-message"></p>
-    <ul id="error-list"></ul>
-    <button id="restart-button" class="restart-button">
-      <i class="fas fa-sync-alt"></i> Reiniciar Quiz
-    </button>
-  </div>
+// --- BIBLIOTECA ---
+btnLibrary.addEventListener("click", ()=>{ hideAllSections(); libraryContainer.style.display="block"; });
+window.showLibrarySection = function(sectionId){
+  hideAllSections();
+  libraryContainer.style.display="block";
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+};
 
-  <!-- Tela Final do Quiz de Perguntas -->
-  <div id="perguntas-end-screen" class="end-screen" style="display:none;">
-    <button class="back-button" id="backButtonPerguntasEndScreen">
-      <i class="fas fa-arrow-left"></i> Voltar ao Menu
-    </button>
-    <p id="perguntas-final-message"></p>
-    <ul id="perguntas-error-list"></ul>
-    <button id="perguntas-restart-button" class="restart-button">
-      <i class="fas fa-sync-alt"></i> Tentar Novamente
-    </button>
-    <button id="perguntas-menu-button" class="restart-button">
-      <i class="fas fa-home"></i> Menu Principal
-    </button>
-  </div>
+// --- RANKING ---
+async function loadRanking() {
+  const rankingList = document.getElementById("ranking-list");
+  rankingList.innerHTML = ""; // Limpa o ranking atual
 
-  <!-- Tela de Perfil -->
-<div id="profile-container" class="profile-container" style="display:none;">
-  <button class="back-button" id="backButtonProfile">
-    <i class="fas fa-arrow-left"></i> Voltar ao Menu
-  </button>
-  <h2>Seu Perfil</h2>
-  <div class="profile-info">
-    <img id="profile-photo" src="images/default.png" alt="Foto de Perfil" class="profile-photo"/>
-    <p><strong>Nome:</strong> <span id="profile-name"></span></p>
-    <p><strong>Pontuação:</strong> <span id="profile-score">0</span></p>
-  </div>
-  <h3>Escolha sua Foto de Perfil</h3>
-  <div class="avatar-options">
-  <div class="avatar-option-container">
-    <img src="images/avatar0.png" class="avatar-option" data-avatar="images/avatar0.png" alt="Avatar 0"/>
-  </div>
-  <div class="avatar-option-container">
-    <img src="images/avatar1.png" class="avatar-option" data-avatar="images/avatar1.png" alt="Avatar 1"/>
-  </div>
-  <div class="avatar-option-container">
-    <img src="images/avatar2.png" class="avatar-option" data-avatar="images/avatar2.png" alt="Avatar 2"/>
-  </div>
-  <div class="avatar-option-container">
-    <img src="images/avatar3.png" class="avatar-option" data-avatar="images/avatar3.png" alt="Avatar 3"/>
-  </div>
-</div>
-</div>
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    const users = [];
 
-  <script type="module" src="script.js"></script>
-</body>
-</html>
+    snap.forEach(doc => {
+      const userData = doc.data();
+      if (userData.score !== undefined && userData.time !== undefined) {
+        users.push(userData);
+      }
+    });
+
+    // Ordena os usuários pela pontuação e tempo
+    users.sort((a, b) => {
+      if (b.score === a.score) {
+        return a.time - b.time; // Menor tempo primeiro
+      }
+      return b.score - a.score; // Maior pontuação primeiro
+    });
+
+    // Preenche o pódio
+    if (users[0]) {
+      document.getElementById("top-1-photo").src = users[0].photoURL || "images/default.png";
+      document.getElementById("top-1-name").textContent = users[0].name;
+      document.getElementById("top-1-score").textContent = `${users[0].score} pontos`;
+      document.getElementById("top-1-time").textContent = `${users[0].time}s`;
+    }
+    if (users[1]) {
+      document.getElementById("top-2-photo").src = users[1].photoURL || "images/default.png";
+      document.getElementById("top-2-name").textContent = users[1].name;
+      document.getElementById("top-2-score").textContent = `${users[1].score} pontos`;
+      document.getElementById("top-2-time").textContent = `${users[1].time}s`;
+    }
+    if (users[2]) {
+      document.getElementById("top-3-photo").src = users[2].photoURL || "images/default.png";
+      document.getElementById("top-3-name").textContent = users[2].name;
+      document.getElementById("top-3-score").textContent = `${users[2].score} pontos`;
+      document.getElementById("top-3-time").textContent = `${users[2].time}s`;
+    }
+
+    // Preenche o restante do ranking
+    users.slice(3).forEach((user, index) => {
+      const listItem = document.createElement("li");
+      listItem.classList.add("ranking-item");
+      listItem.innerHTML = `
+        <div class="ranking-photo-container">
+          <img src="${user.photoURL || 'images/default.png'}" alt="Foto de Perfil" class="ranking-photo"/>
+        </div>
+        <span>${index + 4}. ${user.name}</span>
+        <span>${user.score} pontos - ${user.time}s</span>
+      `;
+      rankingList.appendChild(listItem);
+    });
+  } catch (err) {
+    console.error("Erro ao carregar o ranking:", err);
+  }
+}
+
+// Evento para exibir o ranking ao clicar no botão
+btnRanking.addEventListener("click", () => {
+  hideAllSections();
+  loadRanking();
+  document.getElementById("ranking-container").style.display = "block";
+});
+
+// --- QUIZ ESPAÑOL ---
+let spanishQuestions = [], spanishScore = 0, currentSpanishQuestion = 0, spanishErrors = [], spanishTimer = 0, spanishTimerInterval;
+function getRandomSpanishQuestions() {
+  const all = [
+    { question: "¿Cómo se dice 'Olá' en español?", options: ["Hola", "Adiós", "Gracias", "Por favor"], answer: 0 },
+    { question: "¿Qué significa 'Adeus' en español?", options: ["Hola", "Adiós", "Buenas noches", "Gracias"], answer: 1 },
+    { question: "¿Cómo se dice 'Obrigado' en español?", options: ["Por favor", "Gracias", "De nada", "Perdón"], answer: 1 },
+    { question: "¿Cuál es el plural de 'amigo'?", options: ["Amigos", "Amigas", "Amigoes", "Amigues"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou aprendendo espanhol' en español?", options: ["Estoy aprendiendo español", "Aprendo español", "Yo español aprendo", "Aprendiendo estoy español"], answer: 0 },
+    { question: "¿Qué significa 'Bom dia' en español?", options: ["Buenas noches", "Buenos días", "Buenas tardes", "Hola"], answer: 1 },
+    { question: "¿Cómo se dice 'Eu gosto de comer maçãs' en español?", options: ["Me gusta comer manzanas", "Yo como manzanas", "Me gusta manzanas", "Comer manzanas me gusta"], answer: 0 },
+    { question: "¿Qué significa 'Onde você mora?' en español?", options: ["¿Dónde vives?", "¿Cómo estás?", "¿Cuál es tu nombre?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Cómo se dice 'Que horas são?' en español?", options: ["¿Qué hora es?", "¿Dónde está?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Qué significa 'Por favor'?", options: ["Gracias", "Por favor", "Disculpe", "De nada"], answer: 1 },
+    { question: "¿Cómo se dice 'Eu sou professor' en español?", options: ["Soy profesor", "Yo soy profesor", "Profesor soy", "Soy un profesor"], answer: 0 },
+    { question: "¿Qué significa 'De nada'?", options: ["De nada", "Gracias", "Disculpe", "Por favor"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou feliz' en español?", options: ["Estoy feliz", "Yo feliz", "Soy feliz", "Feliz estoy"], answer: 0 },
+    { question: "¿Qué significa 'Qual é o seu nome?' en español?", options: ["¿Cómo te llamas?", "¿Cómo estás?", "¿Dónde vives?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou cansado' en español?", options: ["Estoy cansado", "Yo cansado", "Soy cansado", "Cansado estoy"], answer: 0 },
+    { question: "¿Qué significa 'O que você faz?' en español?", options: ["¿Qué haces?", "¿Dónde estás?", "¿Cómo estás?", "¿Cuál es tu nombre?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu gosto de ler livros' en español?", options: ["Me gusta leer libros", "Yo leo libros", "Me gusta libros", "Leer libros me gusta"], answer: 0 },
+    { question: "¿Qué significa 'Quanto custa?' en español?", options: ["¿Cuánto cuesta?", "¿Dónde está?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou aprendendo' en español?", options: ["Estoy aprendiendo", "Yo aprendo", "Aprendiendo estoy", "Aprendo"], answer: 0 },
+    { question: "¿Qué significa 'Que horas são?' en español?", options: ["¿Qué hora es?", "¿Dónde estás?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou com fome' en español?", options: ["Tengo hambre", "Yo hambre", "Soy hambre", "Hambre tengo"], answer: 0 },
+    { question: "¿Qué significa 'Você pode me ajudar?' en español?", options: ["¿Puedes ayudarme?", "¿Dónde estás?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou com sede' en español?", options: ["Tengo sed", "Yo sed", "Soy sed", "Sed tengo"], answer: 0 },
+    { question: "¿Qué significa 'Onde fica o banheiro?' en español?", options: ["¿Dónde está el baño?", "¿Cómo estás?", "¿Qué haces?", "¿Dónde vives?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou com frio' en español?", options: ["Tengo frío", "Yo frío", "Soy frío", "Frío tengo"], answer: 0 },
+    { question: "¿Qué significa 'O que você quer comer?' en español?", options: ["¿Qué quieres comer?", "¿Dónde estás?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou com calor' en español?", options: ["Tengo calor", "Yo calor", "Soy calor", "Calor tengo"], answer: 0 },
+    { question: "¿Qué significa 'O que você quer beber?' en español?", options: ["¿Qué quieres beber?", "¿Dónde estás?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou estudando' en español?", options: ["Estoy estudiando", "Yo estudio", "Estudiando estoy", "Estudio"], answer: 0 },
+    { question: "¿Qué significa 'O que você está fazendo?' en español?", options: ["¿Qué estás haciendo?", "¿Dónde estás?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu estou trabalhando' en español?", options: ["Estoy trabajando", "Yo trabajo", "Trabajando estoy", "Trabajo"], answer: 0 },
+    { question: "¿Qué significa 'Onde você trabalha?' en español?", options: ["¿Dónde trabajas?", "¿Cómo estás?", "¿Qué haces?", "¿Dónde vives?"], answer: 0 }
+  ];
+  return [...all].sort(() => Math.random() - 0.5).slice(0, 15);
+}
+function startSpanishTimer() {
+  spanishTimer=0; spanishTimerElement.textContent=spanishTimer;
+  clearInterval(spanishTimerInterval);
+  spanishTimerInterval=setInterval(()=>{
+    spanishTimer++; spanishTimerElement.textContent=spanishTimer;
+  },1000);
+}
+function stopSpanishTimer(){ clearInterval(spanishTimerInterval); }
+function loadSpanishQuestion() {
+  if (currentSpanishQuestion < spanishQuestions.length) {
+    const q = spanishQuestions[currentSpanishQuestion];
+    spanishQuestionElement.textContent = q.question;
+    spanishOptionsElement.innerHTML = "";
+    q.options.forEach((opt,i)=>{
+      const li=document.createElement("li");
+      li.textContent=opt;
+      li.addEventListener("click", ()=> spanishCheckAnswer(i));
+      spanishOptionsElement.appendChild(li);
+    });
+  } else endSpanishQuiz();
+}
+function spanishCheckAnswer(sel) {
+  const q=spanishQuestions[currentSpanishQuestion];
+  const opts=spanishOptionsElement.querySelectorAll("li");
+  opts.forEach((li,i)=>{
+    li.classList.remove("correct","wrong");
+    if (i===q.answer) li.classList.add("correct");
+    else if (i===sel) li.classList.add("wrong");
+    li.style.pointerEvents="none";
+  });
+  if (sel===q.answer) { spanishScore++; spanishScoreElement.textContent=spanishScore; }
+  else spanishErrors.push(`Pregunta: ${q.question} - Respuesta: ${q.options[q.answer]}`);
+  setTimeout(()=>{
+    currentSpanishQuestion++; loadSpanishQuestion();
+  },1500);
+}
+function endSpanishQuiz() {
+  stopSpanishTimer();
+  spanishQuizContainer.style.display="none";
+  spanishEndScreen.style.display="block";
+  spanishFinalMessageEl.textContent = `Puntuación Final: ${spanishScore}/${spanishQuestions.length} | Tiempo: ${spanishTimer}s`;
+  spanishErrorListEl.innerHTML = spanishErrors.map(e=>`
+    <li class="error-item">
+      ${e}<br>
+      <button class="aprenda-mais-button" onclick="showLibrarySectionSpanish()">Aprenda Mais</button>
+    </li>
+  `).join("");
+}
+window.showLibrarySectionSpanish = function() {
+  hideAllSections();
+  spanishLibraryContainer.style.display="block";
+}
+btnSpanish.addEventListener("click", ()=>{ hideAllSections(); spanishMenuContainer.style.display="block"; });
+btnSpanishQuiz.addEventListener("click", ()=>{
+  hideAllSections(); spanishQuizContainer.style.display="block";
+  spanishQuestions = getRandomSpanishQuestions();
+  spanishScore=0; currentSpanishQuestion=0; spanishErrors=[];
+  spanishScoreElement.textContent=spanishScore;
+  startSpanishTimer(); loadSpanishQuestion();
+});
+btnSpanishLibrary.addEventListener("click", ()=>{ hideAllSections(); spanishLibraryContainer.style.display="block"; });
+backButtonSpanishMenu.addEventListener("click", backToMenu);
+spanishRestartButton.addEventListener("click", ()=>{
+  btnSpanishQuiz.click();
+});
+spanishMenuButton.addEventListener("click", backToMenu);
+
+// --- QUIZ FRANÇAIS ---
+let frenchQuestions = [], frenchScore = 0, currentFrenchQuestion = 0, frenchErrors = [], frenchTimer = 0, frenchTimerInterval;
+function getRandomFrenchQuestions() {
+  const all = [
+    { question: "Comment dit-on 'Hello' en français?", options:["Bonjour","Au revoir","Merci","S'il vous plaît"], answer:0 },
+    { question: "Que signifie 'Goodbye' en français?", options:["Bonjour","Au revoir","Bonne nuit","Merci"], answer:1 },
+    { question: "Comment dit-on 'Thank you' en français?", options:["S'il vous plaît","Merci","De rien","Pardon"], answer:1 },
+    { question: "Quel est le pluriel de 'ami'?", options:["Amis","Amies","Amis","Ami(e)s"], answer:0 },
+    { question: "Comment dit-on 'I am learning French' en français?", options:["J'apprends le français","Je français apprends","J'apprendrai le français","Je suis en train d'apprendre le français"], answer:0 }
+  ];
+  return [...all].sort(()=>Math.random()-0.5).slice(0,15);
+}
+function startFrenchTimer() {
+  frenchTimer=0; frenchTimerElement.textContent=frenchTimer;
+  clearInterval(frenchTimerInterval);
+  frenchTimerInterval=setInterval(()=>{
+    frenchTimer++; frenchTimerElement.textContent=frenchTimer;
+  },1000);
+}
+function stopFrenchTimer(){ clearInterval(frenchTimerInterval); }
+function loadFrenchQuestion() {
+  if (currentFrenchQuestion < frenchQuestions.length) {
+    const q = frenchQuestions[currentFrenchQuestion];
+    frenchQuestionElement.textContent = q.question;
+    frenchOptionsElement.innerHTML = "";
+    q.options.forEach((opt,i)=>{
+      const li=document.createElement("li");
+      li.textContent=opt;
+      li.addEventListener("click", ()=> frenchCheckAnswer(i));
+      frenchOptionsElement.appendChild(li);
+    });
+  } else endFrenchQuiz();
+}
+function frenchCheckAnswer(sel) {
+  const q=frenchQuestions[currentFrenchQuestion];
+  const opts=frenchOptionsElement.querySelectorAll("li");
+  opts.forEach((li,i)=>{
+    li.classList.remove("correct","wrong");
+    if (i===q.answer) li.classList.add("correct");
+    else if (i===sel) li.classList.add("wrong");
+    li.style.pointerEvents="none";
+  });
+  if (sel===q.answer) { frenchScore++; frenchScoreElement.textContent=frenchScore; }
+  else frenchErrors.push(`Question: ${q.question} - Réponse: ${q.options[q.answer]}`);
+  setTimeout(()=>{
+    currentFrenchQuestion++; loadFrenchQuestion();
+  },1500);
+}
+function endFrenchQuiz() {
+  stopFrenchTimer();
+  frenchQuizContainer.style.display="none";
+  frenchEndScreen.style.display="block";
+  frenchFinalMessageEl.textContent = `Score Final: ${frenchScore}/${frenchQuestions.length} | Temps: ${frenchTimer}s`;
+  frenchErrorListEl.innerHTML = frenchErrors.map(e=>`
+    <li class="error-item">
+      ${e}<br>
+      <button class="aprenda-mais-button" onclick="showLibrarySectionFrench()">En savoir plus</button>
+    </li>
+  `).join("");
+}
+window.showLibrarySectionFrench = function() {
+  hideAllSections();
+  frenchLibraryContainer.style.display="block";
+}
+btnFrench.addEventListener("click", ()=>{ hideAllSections(); frenchMenuContainer.style.display="block"; });
+btnFrenchQuiz.addEventListener("click", ()=>{
+  hideAllSections(); frenchQuizContainer.style.display="block";
+  frenchQuestions = getRandomFrenchQuestions();
+  frenchScore=0; currentFrenchQuestion=0; frenchErrors=[];
+  frenchScoreElement.textContent=frenchScore;
+  startFrenchTimer(); loadFrenchQuestion();
+});
+btnFrenchLibrary.addEventListener("click", ()=>{ hideAllSections(); frenchLibraryContainer.style.display="block"; });
+backButtonFrenchMenu.addEventListener("click", backToMenu);
+frenchRestartButton.addEventListener("click", ()=> btnFrenchQuiz.click());
+frenchMenuButton.addEventListener("click", backToMenu);
+
+// --- SALVAR PONTUAÇÃO ---
+async function saveScore(userName, score, time) {
+  const snap = await getDocs(collection(db,"users"));
+  let userDoc = null;
+  snap.forEach(doc=>{
+    if (doc.data().name === userName) userDoc = doc.ref;
+  });
+  if (userDoc) {
+    await updateDoc(userDoc, { score, time });
+  }
+}
+
+// Alterna a visualização do conteúdo da Biblioteca (expansível)
+document.addEventListener("DOMContentLoaded", () => {
+  const headers = document.querySelectorAll(".text-card .text-header");
+  headers.forEach(header => {
+    header.addEventListener("click", () => {
+      const content = header.nextElementSibling;
+      content.classList.toggle("active");
+    });
+  });
+});
+
+// Lista de perguntas fixa
+const allQuestions = [
+  { question: "What does 'Burn the midnight oil' mean?", options: ["Work late into the night", "Waste time", "Sleep early", "Take a break"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  { question: "Which sentence uses the Present Perfect tense?", options: ["I have been to Paris", "I went to Paris", "I am going to Paris", "I will go to Paris"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
+  { question: "What is the correct translation of 'Artificial Intelligence'?", options: ["Inteligência artificial", "Inteligência natural", "Inteligência computacional", "Inteligência humana"], answer: 0, difficulty: "hard", libraryRef: "technical-vocabulary" },
+  { question: "Which sentence is grammatically correct?", options: ["She don't like apples", "She doesn't likes apples", "She doesn't like apples", "She not like apples"], answer: 2, difficulty: "hard", libraryRef: "grammar" },
+  { question: "What does 'Throw in the towel' mean?", options: ["To give up", "To start a fight", "To clean something", "To win a competition"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  { question: "Which is an example of Future Perfect tense?", options: ["I will have finished the project by tomorrow", "I am finishing the project now", "I finished the project yesterday", "I will finish the project tomorrow"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
+  { question: "What is the plural of 'crisis'?", options: ["Crises", "Crisis", "Crisises", "Criseses"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "What does 'Hit the nail on the head' mean?", options: ["To be exactly right", "To make a mistake", "To fix something", "To hurt someone"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  { question: "What is the meaning of 'Serendipity'?", options: ["A fortunate discovery", "A mistake", "A coincidence", "A disaster"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "Which sentence uses the Past Perfect tense?", options: ["She had finished her homework before dinner", "She finished her homework before dinner", "She finishes her homework before dinner", "She is finishing her homework before dinner"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
+  { question: "What does 'A blessing in disguise' mean?", options: ["A hidden benefit", "A visible problem", "A curse", "A mistake"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  { question: "What is the correct form of the verb 'to be' in the sentence: 'He ___ a doctor.'?", options: ["is", "are", "am", "be"], answer: 0, difficulty: "medium", libraryRef: "grammar" },
+  { question: "What does 'Cutting corners' mean?", options: ["Doing something poorly to save time or money", "Taking a shortcut", "Avoiding work", "Completing a task perfectly"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  { question: "What is the meaning of 'Eureka'?", options: ["I found it", "I lost it", "I broke it", "I fixed it"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "Which sentence uses the Present Continuous tense?", options: ["They are studying for the exam", "They study for the exam", "They studied for the exam", "They will study for the exam"], answer: 0, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "What does 'The ball is in your court' mean?", options: ["It's your decision now", "The game is over", "You lost the opportunity", "You need to wait"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  { question: "What is the plural of 'phenomenon'?", options: ["Phenomena", "Phenomenons", "Phenomenas", "Phenomenon"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "What does 'To kill two birds with one stone' mean?", options: ["To achieve two goals with one action", "To fail twice", "To waste time", "To make a mistake"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  { question: "Which sentence uses the Future Perfect tense?", options: ["By next year, I will have graduated", "I will graduate next year", "I am graduating next year", "I graduated last year"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
+  { question: "What does 'To bite off more than you can chew' mean?", options: ["To take on more than you can handle", "To eat too much", "To make a mistake", "To give up"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  { question: "What is 'eu sou estudante' in English?", options: ["I am student", "A student I am", "I student am", "I am a student"], answer: 3, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "Which one is correct?", options: ["Pizza do you like?", "Do you like pizza?", "Like pizza you?", "You pizza like?"], answer: 1, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "What does 'I am learning English' mean?", options: ["Eu aprendi inglês", "Eu estou aprendendo inglês", "Eu ensino inglês", "Eu amo inglês"], answer: 1, difficulty: "medium", libraryRef: "frases-basicas" },
+  { question: "How do you say 'Onde você mora?' in English?", options: ["Where do you live?", "Where is you live?", "Where you live?", "Where are you living?"], answer: 0, difficulty: "medium", libraryRef: "frases-basicas" },
+  { question: "What is the plural of 'child'?", options: ["Children", "Childs", "Childes", "Childern"], answer: 0, difficulty: "hard", libraryRef: "verbos" },
+  { question: "How do you say 'bom dia' in English?", options: ["Good night", "Good morning", "Hello", "Good evening"], answer: 1, difficulty: "easy", libraryRef: "greetings" },
+  { question: "What is the past tense of 'go'?", options: ["Going", "Went", "Gone", "Go"], answer: 1, difficulty: "easy", libraryRef: "verbos" },
+  { question: "Which sentence is correct?", options: ["He doesn't likes apples", "He don't like apples", "He like apples", "He doesn't like apples"], answer: 3, difficulty: "medium", libraryRef: "grammar" },
+  { question: "What does 'break a leg' mean?", options: ["Run fast", "Don't trip", "Break your leg", "Good luck"], answer: 3, difficulty: "medium", libraryRef: "idioms" },
+  { question: "How do you say 'obrigado' in English?", options: ["Thanks", "Hello", "Sorry", "Please"], answer: 0, difficulty: "easy", libraryRef: "greetings" },
+  { question: "Which is the correct form of the verb 'to be' for 'they'?", options: ["are", "am", "is", "be"], answer: 0, difficulty: "easy", libraryRef: "verbos" },
+  { question: "What does 'How old are you?' mean?", options: ["Como você está?", "Onde você mora?", "Qual é o seu nome?", "Quantos anos você tem?"], answer: 3, difficulty: "medium", libraryRef: "frases-basicas" },
+  { question: "How do you say 'Estou com fome' in English?", options: ["I'm cold", "I'm tired", "I'm happy", "I'm hungry"], answer: 3, difficulty: "medium", libraryRef: "frases-basicas" },
+  { question: "What is the past tense of 'eat'?", options: ["Eating", "Eated", "Ate", "Eat"], answer: 2, difficulty: "hard", libraryRef: "verbos" },
+  { question: "Which one is a correct question?", options: ["What it is time?", "What is time it?", "It is what time?", "What time is it?"], answer: 3, difficulty: "medium", libraryRef: "grammar" },
+  { question: "What does 'It's raining cats and dogs' mean?", options: ["Está chovendo pouco", "Animais estão caindo", "Chuva de gatos", "Está chovendo muito"], answer: 3, difficulty: "hard", libraryRef: "idioms" },
+  { question: "How do you say 'Estou cansado' in English?", options: ["I'm sad", "I'm bored", "I'm tired", "I'm sleepy"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "Whatés the opposite of 'hot'?", options: ["Boiling", "Cool", "Cold", "Warm"], answer: 2, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "Which sentence uses the present continuous?", options: ["I am eating", "I eat now", "I eats", "I will eat"], answer: 0, difficulty: "medium", libraryRef: "grammar" },
+  { question: "What is the plural of 'mouse'?", options: ["Mices", "Mice", "Mouse", "Mouses"], answer: 1, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "How do you say 'Qual é o seu nome?' in English?", options: ["What is your name?", "How are you?", "Where are you from?", "Who are you?"], answer: 0, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "Which one is a verb?", options: ["Run", "Fast", "Blue", "Happy"], answer: 0, difficulty: "easy", libraryRef: "verbos" },
+  { question: "Complete: She ___ going to school.", options: ["be", "is", "am", "are"], answer: 1, difficulty: "medium", libraryRef: "grammar" },
+  { question: "What does 'piece of cake' mean?", options: ["Um pedaço de bolo", "Algo caro", "Muito fácil", "Muito difícil"], answer: 2, difficulty: "hard", libraryRef: "idioms" },
+  { question: "How do you say 'Eu não entendo' in English?", options: ["Not I understand", "I understand not", "I don't understand", "I no understand"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "What is the opposite of 'early'?", options: ["Now", "Fast", "Soon", "Late"], answer: 3, difficulty: "medium", libraryRef: "vocabulary" },
+  { question: "Which is a correct negative sentence?", options: ["She no likes coffee", "She doesn't like coffee", "She don't like coffee", "She not like coffee"], answer: 1, difficulty: "medium", libraryRef: "grammar" },
+  { question: "How do you say 'Eu gosto de música' in English?", options: ["I like music", "I like of music", "I music like", "I likes music"], answer: 0, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "What is the correct past tense of 'have'?", options: ["Haved", "Has", "Had", "Have"], answer: 2, difficulty: "medium", libraryRef: "verbos" },
+];
+
+// Adicionando funcionalidade de redefinição de senha
+const resetPasswordButton = document.getElementById("reset-password-button");
+if (resetPasswordButton) {
+  resetPasswordButton.addEventListener("click", async () => {
+    const loginName = document.getElementById("login-name").value.trim();
+    if (!loginName) {
+      alert("Por favor, insira seu nome para redefinir a senha.");
+      return;
+    }
+    try {
+      const snap = await getDocs(collection(db, "users"));
+      let userFound = false;
+      snap.forEach(doc => {
+        if (doc.data().name === loginName) {
+          userFound = true;
+          const newPassword = prompt("Digite sua nova senha:");
+          if (newPassword) {
+            updateDoc(doc.ref, { password: newPassword });
+            alert("Senha redefinida com sucesso!");
+          }
+        }
+      });
+      if (!userFound) alert("Usuário não encontrado.");
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao redefinir a senha. Tente novamente.");
+    }
+  });
+}
+
+// Adicionando funcionalidade de logout
+const logoutButton = document.getElementById("logout-button");
+if (logoutButton) {
+  logoutButton.addEventListener("click", () => {
+    currentUserName = "";
+    hideAllSections();
+    loginContainer.style.display = "block";
+  });
+}
+
+// Função para salvar progresso do usuário
+async function saveProgress(userName, progress) {
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    snap.forEach(doc => {
+      if (doc.data().name === userName) {
+        updateDoc(doc.ref, { progress });
+      }
+    });
+  } catch (err) {
+    console.error("Erro ao salvar progresso:", err);
+  }
+}
+
+// Função para carregar progresso do usuário
+async function loadProgress(userName) {
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    let userProgress = null;
+    snap.forEach(doc => {
+      if (doc.data().name === userName) {
+        userProgress = doc.data().progress || null;
+      }
+    });
+    return userProgress;
+  } catch (err) {
+    console.error("Erro ao carregar progresso:", err);
+    return null;
+  }
+}
+
+// Elementos da tela de perfil
+const profileContainer = document.getElementById("profile-container");
+const profileNameElement = document.getElementById("profile-name");
+const profileScoreElement = document.getElementById("profile-score");
+const profilePhotoElement = document.getElementById("profile-photo");
+const avatarOptions = document.querySelectorAll(".avatar-option");
+const backButtonProfile = document.getElementById("backButtonProfile");
+
+// Exibir a tela de perfil ao clicar no nome do usuário
+const userNameElement = document.getElementById("user-name");
+if (userNameElement) {
+  userNameElement.style.cursor = "pointer";
+  userNameElement.addEventListener("click", () => {
+    hideAllSections();
+    loadProfileData();
+    profileContainer.style.display = "block";
+  });
+}
+
+// Voltar ao menu principal
+backButtonProfile.addEventListener("click", backToMenu);
+
+// Carregar dados do perfil do usuário
+async function loadProfileData() {
+  const snap = await getDocs(collection(db, "users"));
+  snap.forEach(doc => {
+    const user = doc.data();
+    if (user.name === currentUserName) {
+      profileNameElement.textContent = user.name;
+      profileScoreElement.textContent = user.score ?? 0;
+      profilePhotoElement.src = user.photoURL || "images/default.png";
+      avatarOptions.forEach(img => {
+        if (img.dataset.avatar === user.photoURL) img.classList.add("selected");
+        else img.classList.remove("selected");
+      });
+    }
+  });
+}
+
+// Atualizar foto de perfil
+avatarOptions.forEach(img => {
+  img.addEventListener("click", async () => {
+    avatarOptions.forEach(i => i.classList.remove("selected"));
+    img.classList.add("selected");
+    profilePhotoElement.src = img.dataset.avatar;
+
+    // Atualizar no Firebase
+    const snap = await getDocs(collection(db, "users"));
+    snap.forEach(doc => {
+      if (doc.data().name === currentUserName) {
+        updateDoc(doc.ref, { photoURL: img.dataset.avatar });
+      }
+    });
+  });
+});
