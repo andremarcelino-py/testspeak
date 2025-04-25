@@ -803,19 +803,31 @@ async function loadProfileData() {
   });
 }
 
-// Atualizar foto de perfil
+// Elementos do menu principal
+const userPhotoElement = document.getElementById("user-photo");
+
+// Atualizar foto de perfil ao selecionar um avatar
 avatarOptions.forEach(img => {
   img.addEventListener("click", async () => {
     avatarOptions.forEach(i => i.classList.remove("selected"));
     img.classList.add("selected");
     profilePhotoElement.src = img.dataset.avatar;
 
+    // Atualizar avatar no menu principal
+    userPhotoElement.src = img.dataset.avatar;
+
     // Atualizar no Firebase
-    const snap = await getDocs(collection(db, "users"));
-    snap.forEach(doc => {
-      if (doc.data().name === currentUserName) {
-        updateDoc(doc.ref, { photoURL: img.dataset.avatar });
-      }
-    });
+    try {
+      const snap = await getDocs(collection(db, "users"));
+      snap.forEach(doc => {
+        if (doc.data().name === currentUserName) {
+          updateDoc(doc.ref, { photoURL: img.dataset.avatar });
+        }
+      });
+      alert("Avatar atualizado com sucesso!");
+    } catch (err) {
+      console.error("Erro ao atualizar avatar:", err);
+      alert("Erro ao salvar avatar. Tente novamente.");
+    }
   });
 });
