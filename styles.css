@@ -878,3 +878,44 @@ body {
     font-size: 0.8rem;
   }
 }
+
+/* Tela de Aviso do Quiz */
+#quiz-warning-container {
+  display: none; /* Oculta a tela inicialmente */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(31, 26, 58, 0.95); /* Fundo com opacidade */
+  color: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000; /* Garante que fique acima de outros elementos */
+  width: 90%;
+  max-width: 400px;
+}
+
+#quiz-warning-message {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #f472b6; /* Destaque para o texto */
+}
+
+#quiz-warning-back-button {
+  background: #f472b6;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#quiz-warning-back-button:hover {
+  background: #d6619d; /* Cor de hover */
+  transform: scale(1.05);
+}
