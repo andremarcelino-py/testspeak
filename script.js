@@ -311,8 +311,8 @@ btnQuiz.addEventListener("click", async () => {
 
 // Evento para o botão de voltar ao menu na aba de aviso
 quizWarningBackButton.addEventListener("click", () => {
-  hideAllSections();
-  menuContainer.style.display = "block";
+  quizWarningContainer.style.display = "none"; // Oculta a mensagem
+  menuContainer.style.display = "block"; // Retorna ao menu principal
 });
 
 restartButton.addEventListener("click", ()=>{
