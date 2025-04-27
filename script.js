@@ -573,13 +573,23 @@ spanishMenuButton.addEventListener("click", backToMenu);
 let frenchQuestions = [], frenchScore = 0, currentFrenchQuestion = 0, frenchErrors = [], frenchTimer = 0, frenchTimerInterval;
 function getRandomFrenchQuestions() {
   const all = [
-    { question: "Comment dit-on 'Hello' en français?", options:["Bonjour","Au revoir","Merci","S'il vous plaît"], answer:0 },
-    { question: "Que signifie 'Goodbye' en français?", options:["Bonjour","Au revoir","Bonne nuit","Merci"], answer:1 },
-    { question: "Comment dit-on 'Thank you' en français?", options:["S'il vous plaît","Merci","De rien","Pardon"], answer:1 },
-    { question: "Quel est le pluriel de 'ami'?", options:["Amis","Amies","Amis","Ami(e)s"], answer:0 },
-    { question: "Comment dit-on 'I am learning French' en français?", options:["J'apprends le français","Je français apprends","J'apprendrai le français","Je suis en train d'apprendre le français"], answer:0 }
+    { question: "Comment dit-on 'Hello' en français?", options: ["Bonjour", "Au revoir", "Merci", "S'il vous plaît"], answer: 0 },
+    { question: "Que signifie 'Goodbye' en français?", options: ["Bonjour", "Au revoir", "Bonne nuit", "Merci"], answer: 1 },
+    { question: "Comment dit-on 'Thank you' en français?", options: ["S'il vous plaît", "Merci", "De rien", "Pardon"], answer: 1 },
+    { question: "Quel est le pluriel de 'ami'?", options: ["Amis", "Amies", "Ami(e)s", "Ami"], answer: 0 },
+    { question: "Comment dit-on 'I am learning French' en français?", options: ["J'apprends le français", "Je français apprends", "J'apprendrai le français", "Je suis en train d'apprendre le français"], answer: 0 },
+    { question: "Que signifie 'Bonne nuit' en français?", options: ["Good night", "Good morning", "Goodbye", "Good evening"], answer: 0 },
+    { question: "Comment dit-on 'Je suis fatigué' en français?", options: ["Je suis fatigué", "Je suis heureux", "Je suis triste", "Je suis en colère"], answer: 0 },
+    { question: "Que signifie 'Où habitez-vous?' en français?", options: ["Where do you live?", "How are you?", "What is your name?", "What do you do?"], answer: 0 },
+    { question: "Comment dit-on 'Je voudrais un café' en français?", options: ["I would like a coffee", "I want a coffee", "I need a coffee", "I drink a coffee"], answer: 0 },
+    { question: "Que signifie 'Quelle heure est-il?' en français?", options: ["What time is it?", "Where are you?", "How are you?", "What are you doing?"], answer: 0 },
+    { question: "Comment dit-on 'Je suis étudiant' en français?", options: ["I am a student", "I am a teacher", "I am a worker", "I am a doctor"], answer: 0 },
+    { question: "Que signifie 'Merci beaucoup' en français?", options: ["Thank you very much", "You're welcome", "Please", "Excuse me"], answer: 0 },
+    { question: "Comment dit-on 'Je suis heureux' en français?", options: ["I am happy", "I am sad", "I am tired", "I am angry"], answer: 0 },
+    { question: "Que signifie 'Quel est votre nom?' en français?", options: ["What is your name?", "How are you?", "Where do you live?", "What do you do?"], answer: 0 },
+    { question: "Comment dit-on 'Je suis en colère' en français?", options: ["I am angry", "I am happy", "I am sad", "I am tired"], answer: 0 }
   ];
-  return [...all].sort(()=>Math.random()-0.5).slice(0,15);
+  return [...all].sort(() => Math.random() - 0.5).slice(0, 15);
 }
 function startFrenchTimer() {
   frenchTimer=0; frenchTimerElement.textContent=frenchTimer;
