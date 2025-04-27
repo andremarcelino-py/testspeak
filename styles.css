@@ -399,127 +399,138 @@ body {
 .ranking-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   background: rgba(255, 255, 255, 0.1);
-  padding: 10px;
+  padding: 15px;
   margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.ranking-item:hover {
+  transform: translateX(10px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .ranking-photo {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
+  overflow: hidden;
   border: 2px solid var(--primary-color);
 }
 
-#ranking-list {
-  counter-reset: ranking;
-  padding: 0;
-  margin: 2rem 0;
+.ranking-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-#ranking-list li {
-  counter-increment: ranking;
-  background: rgba(220, 214, 214, 0.068);
-  padding: 1.2rem;
-  margin: 0.8rem 0;
-  border-radius: 15px;
-  display: grid;
-  grid-template-columns: auto auto;
-  align-items: center;
-  transition: all 0.3s ease;
-}
-
-/* Tela Final */
-.end-screen {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  padding: 2rem;
-  margin: 1rem 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-#error-list,
-#perguntas-error-list {
-  list-style: none;
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
-
-.error-item {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.8rem;
-  margin: 0.5rem 0;
-  border-radius: 8px;
-  border-left: 4px solid var(--accent-color);
-}
-
-/* Botão Reiniciar */
-.restart-button {
-  background: var(--primary-color);
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem;
-  margin: 0.5rem;
-}
-
-.restart-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
-}
-
-/* Botões de Nível */
-.level-buttons {
+.ranking-details {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+}
+
+.ranking-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+.ranking-score-time {
+  font-size: 1rem;
+  color: #fff;
+}
+
+/* Título do Ranking */
+.ranking-title {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo do pódio */
+.podium {
+  display: flex;
   justify-content: center;
-  margin: 2rem 0;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+  margin: 20px 0;
 }
 
-.level-button {
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-  font-size: 1.1rem;
-  transition: transform 0.2s;
+.podium-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 15px;
+  width: 120px;
+  height: 200px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
 }
 
-.level-button:hover {
+.podium-item:hover {
   transform: scale(1.05);
 }
 
-#btnFacil {
-  background: #e1a1cd;
+/* Destaque para o top 3 */
+.podium-item.top-1 {
+  background: linear-gradient(135deg, #FFD700, #FFC700);
+  height: 240px;
+  font-weight: bold;
+  color: #2F2F2F;
 }
 
-#btnMedio {
-  background: #9e4077;
+.podium-item.top-2 {
+  background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+  height: 220px;
+  font-weight: bold;
+  color: #2F2F2F;
 }
 
-#btnDificil {
-  background: #9721c2;
+.podium-item.top-3 {
+  background: linear-gradient(135deg, #CD7F32, #B87333);
+  height: 200px;
+  font-weight: bold;
+  color: #2F2F2F;
 }
 
-/* Animação */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.podium-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 3px solid rgba(255, 255, 255, 0.7);
 }
 
-.animate-in {
-  animation: fadeIn 0.5s ease-out;
+.podium-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.podium-name {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: #fff;
+}
+
+.podium-details {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #fff;
 }
 
 /* Responsividade */
@@ -774,10 +785,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 10px; /* Espaçamento entre os itens */
+  gap: 20px;
   margin: 20px 0;
-  flex-wrap: nowrap; /* Garante que os itens fiquem lado a lado */
-  overflow-x: auto; /* Permite rolagem horizontal em telas muito estreitas */
 }
 
 .podium-item {
@@ -785,8 +794,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  background: #f4f4f4;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
   padding: 15px;
   width: 120px;
   height: 200px;
@@ -794,7 +803,6 @@ body {
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
-  flex-shrink: 0; /* Impede que os itens encolham em telas estreitas */
 }
 
 .podium-item:hover {
@@ -918,4 +926,28 @@ body {
 #quiz-warning-back-button:hover {
   background: #d6619d; /* Cor de hover */
   transform: scale(1.05);
+}
+
+/* Botão Sair */
+#logout-button {
+  position: absolute; /* Posiciona o botão dentro do menu */
+  bottom: -120px; /* Mantém o botão próximo à parte inferior */
+  left: 50%; /* Centraliza horizontalmente */
+  transform: translateX(-50%);
+  background: var(--primary-color); /* Cor principal */
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px; /* Bordas arredondadas */
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+#logout-button:hover {
+  background: var(--secondary-color); /* Cor de hover */
+  transform: translateX(-50%) scale(1.05); /* Efeito de zoom */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Sombra mais intensa no hover */
 }
