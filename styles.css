@@ -22,6 +22,101 @@ body {
   padding: 20px;
 }
 
+/* Tela de Boas-Vindas */
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100vh;
+  background: #1f1a3a; /* Cor de fundo consistente com o restante do site */
+  color: #fff; /* Texto branco para contraste */
+  padding: 20px;
+}
+
+.welcome-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.welcome-header .logo {
+  width: 120px; /* Ajuste o tamanho da logo */
+  height: auto; /* Mantém a proporção da imagem */
+  margin-bottom: 10px; /* Espaçamento entre a logo e o texto */
+}
+
+.welcome-header .logo-text {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #f472b6; /* Cor consistente com o restante do site */
+  text-align: center;
+}
+
+.welcome-slogan {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.welcome-slogan span {
+  color: #f472b6; /* Destaque com a cor principal */
+}
+
+.welcome-description {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: #d1d5db; /* Texto com tom mais claro */
+}
+
+.welcome-buttons {
+  display: flex;
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  gap: 15px; /* Espaçamento entre os botões */
+  margin-top: 20px; /* Adiciona um espaço acima dos botões */
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #f472b6; /* Cor principal */
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #d6619d; /* Cor de hover */
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #fff;
+  border: 2px solid #f472b6; /* Borda com a cor principal */
+}
+
+.btn-secondary:hover {
+  background: rgba(244, 114, 182, 0.2); /* Fundo com transparência no hover */
+}
+
+/* Ocultar outras telas inicialmente */
+#register-container,
+#login-container,
+#menu-container {
+  display: none;
+}
+
 /* Telas de Cadastro e Login */
 .register-container, .login-container {
   text-align: center;
