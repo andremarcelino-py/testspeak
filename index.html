@@ -11,8 +11,24 @@
 <body>
 
 
+<!-- Tela de Boas-Vindas -->
+<div id="welcome-container" class="welcome-container">
+  <header class="welcome-header">
+    <img src="images/logo.png" alt="Logo Speak Easy" class="logo" />
+    <h1 class="logo-text">Speak Easy</h1> <!-- Adicionando o nome ao lado ou abaixo da logo -->
+  </header>
+  <main class="welcome-content">
+    <h1 class="welcome-slogan">O jeito <span>fácil</span> de aprender inglês!</h1>
+    <p class="welcome-description"></p>
+    <div class="welcome-buttons">
+      <button id="start-now" class="btn-primary">Comece Agora</button>
+      <button id="login" class="btn-secondary">Já Tenho uma Conta</button>
+    </div>
+  </main>
+</div>
+
   <!-- Tela de Cadastro -->
-<div id="register-container" class="register-container animate-in">
+<div id="register-container" class="register-container animate-in" style="display:none;">
   <h2>Cadastro</h2>
   <input type="text" id="name" placeholder="Digite seu nome"/>
   <input type="password" id="register-password" placeholder="Crie uma senha"/>
