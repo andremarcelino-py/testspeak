@@ -196,6 +196,48 @@ loginButton.addEventListener("click", async () => {
   }
 });
 
+// Alternar entre telas
+document.getElementById("start-now").addEventListener("click", () => {
+  document.getElementById("welcome-container").style.display = "none";
+  document.getElementById("register-container").style.display = "block";
+});
+
+document.getElementById("login").addEventListener("click", () => {
+  document.getElementById("welcome-container").style.display = "none";
+  document.getElementById("login-container").style.display = "block";
+});
+
+document.getElementById("go-login").addEventListener("click", () => {
+  document.getElementById("register-container").style.display = "none";
+  document.getElementById("login-container").style.display = "block";
+});
+
+document.getElementById("go-register").addEventListener("click", () => {
+  document.getElementById("login-container").style.display = "none";
+  document.getElementById("register-container").style.display = "block";
+});
+
+// Função para capturar o Enter como confirmação
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    const activeElement = document.activeElement;
+
+    // Verifica se está na tela de cadastro
+    if (document.getElementById("register-container").style.display === "block") {
+      if (activeElement.id === "name" || activeElement.id === "register-password") {
+        document.getElementById("start-button").click();
+      }
+    }
+
+    // Verifica se está na tela de login
+    if (document.getElementById("login-container").style.display === "block") {
+      if (activeElement.id === "login-name" || activeElement.id === "login-password") {
+        document.getElementById("login-button").click();
+      }
+    }
+  }
+});
+
 // Navegação entre telas de cadastro e login
 goLoginLink.addEventListener("click", () => {
   registerContainer.style.display = "none";
@@ -253,39 +295,71 @@ function endQuiz() {
   quizContainer.style.display = "none";
   endScreen.style.display = "block";
   finalMessageElement.textContent = `Pontuação Final: ${score}/${questions.length} | Tempo: ${quizTimer}s`;
-  errorListElement.innerHTML = errors.map(e=>`<li class="error-item">${e}</li>`).join("");
-  saveScore(document.getElementById("name").value.trim(), score, quizTimer);
+  errorListElement.innerHTML = errors.map(e => `<li class="error-item">${e}</li>`).join("");
+
+  // Salvar pontuação e marcar como concluído
+  saveScore(currentUserName, score, quizTimer);
+  markQuizAsCompleted(currentUserName);
+
+  // Ocultar o pop-up automaticamente após 5 segundos
+  setTimeout(() => {
+    endScreen.style.display = "none";
+    backToMenu(); // Voltar ao menu principal
+  }, 5000); // 5000ms = 5 segundos
 }
+
+// Função para marcar o quiz como concluído no Firebase
+async function markQuizAsCompleted(userName) {
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    snap.forEach(doc => {
+      if (doc.data().name === userName) {
+        updateDoc(doc.ref, { quizCompleted: true });
+      }
+    });
+  } catch (err) {
+    console.error("Erro ao marcar quiz como concluído:", err);
+  }
+}
+
 btnQuiz.addEventListener("click", async () => {
-  hideAllSections();
-  quizContainer.style.display = "block";
-  const savedProgress = await loadProgress(currentUserName);
-  if (savedProgress) {
-    const resume = confirm("Você tem progresso salvo. Deseja continuar de onde parou?");
-    if (resume) {
-      questions = savedProgress.questions;
-      score = savedProgress.score;
-      currentQuestion = savedProgress.currentQuestion;
-      errors = savedProgress.errors;
-      quizTimer = savedProgress.quizTimer;
-    } else {
-      questions = getRandomQuestions();
-      score = 0;
-      currentQuestion = 0;
-      errors = [];
-      quizTimer = 0;
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    let userFound = false;
+
+    snap.forEach(doc => {
+      const userData = doc.data();
+      if (userData.name === currentUserName) {
+        userFound = true;
+        if (userData.quizCompleted) {
+          alert("Você já completou o quiz. Não é possível refazê-lo.");
+          return;
+        }
+      }
+    });
+
+    if (!userFound) {
+      alert("Usuário não encontrado.");
+      return;
     }
-  } else {
+
+    // Permitir iniciar o quiz se não foi completado
+    hideAllSections();
+    quizContainer.style.display = "block";
     questions = getRandomQuestions();
     score = 0;
     currentQuestion = 0;
     errors = [];
     quizTimer = 0;
+    scoreElement.textContent = score;
+    startTimer();
+    loadQuestion();
+  } catch (err) {
+    console.error("Erro ao verificar status do quiz:", err);
+    alert("Erro ao iniciar o quiz. Tente novamente.");
   }
-  scoreElement.textContent = score;
-  startTimer();
-  loadQuestion();
 });
+
 restartButton.addEventListener("click", ()=>{
   btnQuiz.click();
 });
