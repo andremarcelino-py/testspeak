@@ -592,45 +592,64 @@ body {
 #spanish-library-container,
 #french-container,
 #french-library-container {
-  border-left: 5px solid #f39c12;
+  border-left: 5px solid var(--primary-color);
   padding-left: 1rem;
   animation: fadeIn 0.5s ease-in-out;
+  margin-bottom: 20px;
 }
 
-.tab-button#btnSpanish {
-  background-color: #f39c12;
-  color: white;
+#spanish-container h3,
+#french-container h3 {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
 }
 
-.tab-button#btnFrench {
-  background-color: #b319b8;
-  color: white;
+#spanish-container p,
+#french-container p {
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 10px;
 }
 
-@media (max-width: 768px) {
-  #spanish-container,
-  #spanish-library-container,
-  #french-container,
-  #french-library-container {
-    padding: 1rem;
-  }
+#spanish-container ul,
+#french-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
 }
 
-/* Botão "Aprenda Mais" */
-.aprenda-mais-button {
+#spanish-container ul li::before,
+#french-container ul li::before {
+  content: "•";
+  color: var(--secondary-color);
+  margin-right: 8px;
+}
+
+#spanish-container ul li,
+#french-container ul li {
+  font-size: 1rem;
+  color: #d1d5db;
+  margin-bottom: 5px;
+}
+
+/* Botões para aprender mais */
+.learn-more-button {
   background-color: var(--secondary-color);
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  color: white;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
   transition: all 0.3s ease;
+  margin-top: 10px;
 }
-.aprenda-mais-button:hover {
-  transform: translateY(-2px);
+
+.learn-more-button:hover {
   background-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4);
 }
 
 
