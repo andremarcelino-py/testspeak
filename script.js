@@ -196,46 +196,28 @@ loginButton.addEventListener("click", async () => {
   }
 });
 
-// Alternar entre telas
+// Exibir a tela de cadastro ao clicar em "Comece Agora"
 document.getElementById("start-now").addEventListener("click", () => {
   document.getElementById("welcome-container").style.display = "none";
   document.getElementById("register-container").style.display = "block";
 });
 
+// Exibir a tela de login ao clicar em "Já Tenho uma Conta"
 document.getElementById("login").addEventListener("click", () => {
   document.getElementById("welcome-container").style.display = "none";
   document.getElementById("login-container").style.display = "block";
 });
 
+// Alternar para a tela de login a partir da tela de cadastro
 document.getElementById("go-login").addEventListener("click", () => {
   document.getElementById("register-container").style.display = "none";
   document.getElementById("login-container").style.display = "block";
 });
 
+// Alternar para a tela de cadastro a partir da tela de login
 document.getElementById("go-register").addEventListener("click", () => {
   document.getElementById("login-container").style.display = "none";
   document.getElementById("register-container").style.display = "block";
-});
-
-// Função para capturar o Enter como confirmação
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    const activeElement = document.activeElement;
-
-    // Verifica se está na tela de cadastro
-    if (document.getElementById("register-container").style.display === "block") {
-      if (activeElement.id === "name" || activeElement.id === "register-password") {
-        document.getElementById("start-button").click();
-      }
-    }
-
-    // Verifica se está na tela de login
-    if (document.getElementById("login-container").style.display === "block") {
-      if (activeElement.id === "login-name" || activeElement.id === "login-password") {
-        document.getElementById("login-button").click();
-      }
-    }
-  }
 });
 
 // Navegação entre telas de cadastro e login
@@ -295,56 +277,26 @@ function endQuiz() {
   quizContainer.style.display = "none";
   endScreen.style.display = "block";
   finalMessageElement.textContent = `Pontuação Final: ${score}/${questions.length} | Tempo: ${quizTimer}s`;
-  errorListElement.innerHTML = errors.map(e => `<li class="error-item">${e}</li>`).join("");
-
-  // Salvar pontuação e marcar como concluído
-  saveScore(currentUserName, score, quizTimer);
-  markQuizAsCompleted(currentUserName);
-
-  // Ocultar o pop-up automaticamente após 5 segundos
-  setTimeout(() => {
-    endScreen.style.display = "none";
-    backToMenu(); // Voltar ao menu principal
-  }, 5000); // 5000ms = 5 segundos
+  errorListElement.innerHTML = errors.map(e=>`<li class="error-item">${e}</li>`).join("");
+  saveScore(document.getElementById("name").value.trim(), score, quizTimer);
 }
 
-// Função para marcar o quiz como concluído no Firebase
-async function markQuizAsCompleted(userName) {
-  try {
-    const snap = await getDocs(collection(db, "users"));
-    snap.forEach(doc => {
-      if (doc.data().name === userName) {
-        updateDoc(doc.ref, { quizCompleted: true });
-      }
-    });
-  } catch (err) {
-    console.error("Erro ao marcar quiz como concluído:", err);
-  }
-}
+// Adicione um novo contêiner para a aba de aviso no HTML
+const quizWarningContainer = document.getElementById("quiz-warning-container");
+const quizWarningMessage = document.getElementById("quiz-warning-message");
+const quizWarningBackButton = document.getElementById("quiz-warning-back-button");
 
+// Modifique o evento do botão do quiz principal
 btnQuiz.addEventListener("click", async () => {
-  try {
-    const snap = await getDocs(collection(db, "users"));
-    let userFound = false;
+  hideAllSections();
 
-    snap.forEach(doc => {
-      const userData = doc.data();
-      if (userData.name === currentUserName) {
-        userFound = true;
-        if (userData.quizCompleted) {
-          alert("Você já completou o quiz. Não é possível refazê-lo.");
-          return;
-        }
-      }
-    });
-
-    if (!userFound) {
-      alert("Usuário não encontrado.");
-      return;
-    }
-
-    // Permitir iniciar o quiz se não foi completado
-    hideAllSections();
+  const savedProgress = await loadProgress(currentUserName);
+  if (savedProgress) {
+    // Exibir a aba de aviso
+    quizWarningMessage.textContent = "Você já realizou este quiz. Você só pode fazê-lo uma vez.";
+    quizWarningContainer.style.display = "block";
+  } else {
+    // Iniciar o quiz normalmente
     quizContainer.style.display = "block";
     questions = getRandomQuestions();
     score = 0;
@@ -354,10 +306,13 @@ btnQuiz.addEventListener("click", async () => {
     scoreElement.textContent = score;
     startTimer();
     loadQuestion();
-  } catch (err) {
-    console.error("Erro ao verificar status do quiz:", err);
-    alert("Erro ao iniciar o quiz. Tente novamente.");
   }
+});
+
+// Evento para o botão de voltar ao menu na aba de aviso
+quizWarningBackButton.addEventListener("click", () => {
+  hideAllSections();
+  menuContainer.style.display = "block";
 });
 
 restartButton.addEventListener("click", ()=>{
