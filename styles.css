@@ -780,6 +780,65 @@ body {
   vertical-align: middle;
 }
 
+
+/* Estilo do Carrossel */
+.avatar-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  position: relative;
+}
+
+.carousel-track-container {
+  overflow: hidden;
+  width: 300px; /* Ajuste conforme necessário */
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.carousel-slide img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: border 0.3s ease;
+}
+
+.carousel-slide img.selected {
+  border-color: var(--primary-color);
+}
+
+.carousel-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--primary-color);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.prev-button {
+  left: -40px;
+}
+
+.next-button {
+  right: -40px;
+}
+
 /* Estilo do pódio */
 .podium {
   display: flex;
@@ -887,45 +946,47 @@ body {
   }
 }
 
-/* Tela de Aviso do Quiz */
+/* Estilo para o aviso do quiz */
 #quiz-warning-container {
-  display: none; /* Oculta a tela inicialmente */
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(31, 26, 58, 0.95); /* Fundo com opacidade */
-  color: #fff;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--primary-color);
   border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  z-index: 1000; /* Garante que fique acima de outros elementos */
+  padding: 20px;
   width: 90%;
   max-width: 400px;
+  margin: 50px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
 }
 
 #quiz-warning-message {
   font-size: 1.2rem;
+  color: var(--primary-color);
   margin-bottom: 20px;
-  color: #f472b6; /* Destaque para o texto */
+  font-weight: bold;
 }
 
 #quiz-warning-back-button {
-  background: #f472b6;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   padding: 10px 20px;
   border-radius: 25px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 #quiz-warning-back-button:hover {
-  background: #d6619d; /* Cor de hover */
+  background: var(--secondary-color);
   transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Botão Sair */
@@ -950,4 +1011,25 @@ body {
   background: var(--secondary-color); /* Cor de hover */
   transform: translateX(-50%) scale(1.05); /* Efeito de zoom */
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Sombra mais intensa no hover */
+}
+
+/* Botão Escolher Avatar */
+#avatar-button {
+  margin-top: 20px;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#avatar-button:hover {
+  background: var(--secondary-color);
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
