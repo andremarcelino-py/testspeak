@@ -633,19 +633,6 @@ body {
   background-color: var(--accent-color);
 }
 
-/* Inicialmente, conteúdo das seções oculto */
-.text-card .text-content {
-  display: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-/* Conteúdo ativo */
-.text-card .text-content.active {
-  display: block;
-  opacity: 1;
-}
-
 
 
 #user-info {
@@ -855,8 +842,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 0, 0, 0.1);
-  border: 2px solid rgba(255, 0, 0, 0.5);
+  background-color: rgba(124, 58, 237, 0.1); /* Cor primária com transparência */
+  border: 2px solid var(--primary-color);
   border-radius: 10px;
   padding: 20px;
   margin: 20px auto;
@@ -867,23 +854,25 @@ body {
 #quiz-warning-message {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #ff0000;
+  color: var(--primary-color);
   margin-bottom: 15px;
 }
 
 #quiz-warning-back-button {
-  background-color: #ff0000;
+  background-color: var(--primary-color);
   color: #fff;
   border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
+  border-radius: 25px;
+  padding: 12px 24px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 #quiz-warning-back-button:hover {
-  background-color: #cc0000;
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
 }
 
 /* Estilo para o menu de níveis das perguntas */
@@ -895,35 +884,37 @@ body {
 }
 
 .level-button {
-  background-color: #007bff;
+  background-color: var(--primary-color);
   color: #fff;
   border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
+  border-radius: 25px;
+  padding: 12px 24px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .level-button:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
 }
 
 /* Estilo para o botão "Sair" no menu principal */
 #logout-button {
-  background-color: #dc3545;
+  background-color: var(--accent-color);
   color: #fff;
   border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
+  border-radius: 25px;
+  padding: 12px 24px;
   font-size: 1rem;
   cursor: pointer;
   margin-top: 20px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 #logout-button:hover {
-  background-color: #b02a37;
-  transform: scale(1.05);
+  background-color: #d6619d; /* Tom mais escuro do accent-color */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4);
 }
