@@ -11,15 +11,17 @@
 <body>
 
 
-<!-- Tela de Boas-Vindas -->
+  <!-- Tela de Boas-Vindas -->
 <div id="welcome-container" class="welcome-container">
   <header class="welcome-header">
     <img src="images/logo.png" alt="Logo Speak Easy" class="logo" />
     <h1 class="logo-text">Speak Easy</h1> <!-- Adicionando o nome ao lado ou abaixo da logo -->
   </header>
   <main class="welcome-content">
-    <h1 class="welcome-slogan">O jeito <span>fácil</span> de aprender inglês!</h1>
-    <p class="welcome-description"></p>
+    <h1 class="welcome-slogan">O jeito <span>fácil</span> de falar outra língua!</h1>
+    <p class="welcome-description">
+       Comece agora e transforme seu aprendizado!
+    </p>
     <div class="welcome-buttons">
       <button id="start-now" class="btn-primary">Comece Agora</button>
       <button id="login" class="btn-secondary">Já Tenho uma Conta</button>
@@ -599,6 +601,12 @@
     <img src="images/avatar12.png" class="avatar-option" data-avatar="images/avatar12.png" alt="Avatar 12"/>
   </div>
 </div>
+</div>
+
+  <!-- Aba de aviso do quiz -->
+<div id="quiz-warning-container" style="display: none;">
+  <p id="quiz-warning-message"></p>
+  <button id="quiz-warning-back-button">Voltar ao Menu</button>
 </div>
 
   <script type="module" src="script.js"></script>
