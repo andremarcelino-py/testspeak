@@ -101,7 +101,7 @@ function hideAllSections() {
     libraryContainer, rankingContainer, endScreen, perguntasEndScreen,
     spanishMenuContainer, spanishQuizContainer, spanishEndScreen, spanishLibraryContainer,
     frenchMenuContainer, frenchQuizContainer, frenchEndScreen, frenchLibraryContainer,
-    profileContainer // Adicione esta linha
+    profileContainer, exercisesContainer // Inclua o contêiner de exercícios aqui
   ].forEach(sec => sec && (sec.style.display = "none"));
 }
 
@@ -163,6 +163,36 @@ function updateUserName(name, photoURL = "images/default.png") {
   }
 }
 
+// Verifica se é a primeira vez que o usuário faz login
+function checkFirstTimeLogin() {
+  const isFirstTime = localStorage.getItem("firstTimeLogin") === null;
+
+  if (isFirstTime) {
+    // Exibe o popup
+    const popup = document.getElementById("first-time-popup");
+    popup.style.display = "flex";
+
+    // Botão "Ir para o Perfil"
+    document.getElementById("go-to-profile").addEventListener("click", () => {
+      popup.style.display = "none";
+      hideAllSections();
+      profileContainer.style.display = "block"; // Redireciona para o perfil
+    });
+
+    // Botão "Depois"
+    document.getElementById("skip-profile").addEventListener("click", () => {
+      popup.style.display = "none";
+      menuContainer.style.display = "block"; // Redireciona para o menu principal
+    });
+
+    // Marca que o usuário já fez login pela primeira vez
+    localStorage.setItem("firstTimeLogin", "false");
+  } else {
+    // Redireciona diretamente para o menu principal
+    menuContainer.style.display = "block";
+  }
+}
+
 // Modifique o login para atualizar o nome do usuário
 loginButton.addEventListener("click", async () => {
   const loginName = document.getElementById("login-name").value.trim();
@@ -183,7 +213,7 @@ loginButton.addEventListener("click", async () => {
         userFound = true;
         updateUserName(loginName, userData.photoURL); // Atualiza o nome e a foto do usuário
         hideAllSections();
-        menuContainer.style.display = "block"; // Mostra o menu principal
+        checkFirstTimeLogin(); // Verifica se é a primeira vez que o usuário faz login
       }
     });
 
@@ -275,11 +305,60 @@ function checkAnswer(sel) {
 function endQuiz() {
   stopTimer();
   quizContainer.style.display = "none";
-  endScreen.style.display = "block";
+
+  // Obter mensagem motivacional
+  const motivationalMessage = getMotivationalMessage(score, questions.length);
+  congratulationsTitle.textContent = motivationalMessage.title;
+  congratulationsMessage.textContent = motivationalMessage.message;
+
+  // Exibir a tela de parabenização
+  congratulationsContainer.style.display = "block";
+
+  // Atualizar pontuação final
   finalMessageElement.textContent = `Pontuação Final: ${score}/${questions.length} | Tempo: ${quizTimer}s`;
-  errorListElement.innerHTML = errors.map(e=>`<li class="error-item">${e}</li>`).join("");
+  errorListElement.innerHTML = errors.map(e => `<li class="error-item">${e}</li>`).join("");
+
   saveScore(document.getElementById("name").value.trim(), score, quizTimer);
 }
+
+// Referências aos elementos da tela de parabenização
+const congratulationsContainer = document.getElementById("congratulations-container");
+const congratulationsTitle = document.getElementById("congratulations-title");
+const congratulationsMessage = document.getElementById("congratulations-message");
+const congratulationsBackButton = document.getElementById("congratulations-back-button");
+
+// Mensagens motivacionais baseadas na pontuação
+function getMotivationalMessage(score, totalQuestions) {
+  const percentage = (score / totalQuestions) * 100;
+
+  if (percentage === 100) {
+    return {
+      title: "Parabéns! 🎉",
+      message: "Você acertou todas as perguntas! Um desempenho perfeito! Continue assim!",
+    };
+  } else if (percentage >= 80) {
+    return {
+      title: "Ótimo trabalho! 👏",
+      message: "Você foi muito bem! Continue praticando para alcançar a perfeição!",
+    };
+  } else if (percentage >= 50) {
+    return {
+      title: "Bom esforço! 💪",
+      message: "Você está no caminho certo! Continue praticando para melhorar ainda mais!",
+    };
+  } else {
+    return {
+      title: "Não desista! 🌟",
+      message: "Cada erro é uma oportunidade de aprendizado. Continue tentando!",
+    };
+  }
+}
+
+// Evento para o botão "Voltar ao Menu" na tela de parabenização
+congratulationsBackButton.addEventListener("click", () => {
+  congratulationsContainer.style.display = "none"; // Ocultar a tela de parabenização
+  menuContainer.style.display = "block"; // Voltar ao menu principal
+});
 
 // Adicione um novo contêiner para a aba de aviso no HTML
 const quizWarningContainer = document.getElementById("quiz-warning-container");
@@ -718,7 +797,7 @@ const allQuestions = [
   { question: "Which one is a correct question?", options: ["What it is time?", "What is time it?", "It is what time?", "What time is it?"], answer: 3, difficulty: "medium", libraryRef: "grammar" },
   { question: "What does 'It's raining cats and dogs' mean?", options: ["Está chovendo pouco", "Animais estão caindo", "Chuva de gatos", "Está chovendo muito"], answer: 3, difficulty: "hard", libraryRef: "idioms" },
   { question: "How do you say 'Estou cansado' in English?", options: ["I'm sad", "I'm bored", "I'm tired", "I'm sleepy"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
-  { question: "Whatés the opposite of 'hot'?", options: ["Boiling", "Cool", "Cold", "Warm"], answer: 2, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the opposite of 'hot'?", options: ["Boiling", "Cool", "Cold", "Warm"], answer: 2, difficulty: "easy", libraryRef: "vocabulary" },
   { question: "Which sentence uses the present continuous?", options: ["I am eating", "I eat now", "I eats", "I will eat"], answer: 0, difficulty: "medium", libraryRef: "grammar" },
   { question: "What is the plural of 'mouse'?", options: ["Mices", "Mice", "Mouse", "Mouses"], answer: 1, difficulty: "hard", libraryRef: "vocabulary" },
   { question: "How do you say 'Qual é o seu nome?' in English?", options: ["What is your name?", "How are you?", "Where are you from?", "Who are you?"], answer: 0, difficulty: "easy", libraryRef: "frases-basicas" },
@@ -730,6 +809,21 @@ const allQuestions = [
   { question: "Which is a correct negative sentence?", options: ["She no likes coffee", "She doesn't like coffee", "She don't like coffee", "She not like coffee"], answer: 1, difficulty: "medium", libraryRef: "grammar" },
   { question: "How do you say 'Eu gosto de música' in English?", options: ["I like music", "I like of music", "I music like", "I likes music"], answer: 0, difficulty: "easy", libraryRef: "frases-basicas" },
   { question: "What is the correct past tense of 'have'?", options: ["Haved", "Has", "Had", "Have"], answer: 2, difficulty: "medium", libraryRef: "verbos" },
+  { question: "What is the synonym of 'fast'?", options: ["Quick", "Slow", "Big", "Small"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the antonym of 'happy'?", options: ["Sad", "Joyful", "Excited", "Angry"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the plural of 'tooth'?", options: ["Teeth", "Tooths", "Toothes", "Teeths"], answer: 0, difficulty: "medium", libraryRef: "vocabulary" },
+  { question: "What is the past tense of 'run'?", options: ["Ran", "Running", "Runned", "Run"], answer: 0, difficulty: "medium", libraryRef: "verbos" },
+  { question: "What is the opposite of 'cold'?", options: ["Hot", "Warm", "Cool", "Freezing"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What does 'break the ice' mean?", options: ["Start a conversation", "Destroy something", "Cool down", "Make a mistake"], answer: 0, difficulty: "medium", libraryRef: "idioms" },
+  { question: "What is the meaning of 'cat'?", options: ["An animal", "A fruit", "A color", "A tool"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the capital of Canada?", options: ["Ottawa", "Toronto", "Vancouver", "Montreal"], answer: 0, difficulty: "medium", libraryRef: "geography" },
+  { question: "What is the opposite of 'strong'?", options: ["Weak", "Powerful", "Big", "Fast"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the meaning of 'red'?", options: ["A color", "A fruit", "A number", "A shape"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the plural of 'fish'?", options: ["Fish", "Fishes", "Fishs", "Fishies"], answer: 0, difficulty: "medium", libraryRef: "vocabulary" },
+  { question: "What is the past tense of 'see'?", options: ["Saw", "Seen", "Seeing", "See"], answer: 0, difficulty: "medium", libraryRef: "verbos" },
+  { question: "What is the synonym of 'smart'?", options: ["Intelligent", "Dumb", "Slow", "Lazy"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the opposite of 'day'?", options: ["Night", "Morning", "Evening", "Afternoon"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the meaning of 'dog'?", options: ["An animal", "A fruit", "A color", "A tool"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
 ];
 
 // Adicionando funcionalidade de redefinição de senha
@@ -869,4 +963,261 @@ avatarOptions.forEach(img => {
       alert("Erro ao salvar avatar. Tente novamente.");
     }
   });
+});
+
+// --- ABA DE EXERCÍCIOS ---
+const btnExercises = document.getElementById("btnExercises");
+const exercisesContainer = document.getElementById("exercises-container");
+const exerciseQuestionElement = document.getElementById("exercise-question");
+const exerciseInputElement = document.getElementById("exercise-input");
+const exerciseSubmitButton = document.getElementById("exercise-submit");
+const exerciseFeedbackElement = document.getElementById("exercise-feedback");
+const backButtonExercises = document.getElementById("backButtonExercises");
+
+
+// Adiciona o evento de clique para voltar ao menu principal
+backButtonExercises.addEventListener("click", () => {
+  hideAllSections(); // Esconde todas as seções
+  menuContainer.style.display = "block"; // Mostra o menu principal
+});
+
+// Array de perguntas, respostas e explicações
+const exerciseQuestions = [
+  {
+    question: "Qual é a capital da França?",
+    answer: "Paris",
+    explanation: "Paris é a capital da França e é conhecida como a Cidade Luz.",
+  },
+  
+  // Perguntas em inglês
+  {
+    question: "What is the synonym of 'happy'?",
+    answer: "Joyful",
+    explanation: "A synonym for 'happy' is 'joyful', which means feeling or showing great pleasure.",
+  },
+  {
+    question: "What is the antonym of 'big'?",
+    answer: "Small",
+    explanation: "The antonym of 'big' is 'small', which means of a size that is less than normal.",
+  },
+  {
+    question: "What is the plural of 'child'?",
+    answer: "Children",
+    explanation: "The plural of 'child' is 'children', which refers to more than one child.",
+  },
+  {
+    question: "What is the past tense of 'go'?",
+    answer: "Went",
+    explanation: "The past tense of 'go' is 'went', used to describe an action that happened in the past.",
+  },
+  {
+    question: "What is the opposite of 'hot'?",
+    answer: "Cold",
+    explanation: "The opposite of 'hot' is 'cold', which refers to a low temperature.",
+  },
+  {
+    question: "What is the meaning of 'apple'?",
+    answer: "A fruit",
+    explanation: "An apple is a fruit that is typically round, red, green, or yellow, and sweet or tart in taste.",
+  },
+  {
+    question: "What is the capital of the United States?",
+    answer: "Washington, D.C.",
+    explanation: "Washington, D.C. is the capital of the United States and the seat of its federal government.",
+  },
+  {
+    question: "What is the opposite of 'fast'?",
+    answer: "Slow",
+    explanation: "The opposite of 'fast' is 'slow', which means moving or operating at a low speed.",
+  },
+  {
+    question: "What is the meaning of 'blue'?",
+    answer: "A color",
+    explanation: "Blue is a primary color that is often associated with the sky and the ocean.",
+  },
+  {
+    question: "What is the plural of 'mouse'?",
+    answer: "Mice",
+    explanation: "The plural of 'mouse' is 'mice', which refers to more than one mouse.",
+  },
+  {
+    question: "What is the past tense of 'eat'?",
+    answer: "Ate",
+    explanation: "The past tense of 'eat' is 'ate', used to describe the act of consuming food in the past.",
+  },
+  {
+    question: "What is the synonym of 'beautiful'?",
+    answer: "Pretty",
+    explanation: "A synonym for 'beautiful' is 'pretty', which means pleasing to the eye or attractive.",
+  },
+  {
+    question: "What is the opposite of 'day'?",
+    answer: "Night",
+    explanation: "The opposite of 'day' is 'night', which refers to the period of darkness between sunset and sunrise.",
+  },
+  {
+    question: "What is the meaning of 'dog'?",
+    answer: "An animal",
+    explanation: "A dog is a domesticated animal often kept as a pet or used for work.",
+  },
+  {
+    question: "What is the capital of England?",
+    answer: "London",
+    explanation: "London is the capital of England and one of the most famous cities in the world.",
+  },
+];
+
+let currentExerciseQuestionIndex = 0; // Índice da pergunta atual
+const correctExerciseAnswers = [];
+const similarityThreshold = 0.8; // Limite de similaridade (80%)
+
+// Função para calcular similaridade entre duas strings
+function calculateSimilarity(str1, str2) {
+  const normalize = (str) => str.toLowerCase().trim();
+  const [a, b] = [normalize(str1), normalize(str2)];
+  let matches = 0;
+
+  for (let i = 0; i < Math.min(a.length, b.length); i++) {
+    if (a[i] === b[i]) matches++;
+  }
+
+  return matches / Math.max(a.length, b.length);
+}
+
+// Função para exibir a próxima pergunta
+function showNextQuestion() {
+  if (currentExerciseQuestionIndex < exerciseQuestions.length) {
+      const questionElement = document.getElementById("exercise-question");
+      questionElement.textContent = exerciseQuestions[currentExerciseQuestionIndex].question;
+    } else {
+      document.getElementById("exercise-feedback").textContent =
+        "Você completou todos os exercícios!";
+      document.getElementById("exercise-input").disabled = true;
+      document.getElementById("exercise-submit").disabled = true;
+    }
+}
+
+// Função para adicionar um exercício acertado ao bloco
+function addCorrectAnswer(question, userAnswer, correctAnswer, explanation) {
+  const correctAnswersList = document.getElementById("correct-answers-list");
+
+  // Cria um novo bloco para o exercício acertado
+  const answerBlock = document.createElement("div");
+  answerBlock.className = "correct-answer-item";
+  answerBlock.style.border = "2px solid #4caf50";
+  answerBlock.style.padding = "10px";
+  answerBlock.style.marginBottom = "10px";
+  answerBlock.style.borderRadius = "5px";
+  answerBlock.style.backgroundColor = "#e8f5e9";
+  answerBlock.style.color = "#2e7d32";
+
+  answerBlock.innerHTML = `
+    <p><strong>Pergunta:</strong> ${question}</p>
+    <p><strong>Sua Resposta:</strong> ${userAnswer}</p>
+    <p><strong>Resposta Correta:</strong> ${correctAnswer}</p>
+    <p><strong>Explicação:</strong> ${explanation}</p>
+  `;
+
+  // Adiciona o bloco ao contêiner
+  correctAnswersList.appendChild(answerBlock);
+}
+
+// Manipular envio de resposta
+document.getElementById("exercise-submit").addEventListener("click", () => {
+  const userAnswer = document.getElementById("exercise-input").value.trim();
+  const currentQuestion = exerciseQuestions[currentExerciseQuestionIndex];
+
+  // Verifica se a resposta é semelhante o suficiente
+  if (
+    calculateSimilarity(userAnswer, currentQuestion.answer) >=
+    similarityThreshold
+  ) {
+    correctExerciseAnswers.push({
+      question: currentQuestion.question,
+      answer: userAnswer,
+    });
+    document.getElementById("exercise-feedback").textContent =
+      "Resposta correta!";
+    addCorrectAnswer(
+      currentQuestion.question,
+      userAnswer,
+      currentQuestion.answer,
+      currentQuestion.explanation
+    ); // Adiciona ao bloco de acertos
+    currentExerciseQuestionIndex++; // Avança para a próxima pergunta
+    showNextQuestion(); // Exibe a próxima pergunta
+  } else {
+    document.getElementById("exercise-feedback").textContent =
+      "Resposta incorreta!";
+  }
+
+  document.getElementById("exercise-input").value = ""; // Limpar entrada
+});
+
+// Mostra a aba de exercícios ao clicar no botão
+btnExercises.addEventListener("click", () => {
+  hideAllSections(); // Esconde todas as outras seções
+  exercisesContainer.style.display = "block"; // Mostra o contêiner de exercícios
+  currentExerciseIndex = 0; // Reinicia o índice dos exercícios
+  randomExercises = getRandomExercises(); // Gera uma nova lista de exercícios aleatórios
+  loadExercise(); // Carrega o primeiro exercício
+});
+
+// Inicializa a primeira pergunta
+showNextQuestion();
+
+document.addEventListener('keydown', (event) => {
+  const key = event.key;
+
+  // Ação para a tecla Enter
+  if (key === 'Enter') {
+    // Verifica se está na tela de Cadastro
+    if (document.getElementById('register-container').style.display === 'block') {
+      document.getElementById('start-button').click();
+    }
+
+    // Verifica se está na tela de Login
+    if (document.getElementById('login-container').style.display === 'block') {
+      document.getElementById('login-button').click();
+    }
+
+    // Verifica se está na tela de Exercícios
+    if (document.getElementById('exercises-container').style.display === 'block') {
+      document.getElementById('exercise-submit').click();
+    }
+  }
+
+  // Ação para a tecla Esc
+  if (key === 'Escape') {
+    // Verifica se está na tela de Cadastro
+    if (document.getElementById('register-container').style.display === 'block') {
+      document.getElementById('go-login').click();
+    }
+
+    // Verifica se está na tela de Login
+    if (document.getElementById('login-container').style.display === 'block') {
+      document.getElementById('go-register').click();
+    }
+
+    // Verifica se está na tela de Exercícios
+    if (document.getElementById('exercises-container').style.display === 'block') {
+      document.getElementById('backButtonExercises').click();
+    }
+
+    // Verifica se está na tela de Aviso do Quiz
+    if (document.getElementById('quiz-warning-container').style.display === 'block') {
+      document.getElementById('quiz-warning-back-button').click();
+    }
+
+    // Verifica se está em qualquer outra aba (exceto Quiz)
+    const quizContainers = [
+      document.getElementById('quiz-container')
+      
+    ];
+
+    const isInQuiz = quizContainers.some(container => container && container.style.display === 'block');
+    if (!isInQuiz) {
+      backToMenu(); // Volta ao menu principal
+    }
+  }
 });
