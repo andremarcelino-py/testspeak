@@ -289,18 +289,28 @@ function loadQuestion() {
 function checkAnswer(sel) {
   const q = questions[currentQuestion];
   const opts = optionsElement.querySelectorAll("li");
-  opts.forEach((li,i)=>{
-    li.classList.remove("correct","wrong");
+  opts.forEach((li, i) => {
+    li.classList.remove("correct", "wrong");
     if (i === q.answer) li.classList.add("correct");
     else if (i === sel) li.classList.add("wrong");
     li.style.pointerEvents = "none";
   });
-  if (sel === q.answer) { score++; scoreElement.textContent = score; }
-  else errors.push(`Pergunta: ${q.question} - Resposta: ${q.options[q.answer]}`);
-  saveProgress(currentUserName, { questions, score, currentQuestion, errors, quizTimer });
-  setTimeout(()=>{
-    currentQuestion++; loadQuestion();
-  },1500);
+
+  if (sel === q.answer) {
+    score++;
+    scoreElement.textContent = score;
+  } else {
+    errors.push({
+      question: q.question,
+      correct: q.options[q.answer],
+      libraryRef: q.libraryRef, // Adiciona a referência da biblioteca
+    });
+  }
+
+  setTimeout(() => {
+    currentQuestion++;
+    loadQuestion();
+  }, 1500);
 }
 function endQuiz() {
   stopTimer();
@@ -311,14 +321,29 @@ function endQuiz() {
   congratulationsTitle.textContent = motivationalMessage.title;
   congratulationsMessage.textContent = motivationalMessage.message;
 
+  // Preencher a lista de erros
+  errorListElement.innerHTML = errors.map((error) => `
+    <li class="error-item" style="margin-bottom: 10px;">
+      <p><strong>Pergunta:</strong> ${error.question}</p>
+      <p><strong>Resposta Correta:</strong> ${error.correct}</p>
+      <button class="aprenda-mais-button" onclick="showLibrarySection('${error.libraryRef}')">
+        Aprenda Mais
+      </button>
+    </li>
+  `).join("");
+
   // Exibir a tela de parabenização
   congratulationsContainer.style.display = "block";
 
-  // Atualizar pontuação final
-  finalMessageElement.textContent = `Pontuação Final: ${score}/${questions.length} | Tempo: ${quizTimer}s`;
-  errorListElement.innerHTML = errors.map(e => `<li class="error-item">${e}</li>`).join("");
-
+  // Salvar pontuação final
   saveScore(document.getElementById("name").value.trim(), score, quizTimer);
+}
+
+// Função para redirecionar para a biblioteca correspondente
+function showLibrarySection(libraryRef) {
+  hideAllSections();
+  libraryContainer.style.display = "block";
+  document.getElementById(libraryRef)?.scrollIntoView({ behavior: "smooth" });
 }
 
 // Referências aos elementos da tela de parabenização
@@ -735,11 +760,15 @@ backButtonFrenchMenu.addEventListener("click", backToMenu);
 frenchRestartButton.addEventListener("click", ()=> btnFrenchQuiz.click());
 frenchMenuButton.addEventListener("click", backToMenu);
 
+
+saveScore(currentUserName, score, quizTimer);
+
+
 // --- SALVAR PONTUAÇÃO ---
 async function saveScore(userName, score, time) {
-  const snap = await getDocs(collection(db,"users"));
+  const snap = await getDocs(collection(db, "users"));
   let userDoc = null;
-  snap.forEach(doc=>{
+  snap.forEach(doc => {
     if (doc.data().name === userName) userDoc = doc.ref;
   });
   if (userDoc) {
