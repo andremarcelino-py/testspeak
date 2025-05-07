@@ -1,3 +1,24 @@
+
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Regras para a coleção "users"
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Regras para a coleção "ranking"
+    match /ranking/{docId} {
+      allow read: if true; // Permitir leitura pública do ranking
+      allow write: if request.auth != null; // Apenas usuários autenticados podem escrever
+    }
+  }
+}
+
+
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
