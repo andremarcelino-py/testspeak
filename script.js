@@ -894,6 +894,13 @@ const allQuestions = [
   { question: "What does 'To be in hot water' mean?", options: ["To take a bath", "To be in trouble", "To be happy", "To be rich"], answer: 1, difficulty: "medium", libraryRef: "idioms" },
   { question: "Which is the correct Future Simple sentence?", options: ["I go tomorrow", "I will go tomorrow", "I going tomorrow", "I gone tomorrow"], answer: 1, difficulty: "medium", libraryRef: "verb-tenses" },
 
+  { question: "What is the main goal of Agile methods? 🚀", options: ["Deliver value quickly and adapt to changes", "Follow a strict plan", "Avoid team communication", "Work alone"], answer: 0, difficulty: "easy", libraryRef: "agile-methods" },
+  { question: "Which Agile framework uses 'sprints' to organize work? 🏉", options: ["Scrum", "Kanban", "Waterfall", "Lean"], answer: 0, difficulty: "easy", libraryRef: "agile-methods" },
+  { question: "What is a 'Daily Stand-up'? ⏰", options: ["A quick daily meeting to align the team", "A weekly report", "A monthly review", "A coffee break"], answer: 0, difficulty: "easy", libraryRef: "agile-methods" },
+  { question: "What is the purpose of a 'Sprint Retrospective'? 🔄", options: ["Reflect and improve the process", "Plan the next sprint", "Assign tasks", "Deliver the product"], answer: 0, difficulty: "medium", libraryRef: "agile-methods" },
+  { question: "What does a 'Product Backlog' contain? 📋", options: ["A prioritized list of everything that needs to be done", "A list of team members", "A list of competitors", "A list of finished tasks"], answer: 0, difficulty: "medium", libraryRef: "agile-methods" },
+  { question: "Which Agile method uses boards and cards to visualize tasks? 🗂️", options: ["Kanban", "Scrum", "XP", "Waterfall"], answer: 0, difficulty: "easy", libraryRef: "agile-methods" },
+  { question: "What is the Agile Manifesto? 📜", options: ["A set of values and principles for Agile development", "A project plan", "A list of tasks", "A software tool"], answer: 0, difficulty: "medium", libraryRef: "agile-methods" },
   // 15 com answer: 2
   { question: "What is the correct form of the verb 'to be' in 'He ___ a doctor.'?", options: ["is", "am", "are", "be"], answer: 2, difficulty: "easy", libraryRef: "verb-tenses" },
   { question: "What is the plural of 'child'?", options: ["Childs", "Childes", "Children", "Childern"], answer: 2, difficulty: "hard", libraryRef: "vocabulary" },
