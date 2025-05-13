@@ -1133,12 +1133,12 @@ const exerciseQuestions = [
   },
   {
     question: "What is the meaning of 'apple'?",
-    answer: "A fruit",
+    answer: "fruit",
     explanation: "An apple is a fruit that is typically round, red, green, or yellow, and sweet or tart in taste.",
   },
   {
     question: "What is the capital of the United States?",
-    answer: "Washington, D.C.",
+    answer: "Washington",
     explanation: "Washington, D.C. is the capital of the United States and the seat of its federal government.",
   },
   {
