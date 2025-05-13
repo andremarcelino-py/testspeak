@@ -1,9 +1,3 @@
-
-
-
-
-
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
@@ -280,6 +274,13 @@ function startTimer() {
 }
 function stopTimer() { clearInterval(timerInterval); }
 function loadQuestion() {
+  // Atualiza barra de progresso
+  const progressBar = document.getElementById("quiz-progress-bar");
+  if (progressBar) {
+    const percent = ((currentQuestion) / questions.length) * 100;
+    progressBar.style.width = percent + "%";
+  }
+
   if (currentQuestion < questions.length) {
     const q = questions[currentQuestion];
     questionElement.textContent = q.question;
@@ -292,6 +293,10 @@ function loadQuestion() {
     });
   } else endQuiz();
 }
+
+
+
+
 function checkAnswer(sel) {
   const q = questions[currentQuestion];
   const opts = optionsElement.querySelectorAll("li");
@@ -343,6 +348,9 @@ function endQuiz() {
 
   // Salvar pontuação final
   saveScore(document.getElementById("name").value.trim(), score, quizTimer);
+
+  // SALVAR PROGRESSO PARA BLOQUEAR NOVO QUIZ
+  saveProgress(currentUserName, { finished: true }); // <-- Adicione esta linha
 }
 
 // Função para redirecionar para a biblioteca correspondente
@@ -360,29 +368,45 @@ const congratulationsBackButton = document.getElementById("congratulations-back-
 
 // Mensagens motivacionais baseadas na pontuação
 function getMotivationalMessage(score, totalQuestions) {
-  const percentage = (score / totalQuestions) * 100;
+  const percent = score / totalQuestions;
+  let motivationalMessage;
 
-  if (percentage === 100) {
-    return {
-      title: "Parabéns! 🎉",
-      message: "Você acertou todas as perguntas! Um desempenho perfeito! Continue assim!",
-    };
-  } else if (percentage >= 80) {
-    return {
-      title: "Ótimo trabalho! 👏",
-      message: "Você foi muito bem! Continue praticando para alcançar a perfeição!",
-    };
-  } else if (percentage >= 50) {
-    return {
-      title: "Bom esforço! 💪",
-      message: "Você está no caminho certo! Continue praticando para melhorar ainda mais!",
-    };
+  if (score === totalQuestions) {
+    motivationalMessage = 'Você zerou! Aqui é Speak Easy, mas seu inglês tá Speak Master! 🏆🇬🇧';
+  } else if (percent >= 0.95) {
+    motivationalMessage = 'Só faltou o sotaque britânico! Tá quase virando lenda do Speak Easy! 👑✨';
+  } else if (percent >= 0.9) {
+    motivationalMessage = 'Mandou aquele GG! Já pode dar aula no Speak Easy! 😎📚';
+  } else if (percent >= 0.85) {
+    motivationalMessage = 'Seu inglês tá mais fácil que pedir delivery! Bora pro próximo nível no Speak Easy! 🍔🚀';
+  } else if (percent >= 0.8) {
+    motivationalMessage = 'Top demais! Já já tá assistindo série sem legenda, estilo Speak Easy! 📺🔥';
+  } else if (percent >= 0.75) {
+    motivationalMessage = 'Tá fluindo! Aqui é Speak Easy, mas você tá quase Speak Pro! 💬💪';
+  } else if (percent >= 0.7) {
+    motivationalMessage = 'Safe! Seu inglês tá subindo de elo no Speak Easy! 🛡️';
+  } else if (percent >= 0.65) {
+    motivationalMessage = 'Tá indo bem! Logo logo vai pedir café em Londres sem travar! ☕🇬🇧';
+  } else if (percent >= 0.6) {
+    motivationalMessage = 'Falta pouco pra virar referência no Speak Easy! Keep going! 🚦';
+  } else if (percent >= 0.5) {
+    motivationalMessage = 'Tá no caminho! Melhorando aqui, arrasando lá fora! 🌍😉';
+  } else if (percent >= 0.4) {
+    motivationalMessage = 'Não desanima! Até o Google Tradutor já errou, mas você tá aprendendo de verdade! 📱🔄';
+  } else if (percent >= 0.3) {
+    motivationalMessage = 'Faz parte! Todo mundo já usou legenda, mas só os brabos continuam no Speak Easy! 🎬💡';
+  } else if (percent >= 0.2) {
+    motivationalMessage = 'Primeiro passo já foi! No Speak Easy, cada erro é um aprendizado! 👣';
+  } else if (percent >= 0.1) {
+    motivationalMessage = 'Começou, já é metade do caminho! Speak Easy é pra quem não desiste! 🚀';
   } else {
-    return {
-      title: "Não desista! 🌟",
-      message: "Cada erro é uma oportunidade de aprendizado. Continue tentando!",
-    };
+    motivationalMessage = 'Zero barra zero, mas relaxa: até o dicionário começou do A! Bora tentar de novo no Speak Easy! 📖😅';
   }
+
+  return {
+    title: "Parabéns!",
+    message: motivationalMessage
+  };
 }
 
 // Evento para o botão "Voltar ao Menu" na tela de parabenização
@@ -469,10 +493,10 @@ function checkPerguntasAnswer(sel) {
 }
 function endPerguntasQuiz() {
   stopPerguntasTimer();
-  perguntasQuizContainer.style.display="none";
-  perguntasEndScreen.style.display="block";
+  perguntasQuizContainer.style.display = "none";
+  perguntasEndScreen.style.display = "block";
   perguntasFinalMessageElement.textContent = `Pontuação Final: ${perguntasScore}/${perguntasQuestions.length} | Tempo: ${perguntasTimer}s`;
-  perguntasErrorListElement.innerHTML = perguntasErrors.map(err=>`
+  perguntasErrorListElement.innerHTML = perguntasErrors.map(err => `
     <li class="error-item">
       ${err.question}<br>
       Resposta correta: ${err.correct}
@@ -481,27 +505,64 @@ function endPerguntasQuiz() {
   `).join("");
 }
 function startPerguntasQuiz(dif) {
-  perguntasQuestions = allQuestions.filter(q=>q.difficulty===dif).sort(()=>Math.random()-0.5).slice(0,10);
-  perguntasScore=0; currentPerguntaQuestion=0; perguntasErrors=[];
-  perguntasScoreElement.textContent=perguntasScore;
+  perguntasQuestions = allQuestions.filter(q => q.difficulty === dif).sort(() => Math.random() - 0.5).slice(0,10);
+  perguntasScore = 0; currentPerguntaQuestion = 0; perguntasErrors = [];
+  perguntasScoreElement.textContent = perguntasScore;
   hideAllSections();
-  perguntasQuizContainer.style.display="block";
+  perguntasQuizContainer.style.display = "block";
   startPerguntasTimer();
   loadPerguntasQuestion();
 }
-btnPerguntas.addEventListener("click", ()=>{ hideAllSections(); perguntasContainer.style.display="block"; });
+btnPerguntas.addEventListener("click", ()=>{ hideAllSections(); perguntasContainer.style.display = "block"; });
 btnFacil.addEventListener("click", ()=> startPerguntasQuiz("easy"));
 btnMedio.addEventListener("click", ()=> startPerguntasQuiz("medium"));
 btnDificil.addEventListener("click", ()=> startPerguntasQuiz("hard"));
-perguntasRestartButton.addEventListener("click", ()=> startPerguntasQuiz(perguntasQuestions[0]?.difficulty||"easy"));
+perguntasRestartButton.addEventListener("click", ()=> startPerguntasQuiz(perguntasQuestions[0]?.difficulty || "easy"));
 perguntasMenuButton.addEventListener("click", backToMenu);
 
 // --- BIBLIOTECA ---
-btnLibrary.addEventListener("click", ()=>{ hideAllSections(); libraryContainer.style.display="block"; });
+btnLibrary.addEventListener("click", ()=>{ hideAllSections(); libraryContainer.style.display = "block"; });
 window.showLibrarySection = function(sectionId){
   hideAllSections();
-  libraryContainer.style.display="block";
+  libraryContainer.style.display = "block";
   document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+};
+
+// Função para abrir a biblioteca e esconder o botão de voltar ao menu
+function openLibraryFromLearnMore() {
+  hideAllSections();
+  document.getElementById('library-container').style.display = 'block';
+  // Esconde o botão de voltar ao menu na biblioteca
+  document.getElementById('backButtonLibrary').style.display = 'none';
+}
+
+// Função para mostrar o botão de voltar ao menu quando sair da biblioteca
+function closeLibraryAndShowMenu() {
+  document.getElementById('library-container').style.display = 'none';
+  document.getElementById('menu-container').style.display = 'block';
+  // Mostra o botão de voltar ao menu novamente
+  document.getElementById('backButtonLibrary').style.display = '';
+}
+
+// Exemplo de uso: supondo que o botão "Aprenda Mais" tenha id="learn-more-btn"
+const learnMoreBtn = document.getElementById('learn-more-btn');
+if (learnMoreBtn) {
+  learnMoreBtn.addEventListener('click', openLibraryFromLearnMore);
+}
+
+// No botão de fechar/voltar da biblioteca, use closeLibraryAndShowMenu
+const backButtonLibrary = document.getElementById('backButtonLibrary');
+if (backButtonLibrary) {
+  backButtonLibrary.addEventListener('click', () => {
+    // Esconde a biblioteca
+    libraryContainer.style.display = "none";
+    // Esconde a lista de erros e respostas corretas (tela de parabenização)
+    if (congratulationsContainer) {
+      congratulationsContainer.style.display = "none";
+    }
+    // Volta ao menu principal
+    menuContainer.style.display = "block";
+  });
 };
 
 // --- RANKING ---
@@ -552,6 +613,10 @@ async function loadRanking() {
     users.slice(3).forEach((user, index) => {
       const listItem = document.createElement("li");
       listItem.classList.add("ranking-item");
+      // Destaca o bloco do usuário logado
+      if (user.name === currentUserName) {
+        listItem.classList.add("meu-destaque");
+      }
       listItem.innerHTML = `
         <div class="ranking-photo-container">
           <img src="${user.photoURL || 'images/default.png'}" alt="Foto de Perfil" class="ranking-photo"/>
@@ -593,7 +658,7 @@ function getRandomSpanishQuestions() {
     { question: "¿Qué significa 'Qual é o seu nome?' en español?", options: ["¿Cómo te llamas?", "¿Cómo estás?", "¿Dónde vives?", "¿Qué haces?"], answer: 0 },
     { question: "¿Cómo se dice 'Eu estou cansado' en español?", options: ["Estoy cansado", "Yo cansado", "Soy cansado", "Cansado estoy"], answer: 0 },
     { question: "¿Qué significa 'O que você faz?' en español?", options: ["¿Qué haces?", "¿Dónde estás?", "¿Cómo estás?", "¿Cuál es tu nombre?"], answer: 0 },
-    { question: "¿Cómo se dice 'Eu gosto de ler livros' en español?", options: ["Me gusta leer libros", "Yo leo libros", "Me gusta libros", "Leer libros me gusta"], answer: 0 },
+    { question: "¿Cómo se dice 'Eu gosto de ler livros' en español?", options: ["Me gusta leer libros", "Yo leo livros", "Me gusta livros", "Leer livros me gusta"], answer: 0 },
     { question: "¿Qué significa 'Quanto custa?' en español?", options: ["¿Cuánto cuesta?", "¿Dónde está?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
     { question: "¿Cómo se dice 'Eu estou aprendendo' en español?", options: ["Estoy aprendiendo", "Yo aprendo", "Aprendiendo estoy", "Aprendo"], answer: 0 },
     { question: "¿Qué significa 'Que horas são?' en español?", options: ["¿Qué hora es?", "¿Dónde estás?", "¿Cómo estás?", "¿Qué haces?"], answer: 0 },
@@ -795,70 +860,86 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Lista de perguntas fixa
 const allQuestions = [
-  { question: "What does 'Burn the midnight oil' mean?", options: ["Work late into the night", "Waste time", "Sleep early", "Take a break"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
-  { question: "Which sentence uses the Present Perfect tense?", options: ["I have been to Paris", "I went to Paris", "I am going to Paris", "I will go to Paris"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
-  { question: "What is the correct translation of 'Artificial Intelligence'?", options: ["Inteligência artificial", "Inteligência natural", "Inteligência computacional", "Inteligência humana"], answer: 0, difficulty: "hard", libraryRef: "technical-vocabulary" },
-  { question: "Which sentence is grammatically correct?", options: ["She don't like apples", "She doesn't likes apples", "She doesn't like apples", "She not like apples"], answer: 2, difficulty: "hard", libraryRef: "grammar" },
-  { question: "What does 'Throw in the towel' mean?", options: ["To give up", "To start a fight", "To clean something", "To win a competition"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
-  { question: "Which is an example of Future Perfect tense?", options: ["I will have finished the project by tomorrow", "I am finishing the project now", "I finished the project yesterday", "I will finish the project tomorrow"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
-  { question: "What is the plural of 'crisis'?", options: ["Crises", "Crisis", "Crisises", "Criseses"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
-  { question: "What does 'Hit the nail on the head' mean?", options: ["To be exactly right", "To make a mistake", "To fix something", "To hurt someone"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
-  { question: "What is the meaning of 'Serendipity'?", options: ["A fortunate discovery", "A mistake", "A coincidence", "A disaster"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
-  { question: "Which sentence uses the Past Perfect tense?", options: ["She had finished her homework before dinner", "She finished her homework before dinner", "She finishes her homework before dinner", "She is finishing her homework before dinner"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
-  { question: "What does 'A blessing in disguise' mean?", options: ["A hidden benefit", "A visible problem", "A curse", "A mistake"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
-  { question: "What is the correct form of the verb 'to be' in the sentence: 'He ___ a doctor.'?", options: ["is", "are", "am", "be"], answer: 0, difficulty: "medium", libraryRef: "grammar" },
-  { question: "What does 'Cutting corners' mean?", options: ["Doing something poorly to save time or money", "Taking a shortcut", "Avoiding work", "Completing a task perfectly"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
-  { question: "What is the meaning of 'Eureka'?", options: ["I found it", "I lost it", "I broke it", "I fixed it"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
-  { question: "Which sentence uses the Present Continuous tense?", options: ["They are studying for the exam", "They study for the exam", "They studied for the exam", "They will study for the exam"], answer: 0, difficulty: "medium", libraryRef: "verb-tenses" },
-  { question: "What does 'The ball is in your court' mean?", options: ["It's your decision now", "The game is over", "You lost the opportunity", "You need to wait"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
-  { question: "What is the plural of 'phenomenon'?", options: ["Phenomena", "Phenomenons", "Phenomenas", "Phenomenon"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
-  { question: "What does 'To kill two birds with one stone' mean?", options: ["To achieve two goals with one action", "To fail twice", "To waste time", "To make a mistake"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
-  { question: "Which sentence uses the Future Perfect tense?", options: ["By next year, I will have graduated", "I will graduate next year", "I am graduating next year", "I graduated last year"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
-  { question: "What does 'To bite off more than you can chew' mean?", options: ["To take on more than you can handle", "To eat too much", "To make a mistake", "To give up"], answer: 0, difficulty: "hard", libraryRef: "idioms-advanced" },
+  // 15 com answer: 0
+  { question: "What does the idiom 'Break the ice' mean?", options: ["Start a conversation in a social setting", "Break something fragile", "Go outside in winter", "Make a mistake"], answer: 0, difficulty: "medium", libraryRef: "idioms" },
+  { question: "Which is the correct Present Perfect sentence?", options: ["She has finished her work", "She finish her work", "She finishing her work", "She will finish her work"], answer: 0, difficulty: "hard", libraryRef: "verb-tenses" },
+  { question: "What is the translation of 'Renewable energy'?", options: ["Energia renovável", "Energia nuclear", "Energia solar", "Energia elétrica"], answer: 0, difficulty: "medium", libraryRef: "technical-vocabulary" },
+  { question: "What does 'Piece of cake' mean?", options: ["Something very easy", "A dessert", "A difficult task", "A celebration"], answer: 0, difficulty: "easy", libraryRef: "idioms" },
+  { question: "Which is an example of Past Continuous?", options: ["I was reading a book", "I read a book", "I will read a book", "I have read a book"], answer: 0, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "What is the plural of 'analysis'?", options: ["Analyses", "Analysis", "Analysises", "Analys"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "What does 'Let the cat out of the bag' mean?", options: ["Reveal a secret", "Let a pet escape", "Buy a cat", "Make a mistake"], answer: 0, difficulty: "medium", libraryRef: "idioms" },
+  { question: "What is the meaning of 'Photosynthesis'?", options: ["Process by which plants make food", "A type of photography", "A disease", "A chemical reaction in animals"], answer: 0, difficulty: "hard", libraryRef: "technical-vocabulary" },
+  { question: "Which sentence uses the Future Continuous?", options: ["I will be working tomorrow", "I work tomorrow", "I worked tomorrow", "I am working tomorrow"], answer: 0, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "What does 'Under the weather' mean?", options: ["Feeling sick", "Being outside", "Weather forecast", "Feeling happy"], answer: 0, difficulty: "easy", libraryRef: "idioms" },
+  { question: "What does 'To pull someone's leg' mean?", options: ["To joke with someone", "To hurt someone", "To help someone", "To run fast"], answer: 0, difficulty: "medium", libraryRef: "idioms" },
+  { question: "What is the meaning of 'Algorithm'?", options: ["A set of rules for solving a problem", "A type of music", "A dance move", "A kind of animal"], answer: 0, difficulty: "hard", libraryRef: "technical-vocabulary" },
+  { question: "What does 'Spill the beans' mean?", options: ["Reveal secret information", "Cook beans", "Make a mess", "Tell a joke"], answer: 0, difficulty: "medium", libraryRef: "idioms" },
+  { question: "What is the plural of 'criterion'?", options: ["Criteria", "Criterions", "Criterias", "Criterion"], answer: 0, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "What does 'To hit the books' mean?", options: ["To study hard", "To throw books", "To write a book", "To read for fun"], answer: 0, difficulty: "medium", libraryRef: "idioms" },
+
+  // 15 com answer: 1
+  { question: "Which is the correct form of the verb 'to be' for 'they'?", options: ["is", "are", "am", "be"], answer: 1, difficulty: "easy", libraryRef: "verb-tenses" },
+  { question: "What is the synonym of 'happy'?", options: ["Sad", "Joyful", "Angry", "Tired"], answer: 1, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the antonym of 'cold'?", options: ["Warm", "Hot", "Cool", "Freezing"], answer: 1, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What does 'Break a leg' mean?", options: ["Run fast", "Good luck", "Fall down", "Be careful"], answer: 1, difficulty: "medium", libraryRef: "idioms" },
+  { question: "Which is the correct Past Simple sentence?", options: ["She go to school", "She went to school", "She going to school", "She goes to school"], answer: 1, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "What is the plural of 'goose'?", options: ["Gooses", "Geese", "Goosies", "Goose"], answer: 1, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "What does 'Call it a day' mean?", options: ["Start working", "Stop working", "Work at night", "Take a break"], answer: 1, difficulty: "medium", libraryRef: "idioms" },
+  { question: "What is the meaning of 'CPU'?", options: ["Central Power Unit", "Central Processing Unit", "Computer Personal Unit", "Central Program Unit"], answer: 1, difficulty: "hard", libraryRef: "technical-vocabulary" },
+  { question: "Which sentence uses the Present Continuous?", options: ["I eat breakfast", "I am eating breakfast", "I ate breakfast", "I will eat breakfast"], answer: 1, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "What does 'On cloud nine' mean?", options: ["Very sad", "Very happy", "Very tired", "Very angry"], answer: 1, difficulty: "easy", libraryRef: "idioms" },
+  { question: "What does 'To get cold feet' mean?", options: ["To feel cold", "To become nervous", "To run fast", "To get sick"], answer: 1, difficulty: "medium", libraryRef: "idioms" },
+  { question: "What is the meaning of 'RAM'?", options: ["Random Access Memory", "Read Access Memory", "Rapid Access Memory", "Remote Access Memory"], answer: 1, difficulty: "hard", libraryRef: "technical-vocabulary" },
+  { question: "What is the plural of 'leaf'?", options: ["Leafs", "Leaves", "Leafes", "Leavs"], answer: 1, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "What does 'To be in hot water' mean?", options: ["To take a bath", "To be in trouble", "To be happy", "To be rich"], answer: 1, difficulty: "medium", libraryRef: "idioms" },
+  { question: "Which is the correct Future Simple sentence?", options: ["I go tomorrow", "I will go tomorrow", "I going tomorrow", "I gone tomorrow"], answer: 1, difficulty: "medium", libraryRef: "verb-tenses" },
+
+  // 15 com answer: 2
+  { question: "What is the correct form of the verb 'to be' in 'He ___ a doctor.'?", options: ["is", "am", "are", "be"], answer: 2, difficulty: "easy", libraryRef: "verb-tenses" },
+  { question: "What is the plural of 'child'?", options: ["Childs", "Childes", "Children", "Childern"], answer: 2, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "Which sentence is correct?", options: ["He don't like apples", "He likes apple", "He doesn't like apples", "He like apples"], answer: 2, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "How do you say 'obrigado' in English?", options: ["Hello", "Sorry", "Thanks", "Please"], answer: 2, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What does 'How old are you?' mean?", options: ["Onde você mora?", "Qual é o seu nome?", "Quantos anos você tem?", "Como você está?"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "How do you say 'Estou com fome' in English?", options: ["I'm cold", "I'm happy", "I'm hungry", "I'm tired"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "What is the past tense of 'eat'?", options: ["Eated", "Eating", "Ate", "Eat"], answer: 2, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "Which one is a correct question?", options: ["What is time it?", "It is what time?", "What time is it?", "What it is time?"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "What does 'It's raining cats and dogs' mean?", options: ["Animais estão caindo", "Chuva de gatos", "Está chovendo muito", "Está chovendo pouco"], answer: 2, difficulty: "medium", libraryRef: "idioms" },
+  { question: "How do you say 'Estou cansado' in English?", options: ["I'm bored", "I'm sad", "I'm tired", "I'm sleepy"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "What is the opposite of 'hot'?", options: ["Boiling", "Warm", "Cold", "Cool"], answer: 2, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "Which sentence uses the present continuous?", options: ["I eat now", "I eats", "I am eating", "I will eat"], answer: 2, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "What is the plural of 'mouse'?", options: ["Mices", "Mouse", "Mice", "Mouses"], answer: 2, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "How do you say 'Qual é o seu nome?' in English?", options: ["How are you?", "Where are you from?", "What is your name?", "Who are you?"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "Which one is a verb?", options: ["Fast", "Blue", "Run", "Happy"], answer: 2, difficulty: "easy", libraryRef: "vocabulary" },
+
+  { question: "How do you ask someone how they are in English?", options: ["Where are you from?", "How old are you?", "How are you today?", "What do you do?"], answer: 2, difficulty: "easy", libraryRef: "conversation" },
+  { question: "What is the correct way to ask for help politely?", options: ["Help me now!", "Give me help!", "You help me?", "Can you help me, please?"], answer: 3, difficulty: "easy", libraryRef: "conversation" },
+  { question: "If you didn't understand something, what could you say?", options: ["I didn't understand. Can you explain?", "Say again!", "I don't like it.", "Repeat after me."], answer: 0, difficulty: "easy", libraryRef: "conversation" },
+  { question: "How do you say 'Eu acordo às 7 da manhã' in English?", options: ["I go to bed at 7 a.m.", "I wake up at 7 a.m.", "I have lunch at 7 a.m.", "I go to work at 7 a.m."], answer: 1, difficulty: "easy", libraryRef: "daily-life" },
+  { question: "What is the English for 'Eu vou para o trabalho de ônibus'?", options: ["I go to work by bus.", "I work on the bus.", "I go to school by bus.", "I take the bus to school."], answer: 0, difficulty: "easy", libraryRef: "daily-life" },
+  { question: "How do you say 'Eu almoço ao meio-dia' in English?", options: ["I have dinner at noon.", "I eat breakfast at noon.", "I have lunch at noon.", "I go home at noon."], answer: 2, difficulty: "easy", libraryRef: "daily-life" },
+  { question: "If you want to say you go to bed at 10 p.m., which is correct?", options: ["I go to bed at 10 p.m.", "I wake up at 10 p.m.", "I have lunch at 10 p.m.", "I go to work at 10 p.m."], answer: 0, difficulty: "easy", libraryRef: "daily-life" },
+  { question: "How do you say 'Eu gosto de assistir TV à noite' in English?", options: ["I like to watch TV in the evening.", "I watch TV in the morning.", "I like to read books at night.", "I go to bed in the evening."], answer: 0, difficulty: "easy", libraryRef: "daily-life" },
+  { question: "How do you ask about someone's favorite food?", options: ["Where do you eat?", "How do you cook?", "Do you like pizza?", "What is your favorite food?"], answer: 3, difficulty: "easy", libraryRef: "more-questions" },
+  { question: "Which question asks about the frequency of practice?", options: ["How often do you practice speaking?", "When do you practice?", "Why do you practice?", "Who do you practice with?"], answer: 0, difficulty: "easy", libraryRef: "more-questions" },
+  { question: "How do you ask if someone has pets?", options: ["Do you have any pets?", "Do you like animals?", "Where is your pet?", "What is your pet's name?"], answer: 0, difficulty: "easy", libraryRef: "more-questions" },
+  { question: "Which question means 'Onde você mora?' in English?", options: ["Where do you live?", "Where are you from?", "Where do you go?", "Where is your house?"], answer: 0, difficulty: "easy", libraryRef: "more-questions" },
+  { question: "How do you ask about someone's free time activities?", options: ["What do you do in your free time?", "How do you work?", "Where do you go after work?", "Do you like weekends?"], answer: 0, difficulty: "easy", libraryRef: "more-questions" },
+  // 15 com answer: 3
+  { question: "Complete: She ___ going to school.", options: ["be", "is", "am", "are"], answer: 3, difficulty: "easy", libraryRef: "verb-tenses" },
+  { question: "What does 'A dime a dozen' mean?", options: ["Very expensive", "Very rare", "Very difficult", "Very common"], answer: 3, difficulty: "medium", libraryRef: "idioms" },
+  { question: "How do you say 'Eu não entendo' in English?", options: ["Not I understand", "I understand not", "I no understand", "I don't understand"], answer: 3, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "What is the plural of 'fish'?", options: ["Fish", "Fishes", "Fishs", "Fishies"], answer: 3, difficulty: "hard", libraryRef: "vocabulary" },
+  { question: "What is the past tense of 'see'?", options: ["Saw", "Seen", "Seeing", "See"], answer: 3, difficulty: "medium", libraryRef: "verb-tenses" },
+  { question: "What is the synonym of 'smart'?", options: ["Intelligent", "Dumb", "Slow", "Clever"], answer: 3, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the opposite of 'day'?", options: ["Night", "Morning", "Evening", "Afternoon"], answer: 3, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What is the meaning of 'dog'?", options: ["An animal", "A fruit", "A color", "A tool"], answer: 3, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "Which sentence uses the Future Perfect tense?", options: ["I will graduate next year", "I am graduating next year", "I graduated last year", "By next year, I will have graduated"], answer: 3, difficulty: "hard", libraryRef: "verb-tenses" },
+  { question: "What does 'To bite off more than you can chew' mean?", options: ["To eat too much", "To make a mistake", "To give up", "To take on more than you can handle"], answer: 3, difficulty: "medium", libraryRef: "idioms" },
   { question: "What is 'eu sou estudante' in English?", options: ["I am student", "A student I am", "I student am", "I am a student"], answer: 3, difficulty: "easy", libraryRef: "frases-basicas" },
-  { question: "Which one is correct?", options: ["Pizza do you like?", "Do you like pizza?", "Like pizza you?", "You pizza like?"], answer: 1, difficulty: "easy", libraryRef: "frases-basicas" },
-  { question: "What does 'I am learning English' mean?", options: ["Eu aprendi inglês", "Eu estou aprendendo inglês", "Eu ensino inglês", "Eu amo inglês"], answer: 1, difficulty: "medium", libraryRef: "frases-basicas" },
-  { question: "How do you say 'Onde você mora?' in English?", options: ["Where do you live?", "Where is you live?", "Where you live?", "Where are you living?"], answer: 0, difficulty: "medium", libraryRef: "frases-basicas" },
-  { question: "What is the plural of 'child'?", options: ["Children", "Childs", "Childes", "Childern"], answer: 0, difficulty: "hard", libraryRef: "verbos" },
-  { question: "How do you say 'bom dia' in English?", options: ["Good night", "Good morning", "Hello", "Good evening"], answer: 1, difficulty: "easy", libraryRef: "greetings" },
-  { question: "What is the past tense of 'go'?", options: ["Going", "Went", "Gone", "Go"], answer: 1, difficulty: "easy", libraryRef: "verbos" },
-  { question: "Which sentence is correct?", options: ["He doesn't likes apples", "He don't like apples", "He like apples", "He doesn't like apples"], answer: 3, difficulty: "medium", libraryRef: "grammar" },
-  { question: "What does 'break a leg' mean?", options: ["Run fast", "Don't trip", "Break your leg", "Good luck"], answer: 3, difficulty: "medium", libraryRef: "idioms" },
-  { question: "How do you say 'obrigado' in English?", options: ["Thanks", "Hello", "Sorry", "Please"], answer: 0, difficulty: "easy", libraryRef: "greetings" },
-  { question: "Which is the correct form of the verb 'to be' for 'they'?", options: ["are", "am", "is", "be"], answer: 0, difficulty: "easy", libraryRef: "verbos" },
-  { question: "What does 'How old are you?' mean?", options: ["Como você está?", "Onde você mora?", "Qual é o seu nome?", "Quantos anos você tem?"], answer: 3, difficulty: "medium", libraryRef: "frases-basicas" },
-  { question: "How do you say 'Estou com fome' in English?", options: ["I'm cold", "I'm tired", "I'm happy", "I'm hungry"], answer: 3, difficulty: "medium", libraryRef: "frases-basicas" },
-  { question: "What is the past tense of 'eat'?", options: ["Eating", "Eated", "Ate", "Eat"], answer: 2, difficulty: "hard", libraryRef: "verbos" },
-  { question: "Which one is a correct question?", options: ["What it is time?", "What is time it?", "It is what time?", "What time is it?"], answer: 3, difficulty: "medium", libraryRef: "grammar" },
-  { question: "What does 'It's raining cats and dogs' mean?", options: ["Está chovendo pouco", "Animais estão caindo", "Chuva de gatos", "Está chovendo muito"], answer: 3, difficulty: "hard", libraryRef: "idioms" },
-  { question: "How do you say 'Estou cansado' in English?", options: ["I'm sad", "I'm bored", "I'm tired", "I'm sleepy"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
-  { question: "What is the opposite of 'hot'?", options: ["Boiling", "Cool", "Cold", "Warm"], answer: 2, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "Which sentence uses the present continuous?", options: ["I am eating", "I eat now", "I eats", "I will eat"], answer: 0, difficulty: "medium", libraryRef: "grammar" },
-  { question: "What is the plural of 'mouse'?", options: ["Mices", "Mice", "Mouse", "Mouses"], answer: 1, difficulty: "hard", libraryRef: "vocabulary" },
-  { question: "How do you say 'Qual é o seu nome?' in English?", options: ["What is your name?", "How are you?", "Where are you from?", "Who are you?"], answer: 0, difficulty: "easy", libraryRef: "frases-basicas" },
-  { question: "Which one is a verb?", options: ["Run", "Fast", "Blue", "Happy"], answer: 0, difficulty: "easy", libraryRef: "verbos" },
-  { question: "Complete: She ___ going to school.", options: ["be", "is", "am", "are"], answer: 1, difficulty: "medium", libraryRef: "grammar" },
-  { question: "What does 'piece of cake' mean?", options: ["Um pedaço de bolo", "Algo caro", "Muito fácil", "Muito difícil"], answer: 2, difficulty: "hard", libraryRef: "idioms" },
-  { question: "How do you say 'Eu não entendo' in English?", options: ["Not I understand", "I understand not", "I don't understand", "I no understand"], answer: 2, difficulty: "easy", libraryRef: "frases-basicas" },
-  { question: "What is the opposite of 'early'?", options: ["Now", "Fast", "Soon", "Late"], answer: 3, difficulty: "medium", libraryRef: "vocabulary" },
-  { question: "Which is a correct negative sentence?", options: ["She no likes coffee", "She doesn't like coffee", "She don't like coffee", "She not like coffee"], answer: 1, difficulty: "medium", libraryRef: "grammar" },
-  { question: "How do you say 'Eu gosto de música' in English?", options: ["I like music", "I like of music", "I music like", "I likes music"], answer: 0, difficulty: "easy", libraryRef: "frases-basicas" },
-  { question: "What is the correct past tense of 'have'?", options: ["Haved", "Has", "Had", "Have"], answer: 2, difficulty: "medium", libraryRef: "verbos" },
-  { question: "What is the synonym of 'fast'?", options: ["Quick", "Slow", "Big", "Small"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "What is the antonym of 'happy'?", options: ["Sad", "Joyful", "Excited", "Angry"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "What is the plural of 'tooth'?", options: ["Teeth", "Tooths", "Toothes", "Teeths"], answer: 0, difficulty: "medium", libraryRef: "vocabulary" },
-  { question: "What is the past tense of 'run'?", options: ["Ran", "Running", "Runned", "Run"], answer: 0, difficulty: "medium", libraryRef: "verbos" },
-  { question: "What is the opposite of 'cold'?", options: ["Hot", "Warm", "Cool", "Freezing"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "What does 'break the ice' mean?", options: ["Start a conversation", "Destroy something", "Cool down", "Make a mistake"], answer: 0, difficulty: "medium", libraryRef: "idioms" },
-  { question: "What is the meaning of 'cat'?", options: ["An animal", "A fruit", "A color", "A tool"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "What is the capital of Canada?", options: ["Ottawa", "Toronto", "Vancouver", "Montreal"], answer: 0, difficulty: "medium", libraryRef: "geography" },
-  { question: "What is the opposite of 'strong'?", options: ["Weak", "Powerful", "Big", "Fast"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "What is the meaning of 'red'?", options: ["A color", "A fruit", "A number", "A shape"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "What is the plural of 'fish'?", options: ["Fish", "Fishes", "Fishs", "Fishies"], answer: 0, difficulty: "medium", libraryRef: "vocabulary" },
-  { question: "What is the past tense of 'see'?", options: ["Saw", "Seen", "Seeing", "See"], answer: 0, difficulty: "medium", libraryRef: "verbos" },
-  { question: "What is the synonym of 'smart'?", options: ["Intelligent", "Dumb", "Slow", "Lazy"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "What is the opposite of 'day'?", options: ["Night", "Morning", "Evening", "Afternoon"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
-  { question: "What is the meaning of 'dog'?", options: ["An animal", "A fruit", "A color", "A tool"], answer: 0, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What does 'I am learning English' mean?", options: ["Eu aprendi inglês", "Eu ensino inglês", "Eu amo inglês", "Eu estou aprendendo inglês"], answer: 3, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "How do you say 'Onde você mora?' in English?", options: ["Where is you live?", "Where you live?", "Where are you living?", "Where do you live?"], answer: 3, difficulty: "easy", libraryRef: "frases-basicas" },
+  { question: "What is the antonym of 'strong'?", options: ["Powerful", "Big", "Fast", "Weak"], answer: 3, difficulty: "easy", libraryRef: "vocabulary" },
+  { question: "What does 'To cut corners' mean?", options: ["To take a long route", "To do something perfectly", "To spend more money", "To do something cheaply or quickly"], answer: 3, difficulty: "medium", libraryRef: "idioms" },
 ];
 
 // Adicionando funcionalidade de redefinição de senha
@@ -1256,3 +1337,17 @@ document.addEventListener('keydown', (event) => {
     }
   }
 });
+
+// Unifica o botão "Voltar ao Menu" após qualquer quiz
+const backToMenuButton = document.getElementById("backToMenuButton");
+if (backToMenuButton) {
+  backToMenuButton.addEventListener("click", () => {
+    // Oculta todas as telas de finalização de quiz
+    congratulationsContainer.style.display = "none";
+    perguntasEndScreen.style.display = "none";
+    spanishEndScreen.style.display = "none";
+    frenchEndScreen.style.display = "none";
+    // Volta ao menu principal
+    menuContainer.style.display = "block";
+  });
+};
