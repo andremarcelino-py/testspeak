@@ -38,9 +38,16 @@
     <h3>Erros e Respostas Corretas:</h3>
     <ul id="error-list" style="list-style: none; padding: 0;"></ul>
   </div>
+  <p id="motivational-message" style="display:none; font-weight:bold; margin-top:16px;"></p>
   <button id="congratulations-back-button">Voltar ao Menu</button>
 </div>
 
+<!-- Tela de finalização do Quiz Inglês -->
+<div id="congratulations-container" style="display:none">
+  <!-- ...outros elementos... -->
+  <p id="motivational-message" style="display:none; font-weight:bold; margin-top:16px;"></p>
+  <button id="backToMenuButton">Voltar ao Menu</button>
+</div>
 
   <!-- Tela de Cadastro -->
 <div id="register-container" class="register-container animate-in" style="display:none;">
@@ -130,6 +137,7 @@
     </button>
     <p id="spanish-final-message"></p>
     <ul id="spanish-error-list"></ul>
+    <p id="motivational-message" style="display:none; font-weight:bold; margin-top:16px;"></p>
     <button id="spanish-restart-button" class="restart-button">
       <i class="fas fa-sync-alt"></i> Reiniciar Quiz
     </button>
@@ -271,6 +279,7 @@
     </button>
     <p id="french-final-message"></p>
     <ul id="french-error-list"></ul>
+    <p id="motivational-message" style="display:none; font-weight:bold; margin-top:16px;"></p>
     <button id="french-restart-button" class="restart-button">
       <i class="fas fa-sync-alt"></i> Réessayer
     </button>
@@ -372,6 +381,9 @@
     <div class="score-container">
       <p>Pontuação: <span id="score">0</span>/15</p>
       <p>Tempo: <span id="timer">0</span> s</p>
+    <div id="quiz-progress-bar-container" style="width: 100%; margin-bottom: 16px;">
+      <div id="quiz-progress-bar" style="height: 16px; background: #4caf50; width: 0%; border-radius: 8px; transition: width 0.3s;"></div>
+    </div>
     </div>
   </div>
 
@@ -551,26 +563,80 @@
   </div>
 </div>
 
-<!-- Seção: Mais Perguntas -->
-<div id="more-questions" class="text-card animate-in">
-  <div class="text-header">
-    <i class="fas fa-star"></i>
-    <h3>Mais Perguntas 🗣️</h3>
+<!-- Seção: Conversação -->
+  <div id="conversation" class="text-card animate-in">
+    <div class="text-header">
+      <i class="fas fa-comments"></i>
+      <h3>Conversação 🗨️</h3>
+    </div>
+    <div class="text-content">
+      <p class="english">How are you today? 😊</p>
+      <p class="portuguese">Como você está hoje? 😊</p>
+      <p class="english">Can you help me, please?</p>
+      <p class="portuguese">Você pode me ajudar, por favor?</p>
+      <p class="english">What do you like to do for fun?</p>
+      <p class="portuguese">O que você gosta de fazer para se divertir?</p>
+      <p class="english">Could you repeat that, please?</p>
+      <p class="portuguese">Você pode repetir, por favor?</p>
+      <p class="english">I didn't understand. Can you explain?</p>
+      <p class="portuguese">Eu não entendi. Você pode explicar?</p>
+    </div>
   </div>
-  <div class="text-content">
-    <p>Abaixo, veja exemplos de perguntas comuns com suas traduções:</p>
-    <p class="english">What is your favorite food? 🍔</p>
-    <p class="portuguese">Qual é a sua comida favorita? 🍔</p>
-    <p class="english">When did you start learning English? 📅</p>
-    <p class="portuguese">Quando você começou a aprender inglês? 📅</p>
-    <p class="english">How often do you practice speaking? 🗣️</p>
-    <p class="portuguese">Com que frequência você pratica falar? 🗣️</p>
-    <p class="english">Who is your role model? 🌟</p>
-    <p class="portuguese">Quem é o seu ídolo? 🌟</p>
-    <p class="english">What do you do in your free time? 🕒</p>
-    <p class="portuguese">O que você faz no seu tempo livre? 🕒</p>
+
+  <!-- Seção: Dia a Dia -->
+  <div id="daily-life" class="text-card animate-in">
+    <div class="text-header">
+      <i class="fas fa-calendar-day"></i>
+      <h3>Dia a Dia 🏠</h3>
+    </div>
+    <div class="text-content">
+      <p class="english">I wake up at 7 a.m.</p>
+      <p class="portuguese">Eu acordo às 7 da manhã.</p>
+      <p class="english">I go to work by bus.</p>
+      <p class="portuguese">Eu vou para o trabalho de ônibus.</p>
+      <p class="english">I have lunch at noon.</p>
+      <p class="portuguese">Eu almoço ao meio-dia.</p>
+      <p class="english">I like to watch TV in the evening.</p>
+      <p class="portuguese">Eu gosto de assistir TV à noite.</p>
+      <p class="english">I go to bed at 10 p.m.</p>
+      <p class="portuguese">Eu vou dormir às 22h.</p>
+    </div>
   </div>
-</div>
+
+  <!-- Seção: Mais Perguntas (expandida) -->
+  <div id="more-questions" class="text-card animate-in">
+    <div class="text-header">
+      <i class="fas fa-star"></i>
+      <h3> Perguntas 🗣️</h3>
+    </div>
+    <div class="text-content">
+      <p>Abaixo, veja exemplos de perguntas comuns com suas traduções:</p>
+      <p class="english">What is your favorite food? 🍔</p>
+      <p class="portuguese">Qual é a sua comida favorita? 🍔</p>
+      <p class="english">When did you start learning English? 📅</p>
+      <p class="portuguese">Quando você começou a aprender inglês? 📅</p>
+      <p class="english">How often do you practice speaking? 🗣️</p>
+      <p class="portuguese">Com que frequência você pratica falar? 🗣️</p>
+      <p class="english">Who is your role model? 🌟</p>
+      <p class="portuguese">Quem é o seu ídolo? 🌟</p>
+      <p class="english">What do you do in your free time? 🕒</p>
+      <p class="portuguese">O que você faz no seu tempo livre? 🕒</p>
+      <p class="english">Where do you live? 🏠</p>
+      <p class="portuguese">Onde você mora? 🏠</p>
+      <p class="english">Why are you learning English? 🤔</p>
+      <p class="portuguese">Por que você está aprendendo inglês? 🤔</p>
+      <p class="english">Do you have any pets? 🐶</p>
+      <p class="portuguese">Você tem algum animal de estimação? 🐶</p>
+      <p class="english">What is your favorite movie? 🎬</p>
+      <p class="portuguese">Qual é o seu filme favorito? 🎬</p>
+      <p class="english">How do you get to school or work? 🚗</p>
+      <p class="portuguese">Como você vai para a escola ou trabalho? 🚗</p>
+      <p class="english">What time do you usually wake up? ⏰</p>
+      <p class="portuguese">Que horas você costuma acordar? ⏰</p>
+      <p class="english">Have you ever traveled abroad? ✈️</p>
+      <p class="portuguese">Você já viajou para o exterior? ✈️</p>
+    </div>
+  </div>
   </div>
 
   <!-- Ranking -->
@@ -640,6 +706,7 @@
     </button>
     <p id="final-message"></p>
     <ul id="error-list"></ul>
+    <p id="motivational-message" style="display:none; font-weight:bold; margin-top:16px;"></p>
     <button id="restart-button" class="restart-button">
       <i class="fas fa-sync-alt"></i> Reiniciar Quiz
     </button>
@@ -652,6 +719,7 @@
     </button>
     <p id="perguntas-final-message"></p>
     <ul id="perguntas-error-list"></ul>
+    <p id="motivational-message" style="display:none; font-weight:bold; margin-top:16px;"></p>
     <button id="perguntas-restart-button" class="restart-button">
       <i class="fas fa-sync-alt"></i> Tentar Novamente
     </button>
@@ -735,6 +803,36 @@
   </div>
   <div class="avatar-option-container">
     <img src="images/avatar20.png" class="avatar-option" data-avatar="images/avatar20.png" alt="Avatar 20"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar21.png" class="avatar-option" data-avatar="images/avatar21.png" alt="Avatar 21"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar22.png" class="avatar-option" data-avatar="images/avatar22.png" alt="Avatar 22"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar23.png" class="avatar-option" data-avatar="images/avatar23.png" alt="Avatar 23"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar24.png" class="avatar-option" data-avatar="images/avatar24.png" alt="Avatar 24"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar25.png" class="avatar-option" data-avatar="images/avatar25.png" alt="Avatar 25"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar26.png" class="avatar-option" data-avatar="images/avatar26.png" alt="Avatar 26"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar27.png" class="avatar-option" data-avatar="images/avatar27.png" alt="Avatar 27"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar28.png" class="avatar-option" data-avatar="images/avatar28.png" alt="Avatar 28"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar29.png" class="avatar-option" data-avatar="images/avatar29.png" alt="Avatar 29"/>
+  </div>
+  <div class="avatar-option-container">
+    <img src="images/avatar30.png" class="avatar-option" data-avatar="images/avatar30.png" alt="Avatar 30"/>
   </div>
 </div>
 </div>
